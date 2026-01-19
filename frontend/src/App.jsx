@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect, createContext, useContext } from 'react';
 import api from './services/api';
+import { clearAllDailyCache } from './utils/cache';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Timetable from './pages/Timetable';
@@ -10,6 +11,7 @@ import Files from './pages/Files';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
 import DebugPanel from './components/DebugPanel';
+import SessionExpiredModal from './components/SessionExpiredModal';
 
 export const AuthContext = createContext(null);
 
@@ -21,10 +23,12 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   useEffect(() => {
     checkAuth();
     setIsMobile(window.innerWidth < 1024);
+    api.setAuthErrorHandler(() => setSessionExpired(true));
 
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024);
@@ -50,16 +54,19 @@ function App() {
   const login = async (username, password) => {
     const data = await api.login(username, password);
     setUser(data.user);
+    setSessionExpired(false);
     return data;
   };
 
   const logout = async () => {
     await api.logout();
     setUser(null);
+    setSessionExpired(false);
+    clearAllDailyCache();
     document.cookie = 'libertas_remember=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
   };
 
-  const value = { user, login, logout, loading };
+  const value = { user, login, logout, loading, sessionExpired, setSessionExpired };
 
   if (loading) {
     return (
@@ -112,6 +119,10 @@ function App() {
         </div>
       )}
       <DebugPanel />
+      <SessionExpiredModal 
+        isOpen={sessionExpired} 
+        onClose={() => setSessionExpired(false)} 
+      />
     </AuthContext.Provider>
   );
 }

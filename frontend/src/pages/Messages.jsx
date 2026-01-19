@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import { Skeleton, SkeletonList } from '../components/Skeleton';
 
 function Messages() {
   const [messages, setMessages] = useState([]);
@@ -53,10 +54,12 @@ function Messages() {
 
   if (loading) {
     return (
-      <div className="p-4 lg:p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="loading-spinner w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full"></div>
+      <div className="p-4 lg:p-6 max-w-4xl mx-auto">
+        <div className="mb-6">
+          <Skeleton variant="text" height="h-8" width="w-24" className="mb-2" />
+          <Skeleton variant="text" width="w-32" />
         </div>
+        <SkeletonList items={7} />
       </div>
     );
   }

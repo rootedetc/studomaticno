@@ -396,7 +396,15 @@ router.get('/download/:id', requireAuth, async (req, res) => {
     });
 
     const fileData = Buffer.isBuffer(response.data) ? response.data : Buffer.from(response.data);
+    
+    let fileExtension = '';
+    const extensionMatch = filename.match(/\.[^.]+$/);
+    if (extensionMatch) {
+      fileExtension = extensionMatch[0];
+    }
+    
     res.setHeader('Content-Type', contentType);
+    res.setHeader('X-File-Extension', fileExtension);
     res.setHeader('Content-Disposition', 'attachment');
     res.setHeader('Content-Length', fileData.length);
     res.send(fileData);

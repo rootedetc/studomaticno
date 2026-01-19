@@ -1,9 +1,15 @@
 const API_BASE = '/api';
+import { getDailyCache, setDailyCache } from '../utils/cache';
 
 class ApiService {
   constructor() {
     this.baseUrl = API_BASE;
     this.requestLog = [];
+    this.onAuthError = null;
+  }
+
+  setAuthErrorHandler(handler) {
+    this.onAuthError = handler;
   }
 
   async request(endpoint, options = {}) {
@@ -38,6 +44,9 @@ class ApiService {
       }
 
       if (!response.ok) {
+        if (response.status === 401 && this.onAuthError) {
+          this.onAuthError();
+        }
         throw new Error(data.error || `HTTP ${response.status}`);
       }
 
@@ -73,8 +82,15 @@ class ApiService {
     return this.request('/auth/status');
   }
 
-  async getDashboard() {
-    return this.request('/dashboard/overview');
+  async getDashboard(useCache = true) {
+    const cacheKey = 'dashboard_overview';
+    if (useCache) {
+      const cached = getDailyCache(cacheKey);
+      if (cached) return cached;
+    }
+    const data = await this.request('/dashboard/overview');
+    setDailyCache(cacheKey, data);
+    return data;
   }
 
   async getTimetable() {
@@ -91,8 +107,16 @@ class ApiService {
     return result;
   }
 
-  async getTodayTimetable() {
-    return this.request('/timetable/today');
+  async getTodayTimetable(useCache = true) {
+    const dateKey = new Date().toISOString().split('T')[0];
+    const cacheKey = `timetable_today_${dateKey}`;
+    if (useCache) {
+      const cached = getDailyCache(cacheKey);
+      if (cached) return cached;
+    }
+    const data = await this.request('/timetable/today');
+    setDailyCache(cacheKey, data);
+    return data;
   }
 
   async getWeeklyTimetable(date) {
@@ -100,8 +124,15 @@ class ApiService {
     return this.request(`/timetable/weekly${params}`);
   }
 
-  async getNotifications() {
-    return this.request('/notifications');
+  async getNotifications(useCache = true) {
+    const cacheKey = 'notifications_list';
+    if (useCache) {
+      const cached = getDailyCache(cacheKey);
+      if (cached) return cached;
+    }
+    const data = await this.request('/notifications');
+    setDailyCache(cacheKey, data);
+    return data;
   }
 
   async getUnreadNotifications() {
@@ -113,8 +144,15 @@ class ApiService {
     return this.request(`/notifications/${encodeURIComponent(id)}${params}`);
   }
 
-  async getMessages() {
-    return this.request('/messages/inbox');
+  async getMessages(useCache = true) {
+    const cacheKey = 'messages_inbox';
+    if (useCache) {
+      const cached = getDailyCache(cacheKey);
+      if (cached) return cached;
+    }
+    const data = await this.request('/messages/inbox');
+    setDailyCache(cacheKey, data);
+    return data;
   }
 
   async getMessageThread(id) {
@@ -146,7 +184,8 @@ class ApiService {
       throw new Error('Download failed');
     }
     const blob = await response.blob();
-    return { blob };
+    const fileExtension = response.headers.get('x-file-extension') || '';
+    return { blob, fileExtension };
   }
 
   async getExams() {

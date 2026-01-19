@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
+import { Skeleton, SkeletonCard } from '../components/Skeleton';
 
 function TreeNode({ node, level, currentFolderId, onNavigate, expandedNodes, toggleExpand }) {
   const hasChildren = node.children && node.children.length > 0;
@@ -208,11 +209,11 @@ function Files() {
   const handleDownload = async (id, name) => {
     setDownloading(id);
     try {
-      const { blob } = await api.downloadFile(id);
+      const { blob, fileExtension } = await api.downloadFile(id);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = name;
+      a.download = name + fileExtension;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -241,9 +242,35 @@ function Files() {
 
   if (loading && files.length === 0) {
     return (
-      <div className="p-4 lg:p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="loading-spinner w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full"></div>
+      <div className="h-full flex flex-col">
+        <div className="p-4 lg:p-6 border-b border-gray-200 bg-white">
+          <Skeleton variant="text" height="h-8" width="w-32" className="mb-2" />
+          <Skeleton variant="text" width="w-20" />
+        </div>
+        <div className="flex-1 flex overflow-hidden">
+          <div className="hidden lg:block w-64 border-r border-gray-200 bg-gray-50 flex-shrink-0">
+            <div className="p-3">
+              <Skeleton variant="text" height="h-4" width="w-16" className="mb-2" />
+              <SkeletonCard count={5} />
+            </div>
+          </div>
+          <div className="flex-1 flex flex-col overflow-hidden bg-white">
+            <div className="px-6 py-3 border-b border-gray-200 bg-gray-50">
+              <Skeleton variant="text" height="h-4" width="w-24" />
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+              <div className="space-y-2">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -302,8 +329,17 @@ function Files() {
 
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-6">
             {loading ? (
-              <div className="flex items-center justify-center h-32">
-                <div className="loading-spinner w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full"></div>
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <SkeletonCard key={i} />
+                  ))}
+                </div>
+                <div className="space-y-2">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <SkeletonCard key={i} />
+                  ))}
+                </div>
               </div>
             ) : files.length === 0 && getSubfoldersForCurrent().length === 0 ? (
               <div className="card text-center py-12">

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
+import { Skeleton, SkeletonCard } from '../components/Skeleton';
 
 function Timetable() {
   const [timetable, setTimetable] = useState([]);
@@ -69,9 +70,19 @@ function Timetable() {
 
   if (loading) {
     return (
-      <div className="p-4 lg:p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="loading-spinner w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full"></div>
+      <div className="p-4 lg:p-6 max-w-6xl mx-auto">
+        <div className="mb-6">
+          <Skeleton variant="text" height="h-8" width="w-32" className="mb-2" />
+          <Skeleton variant="text" width="w-48" />
+        </div>
+        <div className="flex gap-2 mb-6">
+          <Skeleton variant="text" width="w-20" height="h-10" />
+          <Skeleton variant="text" width="w-20" height="h-10" />
+        </div>
+        <div className="space-y-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       </div>
     );

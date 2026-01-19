@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../App';
+import { Skeleton, SkeletonCard } from '../components/Skeleton';
+import { getDailyCache, setDailyCache } from '../utils/cache';
 
 function Dashboard() {
   const { user } = useAuth();
@@ -11,56 +13,116 @@ function Dashboard() {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [cacheLoaded, setCacheLoaded] = useState(false);
 
   useEffect(() => {
-    loadDashboard();
-    loadTodayTimetable();
-    loadNotifications();
-    loadMessages();
+    loadFromCache();
+    refreshData();
   }, []);
 
-  const loadDashboard = async () => {
+  const loadFromCache = async () => {
     try {
-      const result = await api.getDashboard();
-      setData(result);
+      const cachedDashboard = getDailyCache('dashboard_overview');
+      if (cachedDashboard) {
+        setData(cachedDashboard);
+      }
+
+      const dateKey = new Date().toISOString().split('T')[0];
+      const cachedTimetable = getDailyCache(`timetable_today_${dateKey}`);
+      if (cachedTimetable) {
+        setTodayLessons(cachedTimetable.lessons || []);
+      }
+
+      const cachedNotifications = getDailyCache('notifications_list');
+      if (cachedNotifications) {
+        setUnreadNotifications(cachedNotifications.unreadCount || 0);
+      }
+
+      const cachedMessages = getDailyCache('messages_inbox');
+      if (cachedMessages) {
+        setUnreadMessages(cachedMessages.unreadCount || 0);
+      }
+
+      setCacheLoaded(true);
     } catch (err) {
-      console.error('Dashboard error:', err.message);
-    } finally {
-      setLoading(false);
+      console.error('Failed to load from cache:', err);
     }
   };
 
-  const loadTodayTimetable = async () => {
+  const refreshData = async () => {
+    await Promise.all([
+      loadDashboard(true),
+      loadTodayTimetable(true),
+      loadNotifications(true),
+      loadMessages(true)
+    ]);
+    setLoading(false);
+  };
+
+  const loadDashboard = async (refresh = false) => {
     try {
-      const result = await api.getTodayTimetable();
+      const result = await api.getDashboard(!refresh);
+      setData(result);
+      if (!refresh) {
+        setDailyCache('dashboard_overview', result);
+      }
+    } catch (err) {
+      console.error('Dashboard error:', err.message);
+    }
+  };
+
+  const loadTodayTimetable = async (refresh = false) => {
+    try {
+      const result = await api.getTodayTimetable(!refresh);
       setTodayLessons(result.lessons || []);
+      if (!refresh) {
+        const dateKey = new Date().toISOString().split('T')[0];
+        setDailyCache(`timetable_today_${dateKey}`, result);
+      }
     } catch (err) {
       console.error('Failed to load today timetable:', err);
     }
   };
 
-  const loadNotifications = async () => {
+  const loadNotifications = async (refresh = false) => {
     try {
-      const result = await api.getNotifications();
+      const result = await api.getNotifications(!refresh);
       setUnreadNotifications(result.unreadCount || 0);
+      if (!refresh) {
+        setDailyCache('notifications_list', result);
+      }
     } catch (err) {
       console.error('Failed to load notifications:', err);
     }
   };
 
-  const loadMessages = async () => {
+  const loadMessages = async (refresh = false) => {
     try {
-      const result = await api.getMessages();
+      const result = await api.getMessages(!refresh);
       setUnreadMessages(result.unreadCount || 0);
+      if (!refresh) {
+        setDailyCache('messages_inbox', result);
+      }
     } catch (err) {
       console.error('Failed to load messages:', err);
     }
   };
 
-  if (loading) {
+  if (loading && !cacheLoaded) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="loading-spinner w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full"></div>
+      <div className="p-4 lg:p-6 max-w-6xl mx-auto">
+        <div className="mb-6">
+          <Skeleton variant="text" height="h-8" width="w-48" className="mb-2" />
+          <Skeleton variant="text" width="w-32" />
+        </div>
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+        <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
+          <SkeletonCard count={4} />
+        </div>
       </div>
     );
   }
