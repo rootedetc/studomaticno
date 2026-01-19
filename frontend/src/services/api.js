@@ -146,19 +146,7 @@ class ApiService {
       throw new Error('Download failed');
     }
     const blob = await response.blob();
-    const contentDisposition = response.headers.get('content-disposition');
-    let filename = `file-${id}`;
-    if (contentDisposition) {
-      const rfc5987Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
-      if (rfc5987Match) {
-        filename = decodeURIComponent(rfc5987Match[1]);
-      } else {
-        const filenameMatch = contentDisposition.match(/filename="?([^";\n]+)"?/i);
-        if (filenameMatch) {
-          filename = filenameMatch[1];
-        }
-      }
-    }
+    const filename = response.headers.get('x-filename') || `file-${id}`;
     return { blob, filename };
   }
 
