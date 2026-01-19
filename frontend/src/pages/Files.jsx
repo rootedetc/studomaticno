@@ -208,11 +208,11 @@ function Files() {
   const handleDownload = async (id, name) => {
     setDownloading(id);
     try {
-      const { blob, filename } = await api.downloadFile(id);
+      const { blob } = await api.downloadFile(id);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = filename;
+      a.download = name;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

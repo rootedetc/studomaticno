@@ -397,7 +397,6 @@ router.get('/download/:id', requireAuth, async (req, res) => {
 
     const fileData = Buffer.isBuffer(response.data) ? response.data : Buffer.from(response.data);
     res.setHeader('Content-Type', contentType);
-    res.setHeader('X-Filename', filename);
     res.setHeader('Content-Disposition', 'attachment');
     res.setHeader('Content-Length', fileData.length);
     res.send(fileData);

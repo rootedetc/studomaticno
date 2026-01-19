@@ -146,8 +146,7 @@ class ApiService {
       throw new Error('Download failed');
     }
     const blob = await response.blob();
-    const filename = response.headers.get('x-filename') || `file-${id}`;
-    return { blob, filename };
+    return { blob };
   }
 
   async getExams() {
