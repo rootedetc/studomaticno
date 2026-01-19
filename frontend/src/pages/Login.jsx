@@ -78,25 +78,25 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Libertas</h1>
-          <p className="text-gray-600">Eduneta Dashboard</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Libertas</h1>
+          <p className="text-gray-600 dark:text-gray-400">Eduneta Dashboard</p>
         </div>
 
         <div className="card">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Prijava</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Prijava</h2>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+            <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-4 text-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Korisničko ime
               </label>
               <input
@@ -111,7 +111,7 @@ function Login() {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Lozinka
               </label>
               <input
@@ -131,9 +131,9 @@ function Login() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                  className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
                 />
-                <span className="ml-2 text-sm text-gray-600">Zapamti me</span>
+                <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Zapamti me</span>
               </label>
             </div>
 
@@ -154,7 +154,7 @@ function Login() {
           </form>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
           Privatni backend proxy za osobnu upotrebu
         </p>
       </div>

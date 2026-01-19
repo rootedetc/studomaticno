@@ -50,15 +50,15 @@ function Notifications() {
     <div className="p-4 lg:p-6 max-w-4xl mx-auto fade-in">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Obavijesti</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Obavijesti</h1>
+          <p className="text-gray-600 dark:text-gray-400">
             {unreadCount > 0 ? `${unreadCount} nepročitanih` : 'Sve pročitano'}
           </p>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-4">
           {error}
         </div>
       )}
@@ -67,7 +67,7 @@ function Notifications() {
         <div className="card">
           <button
             onClick={() => setSelectedNotification(null)}
-            className="flex items-center gap-2 text-primary-600 hover:text-primary-700 mb-4"
+            className="flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 mb-4"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -75,9 +75,9 @@ function Notifications() {
             Natrag na popis
           </button>
 
-          <div className="border-b border-gray-200 pb-4 mb-4">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">{selectedNotification.title}</h2>
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+          <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{selectedNotification.title}</h2>
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
               <span className="flex items-center gap-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -93,7 +93,7 @@ function Notifications() {
             </div>
           </div>
 
-          <div className="prose prose-sm max-w-none text-gray-800">
+          <div className="prose prose-sm max-w-none text-gray-800 dark:text-gray-200">
             <div 
               dangerouslySetInnerHTML={{ __html: selectedNotification.content || '' }}
               style={{ lineHeight: '1.6' }}

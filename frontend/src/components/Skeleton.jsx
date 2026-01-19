@@ -1,5 +1,5 @@
 export function Skeleton({ variant = 'text', width, height, className = '', count = 1 }) {
-  const baseClasses = 'animate-pulse bg-gray-200 rounded';
+  const baseClasses = 'animate-pulse bg-gray-200 dark:bg-gray-700 rounded';
 
   const getVariantClasses = () => {
     switch (variant) {
@@ -81,15 +81,15 @@ export function SkeletonList({ items = 5 }) {
 
 export function SkeletonTable({ rows = 5, cols = 3 }) {
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
-      <div className="bg-gray-50 border-b border-gray-200 p-3">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+      <div className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-3">
         <div className="grid grid-cols-3 gap-4">
           {Array.from({ length: cols }).map((_, i) => (
             <Skeleton key={i} variant="text" height="h-4" />
           ))}
         </div>
       </div>
-      <div className="divide-y divide-gray-200">
+      <div className="divide-y divide-gray-200 dark:divide-gray-700">
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <div key={rowIndex} className="p-3">
             <div className="grid grid-cols-3 gap-4">

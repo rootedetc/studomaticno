@@ -8,6 +8,7 @@ import Timetable from './pages/Timetable';
 import Notifications from './pages/Notifications';
 import Messages from './pages/Messages';
 import Files from './pages/Files';
+import Settings from './pages/Settings';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
 import DebugPanel from './components/DebugPanel';
@@ -70,10 +71,10 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <div className="loading-spinner w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-600">Učitavanje...</p>
+          <p className="text-gray-600 dark:text-gray-400">Učitavanje...</p>
         </div>
       </div>
     );
@@ -86,7 +87,7 @@ function App() {
           <Route path="*" element={<Login />} />
         </Routes>
       ) : (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
           {isMobile ? (
             <div>
               <Routes>
@@ -95,13 +96,14 @@ function App() {
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/files" element={<Files />} />
+                <Route path="/settings" element={<Settings />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               <MobileNav />
             </div>
           ) : (
             <div className="sidebar-layout">
-              <aside className="sidebar bg-white border-r border-gray-200">
+              <aside className="sidebar bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
                 <Sidebar />
               </aside>
               <main className="main-content">
@@ -111,6 +113,7 @@ function App() {
                   <Route path="/notifications" element={<Notifications />} />
                   <Route path="/messages" element={<Messages />} />
                   <Route path="/files" element={<Files />} />
+                  <Route path="/settings" element={<Settings />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </main>
