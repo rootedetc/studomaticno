@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import json5 from 'json5';
 import edunetaService, { generateRequestId, log } from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
+import iconv from 'iconv-lite';
 
 const router = express.Router();
 
@@ -362,6 +363,14 @@ router.get('/download/:id', requireAuth, async (req, res) => {
         const filenameMatch = contentDisposition.match(/filename="?([^";\n]+)"?/i);
         if (filenameMatch) {
           filename = filenameMatch[1];
+          try {
+            const buffer = Buffer.from(filename, 'binary');
+            const utf8 = iconv.decode(buffer, 'windows-1250');
+            if (utf8 && utf8 !== filename) {
+              filename = utf8;
+            }
+          } catch (e) {
+          }
         }
       }
     }
