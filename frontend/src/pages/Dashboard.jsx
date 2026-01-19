@@ -127,11 +127,41 @@ function Dashboard() {
     );
   }
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Dobro jutro';
+    if (hour < 18) return 'Dobar dan';
+    return 'Dobro večer';
+  };
+
   return (
     <div className="p-4 lg:p-6 max-w-6xl mx-auto fade-in">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Dobrodošli, {user?.username}</h1>
-        <p className="text-gray-600">Pregled vašeg dana</p>
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-2xl p-6 lg:p-8 mb-6 shadow-lg">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl"></div>
+        
+        <div className="relative z-10">
+          <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
+            {getGreeting()}, {user?.username}!
+          </h1>
+          <p className="text-primary-100 text-lg">Dobrodošli nazad na Libertas PWA</p>
+          
+          <div className="flex flex-wrap gap-4 mt-6">
+            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span className="text-white font-medium">{new Date().toLocaleDateString('hr-HR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+            </div>
+            
+            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-white font-medium">{new Date().toLocaleTimeString('hr-HR', { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {error && (
