@@ -5,16 +5,45 @@ import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
+function parsePaymentZoneColor(altText) {
+  if (!altText) return 'unknown';
+  if (altText.includes('zeleno')) return 'green';
+  if (altText.includes('žuto')) return 'yellow';
+  if (altText.includes('crveno')) return 'red';
+  return 'unknown';
+}
+
+function extractStudentName(text) {
+  if (!text) return '';
+  const match = text.match(/^(.+?)\s*-\s*\d{4}-\d{2}$/);
+  return match ? match[1].trim() : text;
+}
+
+function extractStudentId(text) {
+  if (!text) return '';
+  const match = text.match(/(\d{4}-\d{2})$/);
+  return match ? match[1] : '';
+}
+
 router.get('/overview', requireAuth, async (req, res) => {
   try {
     const homeHtml = await edunetaService.getPage('/lib-student/Default.aspx');
     const $ = cheerio.load(homeHtml);
 
+    const korisnikText = $('#labKorisnik').text().trim() || '';
+    const paymentZoneIcon = $('#imgZona').attr('src') || '';
+    const paymentZoneStatus = $('#imgZona').attr('alt') || '';
+
     const userInfo = {
-      name: $('#labKorisnik').text().trim() || '',
+      name: korisnikText,
       program: $('#labProgram').text().trim() || '',
       semester: $('#labAkadGodSem').text().trim() || '',
-      date: $('#labDatum').text().trim() || ''
+      date: $('#labDatum').text().trim() || '',
+      paymentZoneIcon,
+      paymentZoneStatus,
+      paymentZoneColor: parsePaymentZoneColor(paymentZoneStatus),
+      studentName: extractStudentName(korisnikText),
+      studentId: extractStudentId(korisnikText)
     };
 
     const hasNoObav = $('#divNemaObav').text().trim().includes('Nema nepročitanih obavijesti');
