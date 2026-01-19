@@ -355,9 +355,14 @@ router.get('/download/:id', requireAuth, async (req, res) => {
     const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition'];
     let filename = `file-${id}`;
     if (contentDisposition) {
-      const filenameMatch = contentDisposition.match(/filename="?([^";\n]+)"?/i);
-      if (filenameMatch) {
-        filename = filenameMatch[1];
+      const rfc5987Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+      if (rfc5987Match) {
+        filename = decodeURIComponent(rfc5987Match[1]);
+      } else {
+        const filenameMatch = contentDisposition.match(/filename="?([^";\n]+)"?/i);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
       }
     }
 
