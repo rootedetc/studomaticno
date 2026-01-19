@@ -1,0 +1,119 @@
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useState, useEffect, createContext, useContext } from 'react';
+import api from './services/api';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Timetable from './pages/Timetable';
+import Notifications from './pages/Notifications';
+import Messages from './pages/Messages';
+import Files from './pages/Files';
+import Sidebar from './components/Sidebar';
+import MobileNav from './components/MobileNav';
+import DebugPanel from './components/DebugPanel';
+
+export const AuthContext = createContext(null);
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    checkAuth();
+    setIsMobile(window.innerWidth < 1024);
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const data = await api.checkAuth();
+      if (data.authenticated) {
+        setUser(data.user);
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const login = async (username, password) => {
+    const data = await api.login(username, password);
+    setUser(data.user);
+    return data;
+  };
+
+  const logout = async () => {
+    await api.logout();
+    setUser(null);
+    document.cookie = 'libertas_remember=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+  };
+
+  const value = { user, login, logout, loading };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="loading-spinner w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-600">Učitavanje...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!user ? (
+        <Routes>
+          <Route path="*" element={<Login />} />
+        </Routes>
+      ) : (
+        <div className="min-h-screen bg-gray-50">
+          {isMobile ? (
+            <div>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/timetable" element={<Timetable />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/files" element={<Files />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+              <MobileNav />
+            </div>
+          ) : (
+            <div className="sidebar-layout">
+              <aside className="sidebar bg-white border-r border-gray-200">
+                <Sidebar />
+              </aside>
+              <main className="main-content">
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/timetable" element={<Timetable />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/files" element={<Files />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </main>
+            </div>
+          )}
+        </div>
+      )}
+      <DebugPanel />
+    </AuthContext.Provider>
+  );
+}
+
+export default App;
