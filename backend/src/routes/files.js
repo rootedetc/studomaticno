@@ -390,13 +390,13 @@ router.get('/download/:id', requireAuth, async (req, res) => {
     res.setHeader('Content-Type', contentType);
     
     const hasNonAscii = /[^\x00-\x7F]/.test(filename);
-    let contentDisposition;
+    let disposition;
     if (hasNonAscii) {
-      contentDisposition = `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`;
+      disposition = `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`;
     } else {
-      contentDisposition = `attachment; filename="${filename}"`;
+      disposition = `attachment; filename="${filename}"`;
     }
-    res.setHeader('Content-Disposition', contentDisposition);
+    res.setHeader('Content-Disposition', disposition);
     res.setHeader('Content-Length', fileData.length);
     res.send(fileData);
   } catch (error) {
