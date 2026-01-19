@@ -156,17 +156,24 @@ function Timetable() {
       {view === 'daily' ? (
         <div className="mb-6">
           <div className="flex gap-2 overflow-x-auto pb-2">
-            {timetable.map((day) => (
-              <button
-                key={day.day}
-                onClick={() => setSelectedDay(day.day)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                  selectedDay === day.day ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {day.day}
-              </button>
-            ))}
+            {timetable.map((day) => {
+              const dateStr = day.lessons[0]?.date || '';
+              const formattedDate = dateStr.replace(/\.$/, '');
+              return (
+                <button
+                  key={day.day}
+                  onClick={() => setSelectedDay(day.day)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                    selectedDay === day.day ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  <div className="flex flex-col items-center">
+                    <span>{day.day}</span>
+                    {formattedDate && <span className="text-xs font-normal opacity-75">{formattedDate}</span>}
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
           <div className="mt-6">
@@ -210,9 +217,17 @@ function Timetable() {
         </div>
       ) : (
         <div className="space-y-4">
-          {timetable.map((day) => (
-            <div key={day.day} className="card">
-              <h3 className="font-semibold text-gray-900 text-lg mb-3">{day.day}</h3>
+          {timetable.map((day) => {
+            const dateStr = day.lessons[0]?.date || '';
+            const formattedDate = dateStr.replace(/\.$/, '');
+            return (
+              <div key={day.day} className="card">
+                <h3 className="font-semibold text-gray-900 text-lg mb-3">
+                  {day.day}
+                  {formattedDate && (
+                    <span className="text-sm font-normal text-gray-500 ml-2">({formattedDate})</span>
+                  )}
+                </h3>
               {day.lessons.length === 0 ? (
                 <p className="text-gray-500 text-sm">Nema predmeta</p>
               ) : (
@@ -240,7 +255,8 @@ function Timetable() {
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
