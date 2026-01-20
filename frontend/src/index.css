@@ -90,8 +90,8 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: white dark:bg-gray-800;
-    border-top: 1px solid #e5e7eb dark:border-gray-700;
+    @apply bg-white dark:bg-gray-800;
+    @apply border-t border-gray-200 dark:border-gray-700;
     display: flex;
     justify-content: space-around;
     padding: 8px 0;
