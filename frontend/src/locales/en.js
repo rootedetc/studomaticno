@@ -5,6 +5,7 @@ export default {
     notifications: 'Notifications',
     messages: 'Messages',
     files: 'Files',
+    grades: 'Grades',
     settings: 'Settings',
     logout: 'Logout'
   },

@@ -5,6 +5,7 @@ export default {
     notifications: 'Obavijesti',
     messages: 'Poruke',
     files: 'Datoteke',
+    grades: 'Indeks',
     settings: 'Postavke',
     logout: 'Odjava'
   },

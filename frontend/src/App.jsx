@@ -8,6 +8,7 @@ import Timetable from './pages/Timetable';
 import Notifications from './pages/Notifications';
 import Messages from './pages/Messages';
 import Files from './pages/Files';
+import Grades from './pages/Grades';
 import Settings from './pages/Settings';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
@@ -100,6 +101,7 @@ function App() {
                     <Route path="/notifications" element={<Notifications />} />
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/files" element={<Files />} />
+                    <Route path="/grades" element={<Grades />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
@@ -117,19 +119,20 @@ function App() {
                       <Route path="/notifications" element={<Notifications />} />
                       <Route path="/messages" element={<Messages />} />
                       <Route path="/files" element={<Files />} />
+                      <Route path="/grades" element={<Grades />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </main>
                 </div>
               )}
+              <DebugPanel />
+              <SessionExpiredModal
+                isOpen={sessionExpired}
+                onClose={() => setSessionExpired(false)}
+              />
             </div>
           )}
-          <DebugPanel />
-          <SessionExpiredModal
-            isOpen={sessionExpired}
-            onClose={() => setSessionExpired(false)}
-          />
         </SettingsProvider>
       </TranslationProvider>
     </AuthContext.Provider>
