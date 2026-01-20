@@ -67,7 +67,7 @@ function Sidebar() {
   return (
     <div className="h-full flex flex-col">
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white">Libertas</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">studomaticno</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400">Eduneta Dashboard</p>
       </div>
 

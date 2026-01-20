@@ -3,7 +3,7 @@
 # Simple dev script - starts both backend and frontend
 # Usage: ./dev.sh
 
-echo "Starting Libertas PWA..."
+echo "Starting studomaticno..."
 echo "================================"
 
 # Colors for output
@@ -38,7 +38,7 @@ FRONTEND_PID=$!
 
 echo ""
 echo -e "${GREEN}================================${NC}"
-echo -e "${GREEN}Libertas PWA is running!${NC}"
+echo -e "${GREEN}studomaticno is running!${NC}"
 echo ""
 echo "Frontend: http://localhost:5173"
 echo "Backend:  http://localhost:3001"

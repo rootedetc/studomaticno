@@ -48,7 +48,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const savedCredentials = getCookie('libertas_remember');
+    const savedCredentials = getCookie('studomaticno_remember');
     if (savedCredentials) {
       const { username: savedUsername, password: savedPassword } = decodeCredentials(savedCredentials);
       setUsername(savedUsername);
@@ -66,9 +66,9 @@ function Login() {
       await login(username, password);
 
       if (rememberMe) {
-        setCookie('libertas_remember', encodeCredentials(username, password), COOKIE_EXPIRY_DAYS);
+        setCookie('studomaticno_remember', encodeCredentials(username, password), COOKIE_EXPIRY_DAYS);
       } else {
-        deleteCookie('libertas_remember');
+        deleteCookie('studomaticno_remember');
       }
     } catch (err) {
       setError(err.message || 'Prijava nije uspjela');
@@ -81,7 +81,7 @@ function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Libertas</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">studomaticno</h1>
           <p className="text-gray-600 dark:text-gray-400">Eduneta Dashboard</p>
         </div>
 

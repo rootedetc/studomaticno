@@ -1,4 +1,4 @@
-# Libertas PWA - Eduneta Dashboard
+# studomaticno - Eduneta Dashboard
 
 Personal Modern PWA Dashboard for Eduneta student portal using a backend-proxy model.
 
@@ -32,7 +32,7 @@ Personal Modern PWA Dashboard for Eduneta student portal using a backend-proxy m
 ### 1. Clone and Install
 
 ```bash
-cd libertas-pwa
+cd studomaticno
 
 # Install backend dependencies
 cd backend
@@ -106,7 +106,7 @@ NODE_ENV=production node src/index.js
 ## Project Structure
 
 ```
-libertas-pwa/
+studomaticno/
 ├── backend/
 │   ├── src/
 │   │   ├── index.js           # Express server entry

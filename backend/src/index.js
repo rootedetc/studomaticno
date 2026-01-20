@@ -28,7 +28,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'libertas-pwa-secret-key-change-in-production',
+  secret: process.env.SESSION_SECRET || 'studomaticno-secret-key-change-in-production',
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -147,5 +147,5 @@ app.get('/api/debug/test-encoding', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Libertas PWA Backend running on http://localhost:${PORT}`);
+  console.log(`studomaticno backend running on http://localhost:${PORT}`);
 });

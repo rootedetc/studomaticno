@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt'],
       manifest: {
-        name: 'Libertas PWA',
-        short_name: 'Libertas',
+        name: 'studomaticno',
+        short_name: 'studomaticno',
         description: 'Personal Eduneta Dashboard',
         theme_color: '#2563eb',
         background_color: '#ffffff',

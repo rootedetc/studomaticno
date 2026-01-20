@@ -146,7 +146,7 @@ function Dashboard() {
               <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
                 {getGreeting()}, {user?.username}!
               </h1>
-              <p className="text-primary-100 text-lg">Dobrodošli nazad na Libertas PWA</p>
+              <p className="text-primary-100 text-lg">Dobrodošli nazad na studomaticno</p>
               
               <div className="flex flex-wrap gap-4 mt-6">
                 <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">

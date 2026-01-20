@@ -1,4 +1,4 @@
-const CACHE_PREFIX = 'libertas_cache_';
+const CACHE_PREFIX = 'studomaticno_cache_';
 
 function getTodayDate() {
   return new Date().toISOString().split('T')[0];

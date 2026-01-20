@@ -67,7 +67,7 @@ function App() {
     setUser(null);
     setSessionExpired(false);
     clearAllDailyCache();
-    document.cookie = 'libertas_remember=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+    document.cookie = 'studomaticno_remember=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
   };
 
   const value = { user, login, logout, loading, sessionExpired, setSessionExpired };

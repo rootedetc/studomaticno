@@ -1,5 +1,5 @@
 {
-  "name": "libertas-pwa-backend",
+  "name": "studomaticno-backend",
   "version": "1.0.0",
   "description": "Backend proxy for Eduneta student portal",
   "main": "src/index.js",

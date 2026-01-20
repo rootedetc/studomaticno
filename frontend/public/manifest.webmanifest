@@ -1,12 +1,12 @@
 {
-  "name": "Libertas PWA",
-  "short_name": "Libertas",
+  "name": "studomaticno",
+  "short_name": "studomaticno",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "lang": "hr",
   "scope": "/",
-  "description": "Libertas PWA Application",
+  "description": "studomaticno - Eduneta Dashboard",
   "theme_color": "#2563eb",
   "orientation": "portrait",
   "icons": [
