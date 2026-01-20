@@ -36,7 +36,7 @@ function Notifications() {
 
   if (loading) {
     return (
-      <div className="p-4 lg:p-6 max-w-4xl mx-auto">
+      <div className="p-4 lg:p-6 max-w-6xl mx-auto">
         <div className="mb-6">
           <Skeleton variant="text" height="h-8" width="w-32" className="mb-2" />
           <Skeleton variant="text" width="w-24" />
@@ -47,7 +47,7 @@ function Notifications() {
   }
 
   return (
-    <div className="p-4 lg:p-6 max-w-4xl mx-auto fade-in">
+    <div className="p-4 lg:p-6 max-w-6xl mx-auto fade-in">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Obavijesti</h1>
