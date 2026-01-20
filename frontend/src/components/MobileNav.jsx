@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../App';
-import { useTranslation } from '../hooks/useTranslation';
+import useTranslation from '../hooks/useTranslation.jsx';
 
 function MobileNav() {
   const { user, logout } = useAuth();

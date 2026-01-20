@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import useSettings from '../contexts/SettingsContext';
-import { useTranslation } from '../hooks/useTranslation';
+import useTranslation from '../hooks/useTranslation.jsx';
 
 export default function Settings() {
   const navigate = useNavigate();

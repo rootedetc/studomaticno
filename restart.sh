@@ -1,15 +1,17 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "Stopping services..."
 lsof -ti:5173 | xargs kill -9 2>/dev/null
 lsof -ti:3001 | xargs kill -9 2>/dev/null
 sleep 1
 
 echo "Starting backend..."
-cd /Users/marko/Downloads/libertas-pwa/backend && npm run dev > /tmp/backend.log 2>&1 &
+(cd "$SCRIPT_DIR/backend" && npm run dev > /tmp/backend.log 2>&1) &
 sleep 2
 
 echo "Starting frontend..."
-cd /Users/marko/Downloads/libertas-pwa/frontend && npm run dev > /tmp/frontend.log 2>&1 &
+(cd "$SCRIPT_DIR/frontend" && npm run dev > /tmp/frontend.log 2>&1) &
 sleep 2
 
 echo ""
