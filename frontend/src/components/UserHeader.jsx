@@ -25,7 +25,7 @@ function UserHeader({ userInfo }) {
   const { studentName, studentId, program, semester, paymentZoneColor } = userInfo;
 
   return (
-    <div className="bg-gray-100 border-b border-gray-200 px-4 py-2 text-sm mb-6">
+    <div className="bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2 text-sm mb-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 flex-wrap">
           {paymentZoneColor !== 'green' && paymentZoneColor !== 'unknown' && (
@@ -33,14 +33,14 @@ function UserHeader({ userInfo }) {
               paymentZoneColor === 'yellow' ? 'bg-yellow-500' : 'bg-red-500'
             }`} />
           )}
-          <span className="font-medium">{studentName}</span>
-          <span className="text-gray-600">({studentId})</span>
-          <span className="text-gray-400">•</span>
-          <span className="text-gray-600">{program}</span>
-          <span className="text-gray-400">•</span>
-          <span className="text-gray-600">{semester}</span>
+          <span className="font-medium text-gray-900 dark:text-white">{studentName}</span>
+          <span className="text-gray-600 dark:text-gray-400">({studentId})</span>
+          <span className="text-gray-400 dark:text-gray-500">•</span>
+          <span className="text-gray-600 dark:text-gray-400">{program}</span>
+          <span className="text-gray-400 dark:text-gray-500">•</span>
+          <span className="text-gray-600 dark:text-gray-400">{semester}</span>
         </div>
-        <div className="text-gray-500">
+        <div className="text-gray-500 dark:text-gray-400">
           {currentTime}
         </div>
       </div>
