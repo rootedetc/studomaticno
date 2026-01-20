@@ -27,6 +27,7 @@ export default {
     data: 'Data',
     clearCache: 'Clear Cache',
     cacheCleared: 'Cache cleared successfully',
+    confirmClearCache: 'Are you sure you want to clear the cache? This will log you out.',
     debugging: 'Debugging',
     enableDebugMode: 'Enable debug mode',
     about: 'About',

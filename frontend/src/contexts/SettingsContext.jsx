@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, createContext } from 'react';
 import useTheme from '../hooks/useTheme';
-import { TranslationProvider } from '../hooks/useTranslation.jsx';
+import { useTranslation } from '../hooks/useTranslation';
 
 const SettingsContext = createContext();
 
@@ -14,10 +14,7 @@ export default function useSettings() {
 
 export function SettingsProvider({ children }) {
   const { theme, effectiveTheme, setTheme, toggleTheme } = useTheme();
-  const [language, setLanguage] = useState(() => {
-    const saved = localStorage.getItem('language');
-    return (saved === 'en' || saved === 'hr') ? saved : 'hr';
-  });
+  const { language, changeLanguage } = useTranslation();
   const [notifications, setNotifications] = useState(() => {
     const saved = localStorage.getItem('notifications');
     return saved !== null ? saved === 'true' : true;
@@ -27,10 +24,9 @@ export function SettingsProvider({ children }) {
     return saved === 'true';
   });
 
-  const handleSetLanguage = (lang) => {
-    setLanguage(lang);
-    localStorage.setItem('language', lang);
-  };
+  useEffect(() => {
+    localStorage.setItem('language', language);
+  }, [language]);
 
   const toggleNotifications = () => {
     const newValue = !notifications;
@@ -47,15 +43,15 @@ export function SettingsProvider({ children }) {
   const clearCache = async () => {
     localStorage.clear();
     sessionStorage.clear();
-    
+
     const databases = await indexedDB.databases();
     databases.forEach(db => {
       if (db.name) indexedDB.deleteDatabase(db.name);
     });
-    
+
     const cacheNames = await caches.keys();
     await Promise.all(cacheNames.map(name => caches.delete(name)));
-    
+
     window.location.reload();
   };
 
@@ -66,16 +62,14 @@ export function SettingsProvider({ children }) {
       setTheme,
       toggleTheme,
       language,
-      setLanguage: handleSetLanguage,
+      setLanguage: changeLanguage,
       notifications,
       toggleNotifications,
       debugMode,
       toggleDebugMode,
       clearCache
     }}>
-      <TranslationProvider>
-        {children}
-      </TranslationProvider>
+      {children}
     </SettingsContext.Provider>
   );
 }

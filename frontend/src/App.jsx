@@ -13,6 +13,8 @@ import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
 import DebugPanel from './components/DebugPanel';
 import SessionExpiredModal from './components/SessionExpiredModal';
+import { SettingsProvider } from './contexts/SettingsContext';
+import { TranslationProvider } from './hooks/useTranslation';
 
 export const AuthContext = createContext(null);
 
@@ -82,50 +84,54 @@ function App() {
 
   return (
     <AuthContext.Provider value={value}>
-      {!user ? (
-        <Routes>
-          <Route path="*" element={<Login />} />
-        </Routes>
-      ) : (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-          {isMobile ? (
-            <div>
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/timetable" element={<Timetable />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/files" element={<Files />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-              <MobileNav />
-            </div>
+      <TranslationProvider>
+        <SettingsProvider>
+          {!user ? (
+            <Routes>
+              <Route path="*" element={<Login />} />
+            </Routes>
           ) : (
-            <div className="sidebar-layout">
-              <aside className="sidebar bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-                <Sidebar />
-              </aside>
-              <main className="main-content">
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/timetable" element={<Timetable />} />
-                  <Route path="/notifications" element={<Notifications />} />
-                  <Route path="/messages" element={<Messages />} />
-                  <Route path="/files" element={<Files />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </main>
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+              {isMobile ? (
+                <div>
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/timetable" element={<Timetable />} />
+                    <Route path="/notifications" element={<Notifications />} />
+                    <Route path="/messages" element={<Messages />} />
+                    <Route path="/files" element={<Files />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                  <MobileNav />
+                </div>
+              ) : (
+                <div className="sidebar-layout">
+                  <aside className="sidebar bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+                    <Sidebar />
+                  </aside>
+                  <main className="main-content">
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/timetable" element={<Timetable />} />
+                      <Route path="/notifications" element={<Notifications />} />
+                      <Route path="/messages" element={<Messages />} />
+                      <Route path="/files" element={<Files />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                  </main>
+                </div>
+              )}
             </div>
           )}
-        </div>
-      )}
-      <DebugPanel />
-      <SessionExpiredModal 
-        isOpen={sessionExpired} 
-        onClose={() => setSessionExpired(false)} 
-      />
+          <DebugPanel />
+          <SessionExpiredModal
+            isOpen={sessionExpired}
+            onClose={() => setSessionExpired(false)}
+          />
+        </SettingsProvider>
+      </TranslationProvider>
     </AuthContext.Provider>
   );
 }
