@@ -277,14 +277,14 @@ function Files() {
   }
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="p-4 lg:p-6 border-b border-gray-200 bg-white">
+    <div className="flex-1 flex flex-col h-full">
+      <div className="p-4 lg:p-6 border-b border-gray-200 bg-white flex-shrink-0">
         <h1 className="text-2xl font-bold text-gray-900">Dokumenti</h1>
         <p className="text-gray-600 text-sm mt-1">{files.length} datoteka</p>
       </div>
 
       {error && (
-        <div className="mx-4 lg:mx-6 mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="mx-4 lg:mx-6 mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex-shrink-0">
           {error}
         </div>
       )}
@@ -308,7 +308,7 @@ function Files() {
         </div>
 
         <div className="flex-1 flex flex-col overflow-hidden bg-white">
-          <div className="px-6 py-3 border-b border-gray-200 bg-gray-50">
+          <div className="px-6 py-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">
             <div className="flex items-center gap-2 text-sm flex-wrap">
               {currentFolder.path.map((item, index) => (
                 <span key={index} className="flex items-center gap-2">
