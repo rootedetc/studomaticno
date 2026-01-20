@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { VibeKanbanWebCompanion } from 'vibe-kanban-web-companion';
 import { SettingsProvider } from './contexts/SettingsContext';
+import { TranslationProvider } from './hooks/useTranslation';
 import App from './App';
 import './index.css';
 
@@ -17,9 +18,11 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <SettingsProvider>
-        <App />
-      </SettingsProvider>
+      <TranslationProvider>
+        <SettingsProvider>
+          <App />
+        </SettingsProvider>
+      </TranslationProvider>
     </BrowserRouter>
     <VibeKanbanWebCompanion />
   </React.StrictMode>

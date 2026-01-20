@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, createContext } from 'react';
 import useTheme from '../hooks/useTheme';
-import { useTranslation } from '../hooks/useTranslation';
+import useTranslation from '../hooks/useTranslation.jsx';
 
 const SettingsContext = createContext();
 

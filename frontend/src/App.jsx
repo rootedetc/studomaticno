@@ -14,7 +14,7 @@ import MobileNav from './components/MobileNav';
 import DebugPanel from './components/DebugPanel';
 import SessionExpiredModal from './components/SessionExpiredModal';
 import { SettingsProvider } from './contexts/SettingsContext';
-import { TranslationProvider } from './hooks/useTranslation';
+import { TranslationProvider } from './hooks/useTranslation.jsx';
 
 export const AuthContext = createContext(null);
 
