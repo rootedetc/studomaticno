@@ -6,6 +6,7 @@ export default {
     messages: 'Poruke',
     files: 'Datoteke',
     grades: 'Indeks',
+    finance: 'Financije',
     settings: 'Postavke',
     logout: 'Odjava'
   },

@@ -6,6 +6,7 @@ export default {
     messages: 'Messages',
     files: 'Files',
     grades: 'Grades',
+    finance: 'Finance',
     settings: 'Settings',
     logout: 'Logout'
   },

@@ -9,6 +9,7 @@ import Notifications from './pages/Notifications';
 import Messages from './pages/Messages';
 import Files from './pages/Files';
 import Grades from './pages/Grades';
+import Finance from './pages/Finance';
 import Settings from './pages/Settings';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
@@ -91,9 +92,7 @@ function App() {
             <Routes>
               <Route path="*" element={<Login />} />
             </Routes>
-          ) : (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-              {isMobile ? (
+              ) : (
                 <div>
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
@@ -102,6 +101,7 @@ function App() {
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/files" element={<Files />} />
                     <Route path="/grades" element={<Grades />} />
+                    <Route path="/finance" element={<Finance />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
@@ -120,6 +120,7 @@ function App() {
                       <Route path="/messages" element={<Messages />} />
                       <Route path="/files" element={<Files />} />
                       <Route path="/grades" element={<Grades />} />
+                      <Route path="/finance" element={<Finance />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
