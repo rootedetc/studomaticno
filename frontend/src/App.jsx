@@ -92,48 +92,46 @@ function App() {
             <Routes>
               <Route path="*" element={<Login />} />
             </Routes>
-              ) : (
-                <div>
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/timetable" element={<Timetable />} />
-                    <Route path="/notifications" element={<Notifications />} />
-                    <Route path="/messages" element={<Messages />} />
-                    <Route path="/files" element={<Files />} />
-                    <Route path="/grades" element={<Grades />} />
-                    <Route path="/finance" element={<Finance />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
-                  <MobileNav />
-                </div>
-              ) : (
-                <div className="sidebar-layout">
-                  <aside className="sidebar bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-                    <Sidebar />
-                  </aside>
-                  <main className="main-content">
-                    <Routes>
-                      <Route path="/" element={<Dashboard />} />
-                      <Route path="/timetable" element={<Timetable />} />
-                      <Route path="/notifications" element={<Notifications />} />
-                      <Route path="/messages" element={<Messages />} />
-                      <Route path="/files" element={<Files />} />
-                      <Route path="/grades" element={<Grades />} />
-                      <Route path="/finance" element={<Finance />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
-                  </main>
-                </div>
-              )}
-              <DebugPanel />
-              <SessionExpiredModal
-                isOpen={sessionExpired}
-                onClose={() => setSessionExpired(false)}
-              />
+          ) : isMobile ? (
+            <div>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/timetable" element={<Timetable />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/files" element={<Files />} />
+                <Route path="/grades" element={<Grades />} />
+                <Route path="/finance" element={<Finance />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+              <MobileNav />
+            </div>
+          ) : (
+            <div className="sidebar-layout">
+              <aside className="sidebar bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+                <Sidebar />
+              </aside>
+              <main className="main-content">
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/timetable" element={<Timetable />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/files" element={<Files />} />
+                  <Route path="/grades" element={<Grades />} />
+                  <Route path="/finance" element={<Finance />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </main>
             </div>
           )}
+          <DebugPanel />
+          <SessionExpiredModal
+            isOpen={sessionExpired}
+            onClose={() => setSessionExpired(false)}
+          />
         </SettingsProvider>
       </TranslationProvider>
     </AuthContext.Provider>
