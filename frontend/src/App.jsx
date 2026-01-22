@@ -10,6 +10,7 @@ import Messages from './pages/Messages';
 import Files from './pages/Files';
 import Grades from './pages/Grades';
 import Finance from './pages/Finance';
+import Ispiti from './pages/Ispiti';
 import Settings from './pages/Settings';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
@@ -102,6 +103,7 @@ function App() {
                 <Route path="/files" element={<Files />} />
                 <Route path="/grades" element={<Grades />} />
                 <Route path="/finance" element={<Finance />} />
+                <Route path="/ispiti" element={<Ispiti />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
@@ -121,6 +123,7 @@ function App() {
                   <Route path="/files" element={<Files />} />
                   <Route path="/grades" element={<Grades />} />
                   <Route path="/finance" element={<Finance />} />
+                  <Route path="/ispiti" element={<Ispiti />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>

@@ -58,4 +58,48 @@ router.get('/', requireAuth, async (req, res) => {
   }
 });
 
+router.get('/attempts', requireAuth, async (req, res) => {
+  try {
+    const { idOS, idPred, idAKG } = req.query;
+
+    if (!idOS || !idPred || !idAKG) {
+      return res.status(400).json({ error: 'Missing required parameters: idOS, idPred, idAKG' });
+    }
+
+    const html = await edunetaService.getPage(`/lib-student/IzvIzlasciIspit.aspx?idOS=${idOS}&idPred=${idPred}&idAKG=${idAKG}`);
+    const $ = cheerio.load(html);
+
+    const subject = $('#labPredmet').text().trim();
+    const attempts = [];
+
+    $('#dg tr').not('.trHead').each((i, row) => {
+      const cols = $(row).find('td');
+      if (cols.length >= 9) {
+        const attemptNumber = $(cols[0]).find('#labBrIzlaska').text().trim();
+        attempts.push({
+          attemptNumber: attemptNumber || (i + 1).toString(),
+          examPeriod: $(cols[1]).text().trim(),
+          registered: $(cols[2]).find('#imgPrijavljen').length > 0,
+          examDate: $(cols[3]).text().trim(),
+          professor: $(cols[4]).text().trim(),
+          enrollmentTime: $(cols[5]).text().trim(),
+          cancellationTime: $(cols[6]).text().trim(),
+          grade: $(cols[7]).text().trim(),
+          year: $(cols[8]).text().trim()
+        });
+      }
+    });
+
+    res.json({
+      success: true,
+      subject,
+      attempts,
+      fetchedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Exam attempts fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch exam attempts' });
+  }
+});
+
 export default router;

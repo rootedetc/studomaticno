@@ -7,6 +7,7 @@ export default {
     files: 'Files',
     grades: 'Grades',
     finance: 'Finance',
+    exams: 'Exams',
     settings: 'Settings',
     logout: 'Logout'
   },

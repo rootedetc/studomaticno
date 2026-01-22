@@ -71,6 +71,15 @@ function MobileNav() {
       )
     },
     {
+      path: '/ispiti',
+      label: t('nav.exams'),
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4m-5.618-9.084a9.954 9.954 0 0111.362 3.752M12.638 2.916a9.954 9.954 0 00-11.362 3.752m0 0l-1.276 1.975m1.276-1.975L10.638 7.25m0-4.334l-2 4m4.5-3a7 7 0 00-7 7v0a7 7 0 007 7h0" />
+        </svg>
+      )
+    },
+    {
       path: '/settings',
       label: t('nav.settings'),
       icon: (

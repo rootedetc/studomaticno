@@ -7,6 +7,7 @@ export default {
     files: 'Datoteke',
     grades: 'Indeks',
     finance: 'Financije',
+    exams: 'Ispiti',
     settings: 'Postavke',
     logout: 'Odjava'
   },
