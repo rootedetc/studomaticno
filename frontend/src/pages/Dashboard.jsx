@@ -4,9 +4,10 @@ import api from '../services/api';
 import { useAuth } from '../App';
 import { Skeleton, SkeletonCard } from '../components/Skeleton';
 import { getDailyCache, setDailyCache } from '../utils/cache';
+import StickyAnnouncements from '../components/StickyAnnouncements';
 
 function Dashboard() {
-  const { user } = useAuth();
+  const { user, stickyAnnouncements, setStickyAnnouncements } = useAuth();
   const [data, setData] = useState(null);
   const [todayLessons, setTodayLessons] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
@@ -14,10 +15,15 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [cacheLoaded, setCacheLoaded] = useState(false);
+  const [showStickyAnnouncements, setShowStickyAnnouncements] = useState(false);
 
   useEffect(() => {
     loadFromCache();
     refreshData();
+
+    if (stickyAnnouncements && stickyAnnouncements.length > 0) {
+      setShowStickyAnnouncements(true);
+    }
   }, []);
 
   const loadFromCache = async () => {
@@ -108,6 +114,11 @@ function Dashboard() {
     }
   };
 
+  const handleDismissSticky = () => {
+    setShowStickyAnnouncements(false);
+    setStickyAnnouncements([]);
+  };
+
   if (loading && !cacheLoaded) {
     return (
       <div className="p-4 lg:p-6">
@@ -170,6 +181,13 @@ function Dashboard() {
             <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-4">
               {error}
             </div>
+          )}
+
+          {showStickyAnnouncements && stickyAnnouncements.length > 0 && (
+            <StickyAnnouncements
+              announcements={stickyAnnouncements}
+              onDismiss={handleDismissSticky}
+            />
           )}
         </div>
       </div>

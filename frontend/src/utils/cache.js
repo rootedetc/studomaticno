@@ -79,10 +79,10 @@ export function getCacheInfo(key) {
   try {
     const cached = localStorage.getItem(getCacheKey(key));
     if (!cached) return null;
-    
+
     const cacheItem = JSON.parse(cached);
     const age = Date.now() - cacheItem.timestamp;
-    
+
     return {
       date: cacheItem.date,
       timestamp: cacheItem.timestamp,
@@ -92,4 +92,48 @@ export function getCacheInfo(key) {
   } catch (error) {
     return null;
   }
+}
+
+export function setStickyAnnouncementsCache(announcements) {
+  const cacheItem = {
+    data: announcements,
+    date: getTodayDate(),
+    timestamp: Date.now()
+  };
+
+  try {
+    localStorage.setItem(getCacheKey('sticky_announcements'), JSON.stringify(cacheItem));
+  } catch (error) {
+    console.warn('Failed to set sticky announcements cache:', error);
+  }
+}
+
+export function getStickyAnnouncementsCache() {
+  try {
+    const cached = localStorage.getItem(getCacheKey('sticky_announcements'));
+
+    if (!cached) {
+      return null;
+    }
+
+    const cacheItem = JSON.parse(cached);
+
+    if (!cacheItem || !cacheItem.date) {
+      return null;
+    }
+
+    if (isCacheStale(cacheItem.date)) {
+      clearCache('sticky_announcements');
+      return null;
+    }
+
+    return cacheItem.data;
+  } catch (error) {
+    console.warn('Failed to get sticky announcements cache:', error);
+    return null;
+  }
+}
+
+export function clearStickyAnnouncementsCache() {
+  clearCache('sticky_announcements');
 }

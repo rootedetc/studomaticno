@@ -82,6 +82,10 @@ class ApiService {
     return this.request('/auth/status');
   }
 
+  async getStickyAnnouncements() {
+    return this.request('/auth/sticky-announcements');
+  }
+
   async getDashboard(useCache = true) {
     const cacheKey = 'dashboard_overview';
     if (useCache) {

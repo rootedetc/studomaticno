@@ -316,6 +316,245 @@ class EdunetaService {
       return false;
     }
   }
+
+  isStickyAnnouncementPage(html, requestId = 'unknown') {
+    const rid = requestId || generateRequestId();
+    const $ = cheerio.load(html);
+
+    const hasImperativeHeader = $('#pImperativ').length > 0;
+    const hasPročitanoLink = $('a[href^="javascript:zatvori"]').length > 0;
+    const hasLabNaslov = $('#labNaslov, #ctl06_labNaslov').length > 0;
+
+    const isSticky = hasImperativeHeader && hasPročitanoLink && hasLabNaslov;
+
+    log('debug', rid, 'Checking for sticky announcement page', {
+      hasImperativeHeader,
+      hasPročitanoLink,
+      hasLabNaslov,
+      isSticky
+    });
+
+    return isSticky;
+  }
+
+  parseStickyAnnouncement(html, requestId = 'unknown') {
+    const rid = requestId || generateRequestId();
+    log('info', rid, 'Parsing sticky announcement');
+
+    const $ = cheerio.load(html);
+
+    const remainingCountMatch = $('#labPreostaloImp').text().match(/\d+/);
+    const remainingCount = remainingCountMatch ? parseInt(remainingCountMatch[0]) : 0;
+
+    const zatvoriLink = $('a[href^="javascript:zatvori"]').first();
+    const zatvoriMatch = zatvoriLink.attr('href')?.match(/zatvori\((\d+)\)/);
+    const idPP = zatvoriMatch ? zatvoriMatch[1] : null;
+
+    const urlParams = $('form').attr('action') || '';
+    const idPMatch = urlParams.match(/idP=(\d+)/);
+    const idP = idPMatch ? idPMatch[1] : null;
+
+    const announcement = {
+      id: idP,
+      idPP,
+      title: $('#labTema').text().trim(),
+      sender: $('#labPosiljatelj').text().trim(),
+      date: $('#labVrijeme').text().trim(),
+      body: $('#labTekstPoruke').html(),
+      remainingCount
+    };
+
+    if (announcement.body) {
+      announcement.body = announcement.body
+        .replace(/<o:p[^>]*>.*?<\/o:p>/gi, '')
+        .replace(/<font[^>]*>/gi, '')
+        .replace(/<\/font>/gi, '')
+        .replace(/<span[^>]*>/gi, '')
+        .replace(/<\/span>/gi, '')
+        .replace(/<p[^>]*class="MsoNormal"[^>]*>/gi, '<p>')
+        .replace(/<p class="MsoNormal"[^>]*>/gi, '<p>')
+        .replace(/<div>\s*<br>\s*<\/div>/gi, '{{EMPTY_LINE}}')
+        .replace(/<div><br><\/div>/gi, '{{EMPTY_LINE}}');
+
+      const parseDivs = (html) => {
+        const result = [];
+        let remaining = html;
+        const divOpen = '<div>';
+        const divClose = '</div>';
+
+        while (remaining.length > 0) {
+          const openIndex = remaining.indexOf(divOpen);
+          const closeIndex = remaining.indexOf(divClose);
+
+          if (openIndex === -1 && closeIndex === -1) {
+            result.push(remaining);
+            break;
+          }
+
+          if (closeIndex !== -1 && (openIndex === -1 || closeIndex < openIndex)) {
+            result.push(remaining.substring(0, closeIndex));
+            remaining = remaining.substring(closeIndex + divClose.length);
+            continue;
+          }
+
+          if (openIndex !== -1 && (closeIndex === -1 || openIndex < closeIndex)) {
+            if (openIndex > 0) {
+              result.push(remaining.substring(0, openIndex));
+            }
+            remaining = remaining.substring(openIndex + divOpen.length);
+
+            let depth = 1;
+            let searchFrom = 0;
+            let found = false;
+
+            while (searchFrom < remaining.length && depth > 0) {
+              const nextOpen = remaining.indexOf(divOpen, searchFrom);
+              const nextClose = remaining.indexOf(divClose, searchFrom);
+
+              if (nextClose === -1) break;
+
+              if (nextOpen !== -1 && nextOpen < nextClose) {
+                result.push(remaining.substring(0, nextOpen));
+                depth++;
+                remaining = remaining.substring(nextOpen + divOpen.length);
+                searchFrom = 0;
+              } else {
+                if (depth === 1) {
+                  const content = remaining.substring(0, nextClose);
+                  const trimmed = content.trim();
+                  if (trimmed === '{{EMPTY_LINE}}' || !trimmed) {
+                    result.push('<br>');
+                  } else {
+                    result.push(trimmed + '<br>');
+                  }
+                  remaining = remaining.substring(nextClose + divClose.length);
+                  found = true;
+                  break;
+                } else {
+                  result.push(remaining.substring(0, nextClose + divClose.length));
+                  remaining = remaining.substring(nextClose + divClose.length);
+                  depth--;
+                  searchFrom = 0;
+                }
+              }
+            }
+
+            if (!found) break;
+          }
+        }
+
+        return result.join('');
+      };
+
+      announcement.body = parseDivs(announcement.body)
+        .replace(/<span>(.*?)<\/span>/gi, '$1')
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/\{\{EMPTY_LINE\}\}/gi, '<br>')
+        .replace(/(<br>\s*){3,}/gi, '<br><br>')
+        .replace(/^(<br>\s*)+/gi, '')
+        .replace(/(<br>\s*)+$/gi, '')
+        .trim();
+    }
+
+    log('info', rid, 'Sticky announcement parsed', {
+      id: announcement.id,
+      idPP: announcement.idPP,
+      title: announcement.title?.substring(0, 50),
+      remainingCount: announcement.remainingCount
+    });
+
+    return announcement;
+  }
+
+  async markStickyAnnouncementAsRead(idPP, requestId = null) {
+    const rid = requestId || generateRequestId();
+    log('info', rid, `Marking sticky announcement as read: idPP=${idPP}`);
+
+    try {
+      const html = await this.getPage('/lib-student/Default.aspx', rid);
+      const $ = cheerio.load(html);
+
+      const viewState = $('input[name="__VIEWSTATE"]').val();
+      const viewStateGenerator = $('input[name="__VIEWSTATEGENERATOR"]').val();
+
+      const formData = new URLSearchParams();
+      formData.append('__VIEWSTATE', viewState || '');
+      formData.append('__VIEWSTATEGENERATOR', viewStateGenerator || '');
+      formData.append('__EVENTTARGET', '');
+      formData.append('__EVENTARGUMENT', '');
+      formData.append('__EVENTVALIDATION', '');
+
+      log('debug', rid, 'Marking sticky as read with form data', { idPP });
+
+      await this.postFormData('/lib-student/Default.aspx', formData.toString(), rid);
+
+      log('info', rid, 'Sticky announcement marked as read', { idPP });
+
+      return { success: true };
+    } catch (error) {
+      log('error', rid, `Failed to mark sticky as read: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async getHomePage(requestId = null) {
+    const rid = requestId || generateRequestId();
+    log('info', rid, 'Fetching home page');
+
+    const response = await this.request('GET', '/lib-student/Default.aspx', null, true, rid);
+
+    if (response.status !== 200) {
+      log('error', rid, `Failed to fetch home page: ${response.status}`);
+      throw new Error(`Failed to fetch home page: ${response.status}`);
+    }
+
+    const html = this.decodeHtml(response.data, rid);
+    const isSticky = this.isStickyAnnouncementPage(html, rid);
+
+    log('info', rid, 'Home page fetched', {
+      htmlLength: html.length,
+      isStickyAnnouncement: isSticky
+    });
+
+    return { html, isSticky };
+  }
+
+  async processStickyAnnouncements(onAnnouncement, requestId = null) {
+    const rid = requestId || generateRequestId();
+    log('info', rid, 'Processing sticky announcements');
+
+    const processedAnnouncements = [];
+
+    while (true) {
+      const { html, isSticky } = await this.getHomePage(rid);
+
+      if (!isSticky) {
+        log('info', rid, 'No more sticky announcements, reached dashboard');
+        break;
+      }
+
+      const announcement = this.parseStickyAnnouncement(html, rid);
+      processedAnnouncements.push(announcement);
+
+      log('info', rid, `Found sticky announcement (${processedAnnouncements.length})`, {
+        id: announcement.id,
+        title: announcement.title?.substring(0, 50),
+        remainingCount: announcement.remainingCount
+      });
+
+      if (onAnnouncement) {
+        await onAnnouncement(announcement);
+      }
+
+      await this.markStickyAnnouncementAsRead(announcement.idPP, rid);
+    }
+
+    log('info', rid, 'All sticky announcements processed', {
+      totalProcessed: processedAnnouncements.length
+    });
+
+    return processedAnnouncements;
+  }
 }
 
 export default new EdunetaService();

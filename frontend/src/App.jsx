@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect, createContext, useContext } from 'react';
 import api from './services/api';
-import { clearAllDailyCache } from './utils/cache';
+import { clearAllDailyCache, getStickyAnnouncementsCache, setStickyAnnouncementsCache } from './utils/cache';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Timetable from './pages/Timetable';
@@ -30,6 +30,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [stickyAnnouncements, setStickyAnnouncements] = useState([]);
 
   useEffect(() => {
     checkAuth();
@@ -49,6 +50,10 @@ function App() {
       const data = await api.checkAuth();
       if (data.authenticated) {
         setUser(data.user);
+        const cachedSticky = getStickyAnnouncementsCache();
+        if (cachedSticky) {
+          setStickyAnnouncements(cachedSticky);
+        }
       }
     } catch (error) {
       console.error('Auth check failed:', error);
@@ -61,6 +66,16 @@ function App() {
     const data = await api.login(username, password);
     setUser(data.user);
     setSessionExpired(false);
+
+    try {
+      const stickyData = await api.getStickyAnnouncements();
+      const announcements = stickyData.stickyAnnouncements || [];
+      setStickyAnnouncements(announcements);
+      setStickyAnnouncementsCache(announcements);
+    } catch (err) {
+      console.error('Failed to load sticky announcements:', err);
+    }
+
     return data;
   };
 
@@ -68,11 +83,12 @@ function App() {
     await api.logout();
     setUser(null);
     setSessionExpired(false);
+    setStickyAnnouncements([]);
     clearAllDailyCache();
     document.cookie = 'studomaticno_remember=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
   };
 
-  const value = { user, login, logout, loading, sessionExpired, setSessionExpired };
+  const value = { user, login, logout, loading, sessionExpired, setSessionExpired, stickyAnnouncements, setStickyAnnouncements };
 
   if (loading) {
     return (
