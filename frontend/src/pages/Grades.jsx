@@ -10,6 +10,15 @@ function Grades() {
   const [grades, setGrades] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedYear, setSelectedYear] = useState('Sve');
+
+  const years = grades?.courses
+    ? [...new Set(grades.courses.map(c => c.year))].sort((a, b) => a - b)
+    : [];
+
+  const filteredCourses = grades?.courses?.filter(course =>
+    selectedYear === 'Sve' || course.year.toString() === selectedYear.toString()
+  ) || [];
 
   useEffect(() => {
     loadGrades();
@@ -111,12 +120,42 @@ function Grades() {
             </div>
           )}
 
-          <GradeDistributionChart grades={grades} />
+          {/* Year Filter */}
+          {years.length > 0 && (
+            <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+              <button
+                onClick={() => setSelectedYear('Sve')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${selectedYear === 'Sve'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                  }`}
+              >
+                Sve godine
+              </button>
+              {years.map(year => (
+                <button
+                  key={year}
+                  onClick={() => setSelectedYear(year)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${selectedYear === year
+                    ? 'bg-primary-600 text-white'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                    }`}
+                >
+                  {year}. godina
+                </button>
+              ))}
+            </div>
+          )}
 
-          {grades?.courses?.length === 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <GradeDistributionChart grades={grades} />
+            <GradeTrendChart grades={grades} />
+          </div>
+
+          {filteredCourses.length === 0 ? (
             <EmptyState
               icon="emptyGrades"
-              title="Nema podataka o ocjenama"
+              title={grades?.courses?.length === 0 ? "Nema podataka o ocjenama" : "Nema ocjena za odabranu godinu"}
             />
           ) : (
             <>
@@ -137,7 +176,7 @@ function Grades() {
                         </tr>
                       </thead>
                       <tbody>
-                        {grades?.courses?.map((course, index) => (
+                        {filteredCourses.map((course, index) => (
                           <tr
                             key={index}
                             className="table-row"
@@ -167,12 +206,33 @@ function Grades() {
               </div>
 
               <div className="md:hidden space-y-3">
-                {grades?.courses?.map((course, index) => (
-                  <TableCard
-                    key={index}
-                    data={course}
-                    columns={gradeColumns}
-                  />
+                {filteredCourses.map((course, index) => (
+                  <div key={index} className="card p-4">
+                    <div className="flex justify-between items-start gap-3 mb-2">
+                      <h3 className="font-medium text-gray-900 dark:text-white leading-tight">
+                        {course.course}
+                      </h3>
+                      <div className="shrink-0">
+                        {course.finalGrade ? (
+                          <span className={`grade-badge ${getGradeColor(course.finalGrade)}`}>
+                            {course.finalGrade}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 font-medium">-</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-y-1 gap-x-3 text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center gap-1">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">ECTS:</span> {course.ects}
+                      </div>
+                      <span className="text-gray-300">•</span>
+                      <div className="flex items-center gap-1 min-w-0 flex-1">
+                        <span className="truncate text-gray-600 dark:text-gray-400">{course.professor}</span>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </>

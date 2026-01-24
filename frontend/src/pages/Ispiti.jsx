@@ -30,7 +30,7 @@ function Ispiti() {
       setExams(examsData);
       setGrades(gradesData);
       if (gradesData.courses && gradesData.courses.length > 0) {
-        setSelectedCourse(gradesData.courses[0]);
+        setSelectedCourse(null); // Changed to null to show list first
       }
     } catch (err) {
       setError(err.message);
@@ -146,7 +146,7 @@ function Ispiti() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Ispiti</h1>
             <p className="text-gray-600 dark:text-gray-400">
-              {activeTab === 'prijavljeni' 
+              {activeTab === 'prijavljeni'
                 ? `${exams?.academicYear} - ${exams?.examPeriod}`
                 : 'Povijest izlazaka na ispit'
               }
@@ -154,14 +154,14 @@ function Ispiti() {
           </div>
         </div>
 
-          <SegmentedControl
-            options={[
-              { value: 'prijavljeni', label: 'Prijavljeni ispiti' },
-              { value: 'izlasci', label: 'Izlasci na ispit' }
-            ]}
-            value={activeTab}
-            onChange={(value) => setActiveTab(value)}
-          />
+        <SegmentedControl
+          options={[
+            { value: 'prijavljeni', label: 'Prijavljeni ispiti' },
+            { value: 'izlasci', label: 'Izlasci na ispit' }
+          ]}
+          value={activeTab}
+          onChange={(value) => setActiveTab(value)}
+        />
 
         {error && (
           <div className="error-banner">
@@ -184,7 +184,7 @@ function Ispiti() {
                   {exams?.prijavljeni?.length > 0 && (
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Prijavljeni kolegiji</h2>
-                      
+
                       <div className="hidden md:block table-container">
                         <div className="overflow-x-auto">
                           <table className="table">
@@ -203,7 +203,7 @@ function Ispiti() {
                               {exams.prijavljeni.map((exam, index) => {
                                 const examKey = `${exam.subject}-${exam.examDate}-${index}`;
                                 return (
-                                  <tr 
+                                  <tr
                                     key={examKey}
                                     className="table-row"
                                   >
@@ -231,16 +231,39 @@ function Ispiti() {
                       </div>
 
                       <div className="md:hidden space-y-3">
-                        {exams.prijavljeni.map((exam, index) => {
-                          const examKey = `${exam.subject}-${exam.examDate}-${index}`;
-                          return (
-                            <TableCard
-                              key={examKey}
-                              data={exam}
-                              columns={prijavljeniColumns}
-                            />
-                          );
-                        })}
+                        {exams.prijavljeni.map((exam, index) => (
+                          <div key={`${exam.subject}-${exam.examDate}-${index}`} className="card p-4">
+                            <div className="flex justify-between items-start gap-3 mb-2">
+                              <h3 className="font-medium text-gray-900 dark:text-white leading-tight">
+                                {exam.subject}
+                              </h3>
+                              <div className="shrink-0">
+                                {exam.grade ? (
+                                  <span className={`grade-badge ${getGradeColor(exam.grade)}`}>
+                                    {exam.grade}
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-400 font-medium">-</span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-1 text-sm text-gray-500 dark:text-gray-400">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700 dark:text-gray-300 w-16">Termin:</span>
+                                <span>{exam.examDate} • {exam.room}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700 dark:text-gray-300 w-16">Predavač:</span>
+                                <span className="truncate">{exam.professor}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700 dark:text-gray-300 w-16">Prijava:</span>
+                                <span>{exam.enrollmentDate}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -248,7 +271,7 @@ function Ispiti() {
                   {exams?.odjavljeni?.length > 0 && (
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Odjavljeni kolegiji</h2>
-                      
+
                       <div className="hidden md:block table-container">
                         <div className="overflow-x-auto">
                           <table className="table">
@@ -266,7 +289,7 @@ function Ispiti() {
                               {exams.odjavljeni.map((exam, index) => {
                                 const examKey = `${exam.subject}-${exam.examDate}-${index}`;
                                 return (
-                                  <tr 
+                                  <tr
                                     key={examKey}
                                     className="table-row"
                                   >
@@ -285,16 +308,31 @@ function Ispiti() {
                       </div>
 
                       <div className="md:hidden space-y-3">
-                        {exams.odjavljeni.map((exam, index) => {
-                          const examKey = `${exam.subject}-${exam.examDate}-${index}`;
-                          return (
-                            <TableCard
-                              key={examKey}
-                              data={exam}
-                              columns={odjavljeniColumns}
-                            />
-                          );
-                        })}
+                        {exams.odjavljeni.map((exam, index) => (
+                          <div key={`${exam.subject}-${exam.examDate}-${index}`} className="card p-4 opacity-75">
+                            <div className="flex justify-between items-start gap-3 mb-2">
+                              <h3 className="font-medium text-gray-900 dark:text-white leading-tight">
+                                {exam.subject}
+                              </h3>
+                              <span className="badge badge-warning">Odjavljeno</span>
+                            </div>
+
+                            <div className="flex flex-col gap-1 text-sm text-gray-500 dark:text-gray-400">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700 dark:text-gray-300 w-16">Termin:</span>
+                                <span>{exam.examDate} • {exam.room}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700 dark:text-gray-300 w-16">Predavač:</span>
+                                <span className="truncate">{exam.professor}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700 dark:text-gray-300 w-16">Odjava:</span>
+                                <span>{exam.cancellationDate}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -304,26 +342,48 @@ function Ispiti() {
           ) : (
             <>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Odaberi kolegij:
-                </label>
-                <select
-                  value={selectedCourse?.course || ''}
-                  onChange={(e) => {
-                    const course = grades?.courses?.find(c => c.course === e.target.value);
-                    if (course) handleCourseChange(course);
-                  }}
-                  className="input"
-                >
-                  {grades?.courses?.map((course, index) => {
-                        const courseKey = `${course.course}-${index}`;
-                        return (
-                          <option key={courseKey} value={course.course}>
-                            {course.course} ({course.examAttempts || 0} pokušaja)
-                          </option>
-                        );
-                      })}
-                </select>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  {selectedCourse ? 'Odabrani kolegij' : 'Odaberi kolegij za pregled izlazaka'}
+                </h2>
+
+                {!selectedCourse ? (
+                  <div className="grid grid-cols-1 gap-3 max-h-[60vh] overflow-y-auto">
+                    {grades?.courses?.map((course, index) => (
+                      <div
+                        key={`${course.course}-${index}`}
+                        onClick={() => handleCourseChange(course)}
+                        className="card p-4 cursor-pointer hover:border-primary-500 transition-colors flex justify-between items-center"
+                      >
+                        <div>
+                          <h3 className="font-medium text-gray-900 dark:text-white">{course.course}</h3>
+                          <p className="text-sm text-gray-500">{course.professor}</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          {course.examAttempts > 0 && <span className="badge badge-primary">{course.examAttempts} izl.</span>}
+                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="card p-4 flex justify-between items-center bg-primary-50 dark:bg-primary-900/10 border-primary-200 dark:border-primary-800">
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white">{selectedCourse.course}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Prikaz povijesti izlazaka</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setSelectedCourse(null);
+                        setExamAttempts(null);
+                      }}
+                      className="text-primary-600 font-medium text-sm hover:underline"
+                    >
+                      Promijeni
+                    </button>
+                  </div>
+                )}
               </div>
 
               {loadingAttempts ? (
@@ -363,7 +423,7 @@ function Ispiti() {
                               {examAttempts.attempts.map((attempt, index) => {
                                 const attemptKey = `${attempt.examPeriod}-${attempt.attemptNumber}-${index}`;
                                 return (
-                                  <tr 
+                                  <tr
                                     key={attemptKey}
                                     className="table-row"
                                   >
@@ -414,16 +474,55 @@ function Ispiti() {
                       </div>
 
                       <div className="md:hidden space-y-3">
-                        {examAttempts.attempts.map((attempt, index) => {
-                          const attemptKey = `${attempt.examPeriod}-${attempt.attemptNumber}-${index}`;
-                          return (
-                            <TableCard
-                              key={attemptKey}
-                              data={attempt}
-                              columns={attemptsColumns}
-                            />
-                          );
-                        })}
+                        {examAttempts.attempts.map((attempt, index) => (
+                          <div key={`${attempt.examPeriod}-${attempt.attemptNumber}-${index}`} className="card p-4">
+                            <div className="flex justify-between items-start gap-3 mb-2">
+                              <div>
+                                <h3 className="font-medium text-gray-900 dark:text-white leading-tight">
+                                  {attempt.examPeriod}
+                                </h3>
+                                <span className="text-xs text-gray-500">Izlazak br. {attempt.attemptNumber}</span>
+                              </div>
+                              <div className="shrink-0">
+                                {attempt.grade ? (
+                                  <span className={`grade-badge ${getGradeColor(attempt.grade)}`}>
+                                    {attempt.grade}
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-400 font-medium">-</span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-1 text-sm text-gray-500 dark:text-gray-400">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700 dark:text-gray-300 w-20">Termin:</span>
+                                <span>{attempt.examDate}</span>
+                              </div>
+                              {attempt.professor && (
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-gray-700 dark:text-gray-300 w-20">Predavač:</span>
+                                  <span className="truncate">{attempt.professor}</span>
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                <div className="flex items-center gap-1">
+                                  {attempt.registered ? (
+                                    <span className="text-green-600 text-xs flex items-center gap-1">
+                                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                                      Prijavljen: {attempt.enrollmentTime}
+                                    </span>
+                                  ) : (
+                                    <span className="text-red-500 text-xs">Nije prijavljen</span>
+                                  )}
+                                </div>
+                                {attempt.cancellationTime && (
+                                  <span className="text-red-500 text-xs">Odjavljen: {attempt.cancellationTime}</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </>
                   )}

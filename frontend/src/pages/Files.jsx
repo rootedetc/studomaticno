@@ -15,9 +15,8 @@ const TreeNode = memo(function TreeNode({ node, level, currentFolderId, onNaviga
   return (
     <div className="select-none">
       <div
-        className={`flex items-center gap-1 py-1 pr-2 cursor-pointer rounded-md transition-colors ${
-          isSelected ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-        }`}
+        className={`flex items-center gap-1 py-1 pr-2 cursor-pointer rounded-md transition-colors ${isSelected ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+          }`}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
         onClick={() => onNavigate(node)}
         role="button"
@@ -34,9 +33,8 @@ const TreeNode = memo(function TreeNode({ node, level, currentFolderId, onNaviga
             e.stopPropagation();
             toggleExpand(nodeKey);
           }}
-          className={`w-5 h-5 flex items-center justify-center transition-transform ${
-            hasChildren ? '' : 'invisible'
-          }`}
+          className={`w-5 h-5 flex items-center justify-center transition-transform ${hasChildren ? '' : 'invisible'
+            }`}
           aria-expanded={hasChildren ? isExpanded : undefined}
           aria-label={isExpanded ? 'Collapse' : 'Expand'}
         >
@@ -90,6 +88,7 @@ function Files() {
   const [files, setFiles] = useState([]);
   const [subfolders, setSubfolders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [treeLoading, setTreeLoading] = useState(true);
   const [downloading, setDownloading] = useState(null);
   const [error, setError] = useState('');
   const [expandedNodes, setExpandedNodes] = useState(new Set());
@@ -100,14 +99,14 @@ function Files() {
   }, []);
 
   const loadTree = async () => {
-    setLoading(true);
+    setTreeLoading(true);
     setError('');
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
       const result = await api.getFilesTree();
       clearTimeout(timeoutId);
-      
+
       setExpandedNodes(new Set());
       setTree(result.tree || []);
     } catch (err) {
@@ -117,7 +116,7 @@ function Files() {
         setError('Failed to load tree: ' + err.message);
       }
     } finally {
-      setLoading(false);
+      setTreeLoading(false);
     }
   };
 
@@ -154,15 +153,15 @@ function Files() {
     });
   };
 
-  const findPathToNode = useCallback((nodes, targetHierId) => {
+  const getPathFromTree = useCallback((nodes, targetId) => {
     for (const node of nodes) {
-      if (node.hierarchyId === targetHierId) {
-        return [node.id];
+      if (node.hierarchyId == targetId) {
+        return [{ idHijer: node.hierarchyId, name: node.name }];
       }
       if (node.children) {
-        const path = findPathToNode(node.children, targetHierId);
+        const path = getPathFromTree(node.children, targetId);
         if (path) {
-          return [node.id, ...path];
+          return [{ idHijer: node.hierarchyId, name: node.name }, ...path];
         }
       }
     }
@@ -172,7 +171,25 @@ function Files() {
   useEffect(() => {
     if (tree.length === 0 || currentFolder.idHijer === 0) return;
 
-    const path = findPathToNode(tree, currentFolder.idHijer);
+    // Use a different helper or the same findPathToNode logic if just needing IDs for expansion
+    // But since we removed findPathToNode, let's just re-implement a simple ID finder or use getPathFromTree and map to IDs?
+    // Actually, for expansion we need node IDs (not hierarchy IDs typically, unless they are same). 
+    // The original findPathToNode returned [node.id, ...]. 
+    // Let's reimplement a specific helper for this to avoid confusion or reuse getPathFromTree if IDs align.
+    // Looking at original code: node.id is used for expansion keys. node.hierarchyId is used for API calls.
+
+    const findNodeIdsPath = (nodes, targetHierId) => {
+      for (const node of nodes) {
+        if (node.hierarchyId === targetHierId) return [node.id];
+        if (node.children) {
+          const path = findNodeIdsPath(node.children, targetHierId);
+          if (path) return [node.id, ...path];
+        }
+      }
+      return null;
+    };
+
+    const path = findNodeIdsPath(tree, currentFolder.idHijer);
     if (path) {
       setExpandedNodes((prev) => {
         const newSet = new Set(prev);
@@ -180,15 +197,31 @@ function Files() {
         return newSet;
       });
     }
-  }, [tree, currentFolder.idHijer, findPathToNode]);
+  }, [tree, currentFolder.idHijer]);
 
   const handleNavigate = (node) => {
-    const newPath = [...currentFolder.path, { idHijer: currentFolder.idHijer, name: currentFolder.name }];
+    // Reconstruct path from tree to ensure accuracy
+    const treePath = getPathFromTree(tree, node.hierarchyId) || [];
+    // The request to loadFolder expects the specific folder shape.
+    // We can just pass the path we found. 
+    // Note: getPathFromTree returns [{idHijer, name}, ...].
+    // loadFolder needs the `path` prop to be the array of parents.
+    // The current folder is the LAST item in treePath. 
+    // Parents are everything before it.
+
+    // Actually, `currentFolder.path` in state usage seems to be "parents list".
+    // Let's verify: 
+    // In handleBreadcrumbClick:
+    // folder = { ..., path: newPath.slice(0, index - 1) } 
+    // So `path` is indeed parents.
+
+    const parents = treePath.slice(0, -1);
+
     loadFolder({
       id: node.id,
       idHijer: node.hierarchyId,
       name: node.name,
-      path: newPath
+      path: parents
     });
   };
 
@@ -238,7 +271,9 @@ function Files() {
     return currentNode?.children || [];
   }, [tree, currentFolder.idHijer]);
 
-  if (loading && files.length === 0) {
+  const isLoadingInitial = (loading && files.length === 0) || (treeLoading && tree.length === 0);
+
+  if (isLoadingInitial) {
     return (
       <div className="h-full flex flex-col">
         <div className="p-4 lg:p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
@@ -314,7 +349,7 @@ function Files() {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-gray-800">
+        <div className="flex-1 flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900">
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-6">
             {loading ? (
               <div className="space-y-6">

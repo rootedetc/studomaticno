@@ -168,7 +168,7 @@ function Dashboard() {
                 {new Date().toLocaleDateString('hr-HR', { weekday: 'long', day: 'numeric', month: 'long' })}
               </p>
             </div>
-            
+
             {nextLesson ? (
               <div className="w-full md:w-auto bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 rounded-xl p-4 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center text-primary-600 dark:text-primary-300 font-bold shrink-0">
@@ -205,7 +205,7 @@ function Dashboard() {
 
       <div ref={containerRef} className="flex-1 overflow-y-auto p-4 lg:p-6">
         <div className="max-w-6xl mx-auto fade-in">
-          <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
             <Link to="/notifications" className="card-hover">
               <div className="flex items-center justify-between">
                 <div>
@@ -258,7 +258,7 @@ function Dashboard() {
                 </Link>
               </div>
               {todayLessons.length === 0 ? (
-                <p className="text-gray-500 dark:text-gray-400 text-center py-8">Nema predmeta danas</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-4 sm:py-8">Nema predmeta danas</p>
               ) : (
                 <div className="space-y-2">
                   {todayLessons.map((lesson, index) => (
