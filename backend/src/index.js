@@ -1,9 +1,11 @@
+import crypto from 'crypto';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import * as cheerio from 'cheerio';
+import iconv from 'iconv-lite';
 import authRoutes from './routes/auth.js';
 import timetableRoutes from './routes/timetable.js';
 import notificationsRoutes from './routes/notifications.js';
@@ -23,7 +25,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Auto-generate session secret if not provided (persists for app lifetime)
-const SESSION_SECRET = process.env.SESSION_SECRET || require('crypto').randomBytes(32).toString('hex');
+const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 if (!process.env.SESSION_SECRET) {
   console.log('Warning: SESSION_SECRET not set, using auto-generated secret. Sessions will be invalidated on server restart.');
 }
@@ -145,7 +147,7 @@ app.get('/api/debug/test-encoding', async (req, res) => {
       encoded: Buffer.from(phrase).toString('binary'),
       decoded: (() => {
         const buf = Buffer.from(Buffer.from(phrase).toString('binary'), 'binary');
-        return require('iconv-lite').decode(buf, 'windows-1250');
+        return iconv.decode(buf, 'windows-1250');
       })()
     }));
 
