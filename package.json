@@ -1,5 +1,8 @@
 {
   "name": "studomaticno",
+  "scripts": {
+    "start": "cd backend && npm install && node src/index.js"
+  },
   "devDependencies": {
     "playwright": "^1.57.0"
   }
