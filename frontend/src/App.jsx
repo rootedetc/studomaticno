@@ -5,8 +5,7 @@ import { clearAllDailyCache, getStickyAnnouncementsCache, setStickyAnnouncements
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Timetable from './pages/Timetable';
-import Notifications from './pages/Notifications';
-import Messages from './pages/Messages';
+import Inbox from './pages/Inbox';
 import Files from './pages/Files';
 import Grades from './pages/Grades';
 import Finance from './pages/Finance';
@@ -17,6 +16,7 @@ import MobileNav from './components/MobileNav';
 import DebugPanel from './components/DebugPanel';
 import SessionExpiredModal from './components/SessionExpiredModal';
 import ErrorBoundary from './components/ErrorBoundary';
+import PWAInstallBanner from './components/PWAInstallBanner';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { TranslationProvider } from './hooks/useTranslation.jsx';
 
@@ -117,8 +117,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/timetable" element={<Timetable />} />
-                  <Route path="/notifications" element={<Notifications />} />
-                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/inbox" element={<Inbox />} />
                   <Route path="/files" element={<Files />} />
                   <Route path="/grades" element={<Grades />} />
                   <Route path="/finance" element={<Finance />} />
@@ -140,8 +139,7 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/timetable" element={<Timetable />} />
-                    <Route path="/notifications" element={<Notifications />} />
-                    <Route path="/messages" element={<Messages />} />
+                    <Route path="/inbox" element={<Inbox />} />
                     <Route path="/files" element={<Files />} />
                     <Route path="/grades" element={<Grades />} />
                     <Route path="/finance" element={<Finance />} />
@@ -154,6 +152,7 @@ function App() {
             </div>
           )}
           {import.meta.env.DEV && <DebugPanel />}
+          {user && <PWAInstallBanner />}
           <SessionExpiredModal
             isOpen={sessionExpired}
             onClose={() => setSessionExpired(false)}

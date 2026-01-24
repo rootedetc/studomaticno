@@ -404,6 +404,15 @@ body {
     overflow-wrap: break-word;
     word-break: break-word;
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 .touch-target {

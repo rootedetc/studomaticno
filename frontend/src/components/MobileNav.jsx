@@ -22,14 +22,14 @@ const MobileNav = memo(function MobileNav() {
       icon: 'timetable'
     },
     {
-      path: '/notifications',
-      label: t('nav.notifications'),
-      icon: 'notifications'
+      path: '/inbox',
+      label: t('nav.inbox'),
+      icon: 'inbox'
     },
     {
-      path: '/messages',
-      label: t('nav.messages'),
-      icon: 'messages'
+      path: '/ispiti',
+      label: t('nav.exams'),
+      icon: 'exams'
     }
   ], [t]);
 
@@ -48,11 +48,6 @@ const MobileNav = memo(function MobileNav() {
       path: '/finance',
       label: t('nav.finance'),
       icon: 'finance'
-    },
-    {
-      path: '/ispiti',
-      label: t('nav.exams'),
-      icon: 'exams'
     },
     {
       path: '/settings',
@@ -104,8 +99,8 @@ const MobileNav = memo(function MobileNav() {
 
   return (
     <>
-      <nav 
-        className="mobile-nav bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700" 
+      <nav
+        className="mobile-nav bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700"
         aria-label="Mobile navigation"
       >
         {primaryNavItems.map((item) => (
@@ -130,7 +125,7 @@ const MobileNav = memo(function MobileNav() {
           className={`mobile-nav-item ${menuOpen
             ? 'text-primary-600 dark:text-primary-400'
             : 'text-gray-500 dark:text-gray-400'
-          }`}
+            }`}
           aria-expanded={menuOpen}
           aria-haspopup="true"
           aria-label={t('nav.more')}
@@ -141,13 +136,13 @@ const MobileNav = memo(function MobileNav() {
       </nav>
 
       {menuOpen && (
-        <div 
-          className="mobile-nav-overlay" 
+        <div
+          className="mobile-nav-overlay"
           onClick={closeMenu}
           role="presentation"
         >
-          <div 
-            className="mobile-nav-menu" 
+          <div
+            className="mobile-nav-menu"
             ref={menuRef}
             role="menu"
             aria-orientation="vertical"
@@ -162,7 +157,7 @@ const MobileNav = memo(function MobileNav() {
                 <Icon name="close" className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="mobile-nav-menu-grid">
               {secondaryNavItems.map((item) => (
                 <NavLink
@@ -183,7 +178,7 @@ const MobileNav = memo(function MobileNav() {
                   <span className="mobile-nav-menu-item-label">{item.label}</span>
                 </NavLink>
               ))}
-              
+
               <button
                 onClick={handleLogoutClick}
                 className="mobile-nav-menu-item mobile-nav-menu-item-logout border-transparent hover:bg-red-50 dark:hover:bg-red-900/20"

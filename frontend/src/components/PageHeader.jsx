@@ -1,3 +1,4 @@
+import { useRef, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from './Icon';
 import useTranslation from '../hooks/useTranslation';
@@ -12,6 +13,13 @@ function PageHeader({
 }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const mobileBreadcrumbRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (mobileBreadcrumbRef.current) {
+      mobileBreadcrumbRef.current.scrollLeft = mobileBreadcrumbRef.current.scrollWidth;
+    }
+  }, [breadcrumbs]);
 
   const handleBack = () => {
     if (onBack) {
@@ -46,8 +54,13 @@ function PageHeader({
                 </p>
               )}
               {breadcrumbs && breadcrumbs.length > 0 && (
-                <nav className="flex items-center gap-1 mt-1 md:hidden" aria-label="Breadcrumb">
-                  <ol className="flex items-center gap-1">
+
+                <nav
+                  ref={mobileBreadcrumbRef}
+                  className="flex items-center gap-1 mt-1 md:hidden overflow-x-auto whitespace-nowrap no-scrollbar -mx-4 px-4"
+                  aria-label="Breadcrumb"
+                >
+                  <ol className="flex items-center gap-1 min-w-max">
                     {breadcrumbs.map((crumb, index) => {
                       const isLast = index === breadcrumbs.length - 1;
                       return (

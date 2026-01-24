@@ -11,7 +11,8 @@ const ListItem = memo(function ListItem({
   badge,
   onClick,
   className = '',
-  ariaLabel
+  ariaLabel,
+  isExpanded = false
 }) {
   const [isPressed, setIsPressed] = useState(false);
 
@@ -23,9 +24,9 @@ const ListItem = memo(function ListItem({
       onMouseUp={() => setIsPressed(false)}
       onTouchStart={() => setIsPressed(true)}
       onTouchEnd={() => setIsPressed(false)}
-      className={`card cursor-pointer transition-all card-hover touch-target ${
-        isNew ? 'bg-blue-50/50 dark:bg-blue-900/20 border-l-4 border-l-blue-500' : ''
-      } ${isPressed ? 'scale-[0.98]' : ''} ${className}`}
+      className={`card cursor-pointer transition-all touch-target ${isExpanded ? '!rounded-b-none !border-b-0 !shadow-none bg-gray-50 dark:bg-gray-800' : 'card-hover'
+        } ${isNew ? 'bg-blue-50/50 dark:bg-blue-900/20 border-l-4 border-l-blue-500' : ''
+        } ${isPressed ? 'scale-[0.98]' : ''} ${className}`}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -37,9 +38,8 @@ const ListItem = memo(function ListItem({
       aria-label={ariaLabel || `${title}${subtitle ? `, ${subtitle}` : ''}${isNew ? ', new' : ''}`}
     >
       <div className="flex items-start gap-3">
-        <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-          isNew ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-gray-100 dark:bg-gray-700'
-        }`}>
+        <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${isNew ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-gray-100 dark:bg-gray-700'
+          }`}>
           <Icon
             name={icon}
             className={`w-5 h-5 ${isNew ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}`}

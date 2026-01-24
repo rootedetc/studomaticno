@@ -21,14 +21,9 @@ const Sidebar = memo(function Sidebar() {
       icon: 'timetable'
     },
     {
-      path: '/notifications',
-      label: t('nav.notifications'),
-      icon: 'notifications'
-    },
-    {
-      path: '/messages',
-      label: t('nav.messages'),
-      icon: 'messages'
+      path: '/inbox',
+      label: t('nav.inbox'),
+      icon: 'inbox'
     },
     {
       path: '/files',

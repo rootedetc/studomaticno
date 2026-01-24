@@ -4,6 +4,7 @@ export default {
     timetable: 'Timetable',
     notifications: 'Notifications',
     messages: 'Messages',
+    inbox: 'Inbox',
     files: 'Files',
     grades: 'Grades',
     finance: 'Finance',

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { getFriendlyErrorMessage } from '../utils/helpers';
 import { Skeleton, SkeletonList } from '../components/Skeleton';
-import { GradeDistributionChart, GradeTrendChart } from '../components/Charts';
+import { PassedCoursesChart, GradeTrendChart } from '../components/Charts';
 import TableCard from '../components/TableCard';
 import EmptyState from '../components/EmptyState';
 
@@ -96,26 +96,26 @@ function Grades() {
       <div className="page-content">
         <div className="max-w-5xl mx-auto fade-in">
           {grades?.summary && (
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-              <div className="stat-card">
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 mb-6">
+              <div className="stat-card hidden md:block">
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{grades.summary.total}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Ukupno</p>
               </div>
               <div className="stat-card">
-                <p className="text-2xl font-bold text-gray-900 dark:text-white text-green-600 dark:text-green-400">{grades.summary.passed}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Položeno</p>
+                <p className="text-xl md:text-2xl font-bold text-green-600 dark:text-green-400">{grades.summary.passed}/{grades.summary.total}</p>
+                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">Položeno</p>
               </div>
-              <div className="stat-card">
-                <p className="text-2xl font-bold text-gray-900 dark:text-white text-red-600 dark:text-red-400">{grades.summary.failed}</p>
+              <div className="stat-card hidden md:block">
+                <p className="text-2xl font-bold text-red-600 dark:text-red-400">{grades.summary.failed}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Nepoloženo</p>
               </div>
               <div className="stat-card">
-                <p className="text-2xl font-bold text-gray-900 dark:text-white text-blue-600 dark:text-blue-400">{grades.summary.ectsTotal}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">ECTS</p>
+                <p className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">{grades.summary.ectsTotal}</p>
+                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">ECTS</p>
               </div>
               <div className="stat-card">
-                <p className="text-2xl font-bold text-gray-900 dark:text-white text-purple-600 dark:text-purple-400">{grades.summary.averageGrade}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Prosjek</p>
+                <p className="text-xl md:text-2xl font-bold text-purple-600 dark:text-purple-400">{grades.summary.averageGrade}</p>
+                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">Prosjek</p>
               </div>
             </div>
           )}
@@ -147,8 +147,8 @@ function Grades() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <GradeDistributionChart grades={grades} />
+          <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <PassedCoursesChart grades={grades} />
             <GradeTrendChart grades={grades} />
           </div>
 

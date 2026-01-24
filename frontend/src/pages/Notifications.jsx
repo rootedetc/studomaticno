@@ -12,6 +12,7 @@ import useTranslation from '../hooks/useTranslation';
 import { usePullToRefresh, PullIndicator } from '../hooks/usePullToRefresh';
 import { useOptimisticUpdate } from '../hooks/useOptimisticUpdate';
 import BottomSheet from '../components/BottomSheet';
+import MessageDetail from '../components/MessageDetail';
 
 function Notifications() {
   const { t } = useTranslation();
@@ -19,7 +20,16 @@ function Notifications() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [expandedItemId, setExpandedItemId] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const markAsReadOptimistic = useCallback((notificationId) => {
     setNotifications(prev => prev.map(n =>
@@ -65,14 +75,38 @@ function Notifications() {
   };
 
   const loadNotificationDetail = async (notification) => {
+    const isCurrentlyExpanding = isDesktop && expandedItemId !== notification.id;
+
+    if (!isDesktop) {
+      // Show modal immediately with partial data
+      setSelectedNotification(notification);
+    } else {
+      if (expandedItemId === notification.id) {
+        setExpandedItemId(null);
+        return;
+      }
+      setExpandedItemId(notification.id);
+    }
+
+    setDetailLoading(true);
+
     if (notification.isNew) {
       handleMarkAsRead(notification);
     }
     try {
       const result = await api.getNotification(notification.id, notification.messageId);
-      setSelectedNotification(result.notification);
+      // Merge new details
+      const fullNotification = { ...notification, ...result.notification };
+
+      if (!isDesktop) {
+        setSelectedNotification(fullNotification);
+      } else {
+        setNotifications(prev => prev.map(n => n.id === notification.id ? fullNotification : n));
+      }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setDetailLoading(false);
     }
   };
 
@@ -122,18 +156,33 @@ function Notifications() {
           ) : (
             <div className="space-y-2">
               {notifications.map((notification) => (
-                <ListItem
-                  key={notification.id}
-                  icon="notifications"
-                  title={notification.title}
-                  subtitle={notification.author}
-                  date={notification.date}
-                  isNew={notification.isNew}
-                  badge={notification.isNew && (
-                    <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded text-xs font-medium">Novo</span>
+                <div key={notification.id}>
+                  <ListItem
+                    icon="notifications"
+                    title={notification.title}
+                    subtitle={notification.author}
+                    date={notification.date}
+                    isNew={notification.isNew}
+                    badge={notification.isNew && (
+                      <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded text-xs font-medium">Novo</span>
+                    )}
+                    onClick={() => loadNotificationDetail(notification)}
+                    isExpanded={expandedItemId === notification.id}
+                  />
+                  {isDesktop && expandedItemId === notification.id && (
+                    <div className="px-4 pb-4 bg-gray-50 dark:bg-gray-800 border-b border-x border-gray-100 dark:border-gray-700 rounded-b-xl -mt-px mb-3 fade-in shadow-sm">
+                      {detailLoading ? (
+                        <div className="p-4 space-y-3">
+                          <Skeleton variant="text" width="60%" />
+                          <Skeleton variant="text" count={2} />
+                          <Skeleton variant="text" width="40%" />
+                        </div>
+                      ) : (
+                        <MessageDetail item={notification} isInline={true} />
+                      )}
+                    </div>
                   )}
-                  onClick={() => loadNotificationDetail(notification)}
-                />
+                </div>
               ))}
             </div>
           )}
@@ -148,23 +197,14 @@ function Notifications() {
       >
         {selectedNotification && (
           <div>
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4">
-              <span className="flex items-center gap-1">
-                <Icon name="user" className="w-4 h-4" aria-hidden="true" />
-                <span className="font-medium text-gray-900 dark:text-white">{selectedNotification.author}</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <Icon name="clock" className="w-4 h-4" aria-hidden="true" />
-                {selectedNotification.date}
-              </span>
-            </div>
-
-            <div className="prose prose-sm max-w-none text-gray-800 dark:text-gray-200">
-              <div
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedNotification.content || '') }}
-                style={{ lineHeight: '1.6' }}
-              />
-            </div>
+            {detailLoading ? (
+              <div className="space-y-4">
+                <Skeleton variant="text" width="40%" className="mb-2" />
+                <Skeleton variant="text" count={3} />
+              </div>
+            ) : (
+              <MessageDetail item={selectedNotification} />
+            )}
           </div>
         )}
       </BottomSheet>

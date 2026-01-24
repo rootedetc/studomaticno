@@ -27,87 +27,91 @@ export const GradeTrendChart = ({ grades }) => {
 
   if (data.length < 2) return null; // Need at least 2 points for a trend
 
-  const maxGrade = 5;
-  const minGrade = 2; // Graph looks better if scaled from 2 to 5 usually
-
   return (
     <div className="card p-6 mb-6">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Prosjek po godinama</h3>
 
       <div className="relative h-48 w-full">
-        {/* Grid lines */}
-        <div className="absolute inset-0 flex flex-col justify-between text-xs text-gray-400">
+        {/* Y-axis labels */}
+        <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400" style={{ width: '24px' }}>
           {[5, 4, 3, 2].map(g => (
-            <div key={g} className="flex items-center w-full">
-              <span className="w-4">{g}</span>
-              <div className="flex-1 h-px bg-gray-100 dark:bg-gray-700 ml-2"></div>
+            <div key={g} className="flex items-center h-0">
+              <span>{g}</span>
             </div>
           ))}
         </div>
 
-        {/* Data Points & Line */}
-        <div className="absolute inset-0 ml-6 flex items-center justify-between pointer-events-none">
-          {/* SVG Line connecting points */}
-          <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }}>
+        {/* Chart area */}
+        <div className="absolute inset-0" style={{ left: '32px' }}>
+          {/* Grid lines */}
+          <div className="absolute inset-0 flex flex-col justify-between">
+            {[5, 4, 3, 2].map(g => (
+              <div key={g} className="h-px bg-gray-200 dark:bg-gray-700" />
+            ))}
+          </div>
+
+          {/* SVG for line */}
+          <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            className="absolute inset-0 w-full h-full overflow-visible"
+          >
+            {/* Line connecting points */}
             <polyline
               fill="none"
-              stroke="currentColor"
+              stroke="url(#gradient)"
               strokeWidth="2"
-              className="text-primary-500"
-              points={data.map((d, i) => {
-                const x = (i / (data.length - 1)) * 100; // Percentage X
-                const y = 100 - ((d.average - 2) / 3) * 100; // Percentage Y (scale 2-5)
-                return `${x}%,${y}%`; // Note: SVG points typically need pixel values or viewBox. 
-                // For simplicity in this environment without specific width refs, we can use a flex approach for dots and not draw complex lines, 
-                // OR we can try to guess coordinates if we knew width.
-                // Since we don't know width, simple dots + bars might be safer than a line which requires absolute coordinates.
-              }).join(' ')}
-            />
-            {/* 
-                 Actually, polyline with % points is not standard SVG support in all browsers/contexts easily without viewBox. 
-                 Let's stick to a robust visual: Bars or just connected dots if we can layout them.
-                 Simpler: Just use bars for now, it's safer than broken SVG.
-                 User asked for "GRAPH", but bars are a graph.
-                 Wait, "Grade Trend" implies line.
-                 Let's try a CSS-only Line Graph using clip-path? Too complex.
-                 Let's stick to specific positioned dots and we remove the line if complex.
-                 Actually, we can use SVG with viewBox="0 0 100 100" and preserveAspectRatio="none".
-               */}
-            <polyline
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               vectorEffect="non-scaling-stroke"
-              className="text-primary-500 opacity-50"
               points={data.map((d, i) => {
-                const x = (i / (data.length - 1)) * 100;
+                const x = data.length === 1 ? 50 : (i / (data.length - 1)) * 100;
                 const y = 100 - ((d.average - 2) / 3) * 100;
                 return `${x},${y}`;
               }).join(' ')}
             />
+            {/* Gradient definition */}
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#6366f1" />
+                <stop offset="100%" stopColor="#8b5cf6" />
+              </linearGradient>
+            </defs>
           </svg>
 
-          {data.map((d, i) => {
-            // Calculate position
-            const percentage = ((d.average - 2) / 3) * 100;
-            return (
-              <div key={d.year} className="relative h-full flex flex-col justify-end group" style={{ zIndex: 2 }}>
-                <div
-                  className="absolute bottom-0 w-3 h-3 bg-primary-600 rounded-full border-2 border-white dark:border-gray-800 shadow-md transform translate-y-1.5 transition-transform group-hover:scale-125"
-                  style={{ bottom: `${percentage}%`, left: '-6px' }}
-                >
-                  <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    {d.average.toFixed(2)}
+          {/* Data points */}
+          <div className="absolute inset-0 flex justify-between items-stretch">
+            {data.map((d, i) => {
+              const bottomPercent = ((d.average - 2) / 3) * 100;
+              return (
+                <div key={d.year} className="relative flex-1 flex justify-center group">
+                  <div
+                    className="absolute w-4 h-4 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 border-3 border-white dark:border-gray-800 shadow-lg transform -translate-x-1/2 -translate-y-1/2 transition-transform group-hover:scale-150 cursor-pointer"
+                    style={{
+                      bottom: `${bottomPercent}%`,
+                      left: '50%',
+                      transform: 'translate(-50%, 50%)'
+                    }}
+                  >
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg pointer-events-none">
+                      {d.average.toFixed(2)}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
-      <div className="flex justify-between ml-6 mt-2 text-sm text-gray-500 dark:text-gray-400">
+
+      {/* X-axis labels */}
+      <div className="flex justify-between mt-4 text-sm text-gray-500 dark:text-gray-400" style={{ marginLeft: '32px' }}>
         {data.map(d => (
-          <span key={d.year}>{d.year}. god</span>
+          <div key={d.year} className="flex-1 text-center">
+            <span className="font-medium">{d.year}. god</span>
+          </div>
         ))}
       </div>
     </div>
@@ -115,58 +119,76 @@ export const GradeTrendChart = ({ grades }) => {
 };
 
 
-export const GradeDistributionChart = ({ grades }) => {
-  if (!grades || !grades.courses) return null;
+export const PassedCoursesChart = ({ grades }) => {
+  if (!grades?.summary) return null;
 
-  const distribution = (grades.courses || []).reduce((acc, course) => {
-    // Handle both string and number grades, and potential nulls
-    const gradeVal = course.finalGrade;
-    if (!gradeVal) return acc;
+  const passed = grades.summary.passed || 0;
+  const total = grades.summary.total || 0;
+  const failed = total - passed;
+  const percentage = total > 0 ? Math.round((passed / total) * 100) : 0;
 
-    // Parse int to be safe
-    const grade = parseInt(gradeVal, 10);
-
-    // Check if it's a valid grade (2-5)
-    if (!isNaN(grade) && grade >= 2 && grade <= 5) {
-      acc[grade] = (acc[grade] || 0) + 1;
-    }
-    return acc;
-  }, {});
-
-  const total = Object.values(distribution).reduce((a, b) => a + b, 0);
-  const max = Math.max(...Object.values(distribution));
+  // Calculate stroke-dasharray for the pie chart
+  const radius = 70;
+  const circumference = 2 * Math.PI * radius;
+  const passedLength = total > 0 ? (passed / total) * circumference : 0;
 
   return (
     <div className="card p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Distribucija ocjena</h3>
-      <div className="flex items-end justify-between h-40 gap-2">
-        {[2, 3, 4, 5].map((grade) => {
-          const count = distribution[grade] || 0;
-          const percentage = total > 0 ? (count / total) * 100 : 0;
-          const height = max > 0 ? (count / max) * 100 : 0;
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Položeno kolegija</h3>
 
-          let colorClass = 'bg-gray-200 dark:bg-gray-700';
-          if (grade === 5) colorClass = 'bg-green-500';
-          if (grade === 4) colorClass = 'bg-blue-500';
-          if (grade === 3) colorClass = 'bg-yellow-500';
-          if (grade === 2) colorClass = 'bg-orange-500';
+      <div className="flex items-center justify-center py-4">
+        {/* Pie Chart */}
+        <div className="relative w-52 h-52 group cursor-pointer">
+          <svg viewBox="0 0 180 180" className="transform -rotate-90 w-full h-full">
+            {/* Background circle (remaining/failed) */}
+            <circle
+              cx="90"
+              cy="90"
+              r={radius}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="20"
+              className="text-red-100 dark:text-red-900/40 transition-all duration-300 group-hover:opacity-80"
+            />
 
-          return (
-            <div key={grade} className="flex-1 flex flex-col items-center gap-2 group">
-              <div className="relative w-full flex justify-center items-end h-full">
-                <div
-                  className={`w-full max-w-[40px] rounded-t-lg transition-all duration-500 ${colorClass} opacity-80 group-hover:opacity-100`}
-                  style={{ height: `${Math.max(height, 5)}%` }}
-                >
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-xs px-2 py-1 rounded">
-                    {count} ({Math.round(percentage)}%)
-                  </div>
-                </div>
-              </div>
-              <span className="font-bold text-gray-700 dark:text-gray-300 text-lg">{grade}</span>
+            {/* Passed segment (green) */}
+            <circle
+              cx="90"
+              cy="90"
+              r={radius}
+              fill="none"
+              stroke="url(#passedGradient)"
+              strokeWidth="20"
+              strokeDasharray={`${passedLength} ${circumference}`}
+              strokeLinecap="round"
+              className="transition-all duration-1000 ease-out"
+              style={{ filter: 'drop-shadow(0 4px 6px rgba(34, 197, 94, 0.3))' }}
+            />
+
+            {/* Gradient definitions */}
+            <defs>
+              <linearGradient id="passedGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#22c55e" />
+                <stop offset="100%" stopColor="#10b981" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          {/* Center text */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-300">
+            <span className="text-4xl font-bold text-gray-900 dark:text-white">{percentage}%</span>
+          </div>
+
+          {/* Hover tooltip */}
+          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+            <div className="bg-gray-900 dark:bg-gray-700 text-white text-sm px-4 py-2 rounded-xl shadow-xl flex gap-4 whitespace-nowrap">
+              <span className="text-green-400 font-semibold">{passed} položeno</span>
+              <span className="text-gray-400">•</span>
+              <span className="text-red-400 font-semibold">{failed} preostalo</span>
             </div>
-          );
-        })}
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-8 border-transparent border-b-gray-900 dark:border-b-gray-700" />
+          </div>
+        </div>
       </div>
     </div>
   );

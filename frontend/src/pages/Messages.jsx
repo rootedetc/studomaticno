@@ -11,13 +11,23 @@ import PageHeader from '../components/PageHeader';
 import { usePullToRefresh, PullIndicator } from '../hooks/usePullToRefresh';
 import { useOptimisticUpdate } from '../hooks/useOptimisticUpdate';
 import BottomSheet from '../components/BottomSheet';
+import MessageDetail from '../components/MessageDetail';
 
 function Messages() {
   const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const [expandedItemId, setExpandedItemId] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const markAsReadOptimistic = useCallback((messageId) => {
     setMessages(prev => prev.map(m =>
@@ -57,14 +67,39 @@ function Messages() {
   };
 
   const loadMessageDetail = async (messageId, message) => {
+    const isCurrentlyExpanding = isDesktop && expandedItemId !== messageId;
+
+    if (!isDesktop) {
+      // Show modal immediately with available data
+      setSelectedMessage(message);
+    } else {
+      if (expandedItemId === messageId) {
+        setExpandedItemId(null);
+        return;
+      }
+      setExpandedItemId(messageId);
+    }
+
+    setDetailLoading(true);
+
     if (message && !message.isRead) {
       handleMarkAsRead(messageId);
     }
+
     try {
       const result = await api.getMessageThread(messageId);
-      setSelectedMessage(result.message);
+      // Merge new details with existing message data
+      const fullMessage = { ...message, ...result.message };
+
+      if (!isDesktop) {
+        setSelectedMessage(fullMessage);
+      } else {
+        setMessages(prev => prev.map(m => m.id === messageId ? fullMessage : m));
+      }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setDetailLoading(false);
     }
   };
 
@@ -132,23 +167,38 @@ function Messages() {
           ) : (
             <div className="space-y-2">
               {messages.map((message) => (
-                <ListItem
-                  key={message.id}
-                  icon="messages"
-                  title={message.subject}
-                  subtitle={message.sender}
-                  date={message.sentDate}
-                  isNew={!message.isRead}
-                  hasAttachment={message.hasAttachment}
-                  onClick={() => loadMessageDetail(message.id, message)}
-                />
+                <div key={message.id}>
+                  <ListItem
+                    icon="messages"
+                    title={message.subject}
+                    subtitle={message.sender}
+                    date={message.sentDate}
+                    isNew={!message.isRead}
+                    hasAttachment={message.hasAttachment}
+                    onClick={() => loadMessageDetail(message.id, message)}
+                    isExpanded={expandedItemId === message.id}
+                  />
+                  {isDesktop && expandedItemId === message.id && (
+                    <div className="px-4 pb-4 bg-gray-50 dark:bg-gray-800 border-b border-x border-gray-100 dark:border-gray-700 rounded-b-xl -mt-px mb-3 fade-in shadow-sm">
+                      {detailLoading ? (
+                        <div className="p-4 space-y-3">
+                          <Skeleton variant="text" width="60%" />
+                          <Skeleton variant="text" count={2} />
+                          <Skeleton variant="text" width="40%" />
+                        </div>
+                      ) : (
+                        <MessageDetail item={message} isInline={true} />
+                      )}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           )}
         </div>
       </div>
 
-      {/* Message Detail Bottom Sheet */}
+  /* Message Detail Bottom Sheet */
       <BottomSheet
         isOpen={!!selectedMessage}
         onClose={() => setSelectedMessage(null)}
@@ -156,42 +206,17 @@ function Messages() {
       >
         {selectedMessage && (
           <div>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
-              <span className="font-medium text-gray-900 dark:text-white">{selectedMessage.sender}</span>
-              <span>{selectedMessage.sentDate || selectedMessage.date}</span>
-              {selectedMessage.recipient && (
-                <span>→ {selectedMessage.recipient}</span>
-              )}
-            </div>
-
-            <div className="prose prose-sm max-w-none text-gray-800 dark:text-gray-300">
-              <div
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedMessage.body || 'Nema sadržaja') }}
-                style={{ lineHeight: '1.6' }}
-              />
-            </div>
-
-            {selectedMessage.attachments && selectedMessage.attachments.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <h3 className="font-medium text-gray-900 dark:text-white mb-3">Prilozi</h3>
-                <div className="space-y-2">
-                  {selectedMessage.attachments.map((attachment, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
-                    >
-                      <Icon name="attachment" className="w-5 h-5 text-gray-500 dark:text-gray-400 flex-shrink-0" aria-hidden="true" />
-                      <span className="flex-1 text-sm text-gray-700 dark:text-gray-300">{attachment.name}</span>
-                      <button
-                        onClick={() => handleDownload(attachment.url, attachment.name)}
-                        className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium flex-shrink-0"
-                      >
-                        Preuzmi
-                      </button>
-                    </div>
-                  ))}
+            {detailLoading ? (
+              <div className="space-y-4">
+                <Skeleton variant="text" count={3} />
+                <Skeleton variant="text" width="60%" />
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <Skeleton variant="text" width="30%" className="mb-2" />
+                  <Skeleton variant="text" height="h-12" />
                 </div>
               </div>
+            ) : (
+              <MessageDetail item={selectedMessage} />
             )}
           </div>
         )}

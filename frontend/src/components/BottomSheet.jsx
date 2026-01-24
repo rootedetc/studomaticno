@@ -8,6 +8,11 @@ function BottomSheet({ isOpen, onClose, title, children }) {
     const [isAnimating, setIsAnimating] = useState(false);
     const [shouldRender, setShouldRender] = useState(false);
 
+    const [dragOffset, setDragOffset] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const touchStartY = useRef(0);
+    const contentScrollTop = useRef(0);
+
     useEffect(() => {
         if (isOpen) {
             setShouldRender(true);
@@ -20,6 +25,7 @@ function BottomSheet({ isOpen, onClose, title, children }) {
             });
         } else {
             setIsAnimating(false);
+            setDragOffset(0); // Reset drag offset
             document.body.style.overflow = 'unset';
             // Wait for animation to complete before unmounting
             const timer = setTimeout(() => {
@@ -50,6 +56,41 @@ function BottomSheet({ isOpen, onClose, title, children }) {
         }
     };
 
+    const handleTouchStart = (e) => {
+        touchStartY.current = e.touches[0].clientY;
+        // Check if content is scrolled to top
+        const contentElement = sheetRef.current?.querySelector('.overflow-y-auto');
+        contentScrollTop.current = contentElement ? contentElement.scrollTop : 0;
+        setIsDragging(true);
+    };
+
+    const handleTouchMove = (e) => {
+        if (!isDragging) return;
+
+        const currentY = e.touches[0].clientY;
+        const deltaY = currentY - touchStartY.current;
+
+        // Only allow dragging down if content is at the top
+        if (contentScrollTop.current === 0 && deltaY > 0) {
+            // Add resistance
+            setDragOffset(deltaY);
+            // Prevent default scrolling only if we are dragging the sheet
+            if (e.cancelable) e.preventDefault();
+        }
+    };
+
+    const handleTouchEnd = () => {
+        setIsDragging(false);
+
+        // Threshold to close
+        if (dragOffset > 150) {
+            onClose();
+        } else {
+            // Snap back
+            setDragOffset(0);
+        }
+    };
+
     const handleKeyDown = (e) => {
         if (e.key === 'Tab') {
             const focusableElements = sheetRef.current?.querySelectorAll(
@@ -71,7 +112,7 @@ function BottomSheet({ isOpen, onClose, title, children }) {
         }
     };
 
-    if (!shouldRender) return null;
+    if (!isOpen && !shouldRender) return null;
 
     return createPortal(
         <div
@@ -93,9 +134,19 @@ function BottomSheet({ isOpen, onClose, title, children }) {
           flex flex-col
           focus:outline-none
           transition-transform duration-300 ease-out
-          ${isAnimating ? 'translate-y-0' : 'translate-y-full'}
         `}
+                style={{
+                    transform: isDragging
+                        ? `translateY(${dragOffset}px)`
+                        : isAnimating && !dragOffset
+                            ? 'translateY(0)'
+                            : 'translateY(100%)',
+                    transition: isDragging ? 'none' : undefined
+                }}
                 onKeyDown={handleKeyDown}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
                 tabIndex="-1"
             >
                 {/* Drag Handle */}

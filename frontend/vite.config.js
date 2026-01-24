@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
-  
+
   return {
     plugins: [
       react(),
@@ -36,10 +36,18 @@ export default defineConfig(({ mode }) => {
           ]
         },
         workbox: {
+          // Force new service worker to activate immediately
+          skipWaiting: true,
+          clientsClaim: true,
+          // Clean up old caches
+          cleanupOutdatedCaches: true,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+          // Ignore source maps to reduce cache size
+          globIgnores: ['**/*.map'],
           runtimeCaching: [
             {
-              urlPattern: /^http:\/\/localhost:3001\/api\/.*/i,
+              // Cache API requests with NetworkFirst strategy
+              urlPattern: /^https?:\/\/.*\/api\/.*/i,
               handler: 'NetworkFirst',
               options: {
                 cacheName: 'api-cache',
@@ -49,7 +57,8 @@ export default defineConfig(({ mode }) => {
                 },
                 cacheableResponse: {
                   statuses: [0, 200]
-                }
+                },
+                networkTimeoutSeconds: 10
               }
             }
           ]

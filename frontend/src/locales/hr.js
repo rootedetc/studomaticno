@@ -4,6 +4,7 @@ export default {
     timetable: 'Raspored',
     notifications: 'Obavijesti',
     messages: 'Poruke',
+    inbox: 'Sandučić',
     files: 'Datoteke',
     grades: 'Indeks',
     finance: 'Financije',
