@@ -159,35 +159,34 @@ function Notifications() {
                 </div>
               </div>
             </div>
-            </div>
-        ) : (
-        <>
-          {notifications.length === 0 ? (
-            <EmptyState icon="emptyInbox" title="Nema obavijesti" />
           ) : (
-            <div className="space-y-2">
-              {notifications.map((notification) => (
-                <ListItem
-                  key={notification.id}
-                  icon="notifications"
-                  title={notification.title}
-                  subtitle={notification.author}
-                  date={notification.date}
-                  isNew={notification.isNew}
-                  badge={notification.isNew && (
-                    <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded text-xs font-medium">Novo</span>
-                  )}
-                  onClick={() => loadNotificationDetail(notification)}
-                />
-              ))}
-            </div>
+            <>
+              {notifications.length === 0 ? (
+                <EmptyState icon="emptyInbox" title="Nema obavijesti" />
+              ) : (
+                <div className="space-y-2">
+                  {notifications.map((notification) => (
+                    <ListItem
+                      key={notification.id}
+                      icon="notifications"
+                      title={notification.title}
+                      subtitle={notification.author}
+                      date={notification.date}
+                      isNew={notification.isNew}
+                      badge={notification.isNew && (
+                        <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded text-xs font-medium">Novo</span>
+                      )}
+                      onClick={() => loadNotificationDetail(notification)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
-        </>
-          )}
+        </div>
       </div>
-    </div>
-      </div >
-      );
+    </div >
+  );
 }
 
 export default Notifications;
