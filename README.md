@@ -4,14 +4,16 @@ Personal Modern PWA Dashboard for Eduneta student portal using a backend-proxy m
 
 ## Features
 
-- **Modern UI/UX** - Responsive mobile-first design
+- **Modern UI/UX** - Responsive mobile-first design with dark mode support
 - **Multi-User Support** - Multiple users can log in simultaneously with isolated sessions
 - **Dashboard Overview** - Today's timetable, notifications, messages, files
-- **Timetable** - Weekly and daily views
-- **Notifications** - Read/unread states
-- **Messages** - Inbox with attachments
+- **Timetable** - Weekly and daily views with "Add to Calendar" support
+- **Grades** - Overview of grades, ECTS, and GPA
+- **Notifications** - Real-time notifications and read/unread states
+- **Messages** - Inbox with attachments and message details
 - **Files** - Categorized document list with download
-- **PWA** - Installable on iOS and Android
+- **PWA** - Installable on iOS and Android with custom install banner
+- **Localization** - Multi-language support (English and Croatian)
 - **Offline Support** - Cached data for basic views
 
 ## Tech Stack
@@ -20,11 +22,11 @@ Personal Modern PWA Dashboard for Eduneta student portal using a backend-proxy m
 - Node.js + Express
 - Axios for HTTP requests
 - Cheerio for HTML parsing
-- Express-session for session management
+- Express-session for session management (with session-scoped services)
 
 ### Frontend
 - React + Vite
-- Tailwind CSS
+- Tailwind CSS (Premium modern design)
 - React Router
 - Vite PWA plugin
 
@@ -82,14 +84,22 @@ Access at: http://localhost:5173
 cd frontend
 npm run build
 
-# Configure production .env
-cd ../backend
-cp .env.example .env.production
-# Edit .env.production with production settings
-
-# Start production server
-NODE_ENV=production node src/index.js
+# Start production server (from root or backend)
+PORT=3001 NODE_ENV=production node backend/src/index.js
 ```
+
+## DigitalOcean Deployment
+
+This project is optimized for **DigitalOcean App Platform**.
+
+1. **Create App**: Use the "Create App" button in DigitalOcean.
+2. **Components**:
+   - **Service (backend)**: Set `HTTP Port` to `8080` (or as configured), Environment: Node.js.
+   - **Static Site (frontend)**: Build command `npm run build`, Output directory `dist`.
+3. **Environment Variables**:
+   - `SESSION_SECRET`: Random long string.
+   - `FRONTEND_URL`: Your App Platform URL.
+   - `NODE_ENV`: `production`.
 
 ## PWA Installation
 
@@ -100,8 +110,8 @@ NODE_ENV=production node src/index.js
 
 ### Android
 1. Open in Chrome
-2. Tap menu (three dots)
-3. Tap "Install App" or "Add to Home Screen"
+2. Tap the custom "Install App" banner or browser menu
+3. Tap "Install App"
 
 ## Project Structure
 
@@ -111,16 +121,18 @@ studomaticno/
 │   ├── src/
 │   │   ├── index.js           # Express server entry
 │   │   ├── services/
-│   │   │   └── eduneta.js     # Eduneta API proxy service
+│   │   │   ├── ServiceManager.js  # Manages session-scoped services
+│   │   │   └── eduneta.js         # Eduneta API proxy logic
 │   │   ├── routes/
 │   │   │   ├── auth.js        # Login/logout endpoints
 │   │   │   ├── dashboard.js   # Dashboard overview
 │   │   │   ├── timetable.js   # Timetable endpoints
+│   │   │   ├── grades.js      # Grades endpoints
 │   │   │   ├── notifications.js
 │   │   │   ├── messages.js
 │   │   │   └── files.js
 │   │   └── middleware/
-│   │       └── auth.js        # Session validation
+│   │       └── auth.js        # Session validation & service attachment
 │   └── package.json
 │
 └── frontend/
@@ -130,14 +142,19 @@ studomaticno/
     │   │   ├── Login.jsx
     │   │   ├── Dashboard.jsx
     │   │   ├── Timetable.jsx
+    │   │   ├── Grades.jsx
     │   │   ├── Notifications.jsx
-    │   │   ├── Messages.jsx
+    │   │   ├── Inbox.jsx      # Message list view
     │   │   └── Files.jsx
     │   ├── components/
     │   │   ├── Sidebar.jsx
-    │   │   └── MobileNav.jsx
+    │   │   ├── MobileNav.jsx
+    │   │   ├── PWAInstallBanner.jsx
+    │   │   └── WeekRibbon.jsx
+    │   ├── utils/
+    │   │   └── dateUtils.js   # Date formatting and logic
     │   └── services/
-    │       └── api.js         # API client
+    │       └── api.js         # Axios API client
     ├── public/
     │   └── icons/
     └── package.json
@@ -152,24 +169,19 @@ studomaticno/
 | GET | /api/auth/status | Check authentication |
 | GET | /api/dashboard/overview | Dashboard data |
 | GET | /api/timetable | Full timetable |
-| GET | /api/timetable/today | Today's lessons |
+| GET | /api/grades | Exam grades and ECTS |
 | GET | /api/notifications | All notifications |
 | GET | /api/messages/inbox | All messages |
 | GET | /api/files | All files |
-| GET | /api/files/download/:id | Download file |
 
 ## Security Notes
 
 - HTTPS required for production
-- Credentials sent only during login
-- Session tokens protected against XSS
-- Per-user session isolation with separate cookie jars
-- No credential storage in persistent storage
+- Credentials sent only during login via POST
+- Session tokens protected with `httpOnly` and `secure` flags
+- Per-user session isolation with separate `EdunetaService` instances
+- No student credentials stored in the backend (stored only in session memory)
 
 ## License
 
 Personal use only.
-
-## Author
-
-Created for personal use with Eduneta.
