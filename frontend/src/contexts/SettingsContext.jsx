@@ -20,10 +20,7 @@ export function SettingsProvider({ children }) {
     const saved = localStorage.getItem('notifications');
     return saved !== null ? saved === 'true' : true;
   });
-  const [debugMode, setDebugMode] = useState(() => {
-    const saved = localStorage.getItem('debugMode');
-    return saved === 'true';
-  });
+
 
   const toggleNotificationsOptimistic = useCallback(() => {
     const newValue = !notifications;
@@ -32,22 +29,14 @@ export function SettingsProvider({ children }) {
     return newValue;
   }, [notifications]);
 
-  const toggleDebugModeOptimistic = useCallback(() => {
-    const newValue = !debugMode;
-    setDebugMode(newValue);
-    localStorage.setItem('debugMode', String(newValue));
-    return newValue;
-  }, [debugMode]);
+
 
   const notificationsUpdate = useOptimisticUpdate(async () => {
     await new Promise(resolve => setTimeout(resolve, 100));
     return { success: true };
   });
 
-  const debugModeUpdate = useOptimisticUpdate(async () => {
-    await new Promise(resolve => setTimeout(resolve, 100));
-    return { success: true };
-  });
+
 
   const toggleNotifications = useCallback(async () => {
     const optimisticValue = toggleNotificationsOptimistic();
@@ -57,13 +46,7 @@ export function SettingsProvider({ children }) {
     }
   }, [toggleNotificationsOptimistic, notificationsUpdate]);
 
-  const toggleDebugMode = useCallback(async () => {
-    const optimisticValue = toggleDebugModeOptimistic();
-    try {
-      await debugModeUpdate.execute(optimisticValue);
-    } catch (err) {
-    }
-  }, [toggleDebugModeOptimistic, debugModeUpdate]);
+
 
   useEffect(() => {
     localStorage.setItem('language', language);
@@ -93,8 +76,6 @@ export function SettingsProvider({ children }) {
     setLanguage: changeLanguage,
     notifications,
     toggleNotifications,
-    debugMode,
-    toggleDebugMode,
     clearCache
   }), [
     theme,
@@ -105,8 +86,6 @@ export function SettingsProvider({ children }) {
     changeLanguage,
     notifications,
     toggleNotifications,
-    debugMode,
-    toggleDebugMode,
     clearCache
   ]);
 
