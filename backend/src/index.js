@@ -30,6 +30,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust first proxy (required for secure cookies behind reverse proxy like DigitalOcean App Platform)
+// This tells Express that the X-Forwarded-Proto header is trustworthy
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Auto-generate session secret if not provided (persists for app lifetime)
 const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 if (!process.env.SESSION_SECRET) {
