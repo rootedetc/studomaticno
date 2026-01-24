@@ -47,3 +47,5 @@ opencode.json
 # Tooling/Audit
 AGENTS.md
 UX_AUDIT.md
+manual-scraper.js
+backend/manual-scrape/
