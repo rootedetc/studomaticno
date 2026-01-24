@@ -1,9 +1,14 @@
 {
   "name": "studomaticno",
   "scripts": {
-    "start": "cd backend && npm install && node src/index.js"
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd backend && npm install && node src/index.js",
+    "heroku-postbuild": "npm run build"
   },
   "devDependencies": {
     "playwright": "^1.57.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

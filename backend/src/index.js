@@ -1,4 +1,6 @@
 import crypto from 'crypto';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -20,6 +22,10 @@ import serviceManager from './utils/service-manager.js';
 import { generateRequestId, log } from './services/eduneta.js';
 
 dotenv.config();
+
+// ES Module path resolution
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -162,6 +168,21 @@ app.get('/api/debug/test-encoding', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Serve static frontend files in production
+// The frontend build output is at ../frontend/dist relative to backend root
+const frontendDistPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDistPath));
+
+// SPA fallback - serve index.html for all non-API routes
+app.get('*', (req, res) => {
+  // Only serve index.html for non-API routes
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  } else {
+    res.status(404).json({ error: 'API endpoint not found' });
   }
 });
 
