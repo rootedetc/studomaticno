@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { getFriendlyErrorMessage } from '../utils/helpers';
 import { Skeleton, SkeletonList } from '../components/Skeleton';
-import { GradeDistributionChart } from '../components/Charts';
+import { GradeDistributionChart, GradeTrendChart } from '../components/Charts';
 import TableCard from '../components/TableCard';
 import EmptyState from '../components/EmptyState';
 
