@@ -1,7 +1,7 @@
 import express from 'express';
 import * as cheerio from 'cheerio';
 import json5 from 'json5';
-import edunetaService, { generateRequestId, log } from '../services/eduneta.js';
+import { generateRequestId, log } from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
 import iconv from 'iconv-lite';
 
@@ -12,11 +12,11 @@ const EDUNETA_BASE_URL = process.env.EDUNETA_BASE_URL || 'https://eduneta.hr';
 function buildTree(nodes) {
   const nodeMap = {};
   const roots = [];
-  
+
   nodes.forEach(node => {
     nodeMap[node.id] = { ...node, children: [] };
   });
-  
+
   nodes.forEach(node => {
     const treeNode = nodeMap[node.id];
     if (node.parentId && nodeMap[node.parentId]) {
@@ -25,14 +25,14 @@ function buildTree(nodes) {
       roots.push(treeNode);
     }
   });
-  
+
   return roots;
 }
 
 function parseFiles(html, requestId = 'unknown') {
   const rid = requestId || generateRequestId();
   log('info', rid, 'Parsing files HTML');
-  
+
   const $ = cheerio.load(html);
   const files = [];
 
@@ -54,11 +54,11 @@ function parseFiles(html, requestId = 'unknown') {
     const rows = $(selector);
     if (rows.length > 0) {
       log('debug', rid, `Found files table with selector: ${selector}`, { rowCount: rows.length });
-      
+
       rows.not('.trHead, trHeadAlt, tr.head, tr.trHead, tr.trHeadAlt').each((index, row) => {
         rowCount++;
         const cols = $(row).find('td');
-        
+
         if (cols.length < 4) {
           return;
         }
@@ -134,22 +134,22 @@ router.get('/', requireAuth, async (req, res) => {
 
     log('debug', requestId, 'Fetching files URL', { url });
 
-    const html = await edunetaService.getPage(url, requestId);
+    const html = await req.edunetaService.getPage(url, requestId);
 
     if (html.includes('frameset') || html.includes('FRAME')) {
       log('warn', requestId, 'Received frameset instead of content, trying alternate URL');
       if (idHijer) {
         const altUrl = `/lib-student/DocDownloadDesno.aspx?idHijer=${idHijer}`;
-        const altHtml = await edunetaService.getPage(altUrl, requestId);
+        const altHtml = await req.edunetaService.getPage(altUrl, requestId);
         if (!altHtml.includes('frameset')) {
           log('info', requestId, 'Got content from alternate URL');
         }
       } else {
         const altUrl = `/lib-student/DocDownloadDesno.aspx?akc=${akc || 10}`;
         const altAltUrl = '/lib-student/DocDownloadDesno.aspx';
-        const altHtml = await edunetaService.getPage(altUrl, requestId);
+        const altHtml = await req.edunetaService.getPage(altUrl, requestId);
         if (altHtml.includes('frameset')) {
-          const altAltHtml = await edunetaService.getPage(altAltUrl, requestId);
+          const altAltHtml = await req.edunetaService.getPage(altAltUrl, requestId);
           if (!altAltHtml.includes('frameset')) {
             log('info', requestId, 'Got content from base URL');
           }
@@ -189,20 +189,20 @@ router.get('/tree', requireAuth, async (req, res) => {
 
   try {
     log('debug', requestId, 'About to fetch DocDownloadTree.aspx');
-    let html = await edunetaService.getPage('/lib-student/DocDownloadTree.aspx?akc=10', requestId);
+    let html = await req.edunetaService.getPage('/lib-student/DocDownloadTree.aspx?akc=10', requestId);
 
     log('debug', requestId, 'Tree HTML received', { length: html.length, startsWith: html.substring(0, 100) });
 
     if (html.includes('frameset') || html.includes('FRAME')) {
       log('warn', requestId, 'Received frameset for tree, trying DocDownloadFS.aspx');
-      const fsHtml = await edunetaService.getPage('/lib-student/DocDownloadFS.aspx?akc=10', requestId);
+      const fsHtml = await req.edunetaService.getPage('/lib-student/DocDownloadFS.aspx?akc=10', requestId);
       if (fsHtml.includes('DocDownloadTree.aspx')) {
         log('info', requestId, 'Extracting tree URL from frameset');
         const treeMatch = fsHtml.match(/src=["']DocDownloadTree\.aspx[^"']*["']/i);
         if (treeMatch) {
           const treeUrl = treeMatch[0].match(/src=["']([^"']+)["']/i);
           if (treeUrl && treeUrl[1]) {
-            html = await edunetaService.getPage(treeUrl[1], requestId);
+            html = await req.edunetaService.getPage(treeUrl[1], requestId);
             log('info', requestId, 'Fetched tree from extracted URL');
           }
         }
@@ -211,7 +211,7 @@ router.get('/tree', requireAuth, async (req, res) => {
 
     if (html.includes('frameset') || html.includes('FRAME')) {
       log('warn', requestId, 'Still got frameset, trying DocDownloadDesno.aspx as fallback');
-      const desnoHtml = await edunetaService.getPage('/lib-student/DocDownloadDesno.aspx?akc=10', requestId);
+      const desnoHtml = await req.edunetaService.getPage('/lib-student/DocDownloadDesno.aspx?akc=10', requestId);
       if (desnoHtml.includes('tvClientData')) {
         html = desnoHtml;
       }
@@ -272,13 +272,13 @@ router.get('/tree', requireAuth, async (req, res) => {
     log('info', requestId, 'Parsing complete', { tvDataCount: tvData.length, matchedPattern });
 
     if (tvData.length === 0) {
-      log('error', requestId, 'Could not find tvClientData in tree page', { 
+      log('error', requestId, 'Could not find tvClientData in tree page', {
         htmlLength: html.length,
         hasFrameset: html.includes('frameset'),
         hasTvClientData: html.includes('tvClientData'),
         htmlPreview: html.substring(0, 3000)
       });
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Failed to parse tree data - no tvClientData found in page',
         debug: {
           htmlLength: html.length,
@@ -295,11 +295,11 @@ router.get('/tree', requireAuth, async (req, res) => {
       const hierarchyId = item[0];
       const name = item[1];
       const value = item[2];
-      
+
       const parts = hierarchyId.split('_');
       parts.pop();
       const parentId = parts.length > 1 ? parts.join('_') : null;
-      
+
       return {
         id: hierarchyId,
         hierarchyId: parseInt(value),
@@ -330,14 +330,14 @@ router.get('/tree', requireAuth, async (req, res) => {
 router.get('/download/:id', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   log('info', requestId, 'Downloading file', { id: req.params.id });
-  
+
   try {
     const { id } = req.params;
-    
+
     log('debug', requestId, 'Starting file download request', { id });
-    
-    const response = await edunetaService.request('GET', `/lib-student/getFile.aspx?id=${id}`, null, true, requestId);
-    
+
+    const response = await req.edunetaService.request('GET', `/lib-student/getFile.aspx?id=${id}`, null, true, requestId);
+
     log('debug', requestId, 'Download response received', {
       status: response.status,
       contentType: response.headers['content-type'],
@@ -396,13 +396,13 @@ router.get('/download/:id', requireAuth, async (req, res) => {
     });
 
     const fileData = Buffer.isBuffer(response.data) ? response.data : Buffer.from(response.data);
-    
+
     let fileExtension = '';
     const extensionMatch = filename.match(/\.[^.]+$/);
     if (extensionMatch) {
       fileExtension = extensionMatch[0];
     }
-    
+
     res.setHeader('Content-Type', contentType);
     res.setHeader('X-File-Extension', fileExtension);
     res.setHeader('Content-Disposition', 'attachment');
@@ -424,9 +424,9 @@ router.get('/download/:id', requireAuth, async (req, res) => {
 router.get('/recent', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   log('info', requestId, 'Fetching recent files');
-  
+
   try {
-    const html = await edunetaService.getPage('/lib-student/DocDownloadDesno.aspx?akc=10', requestId);
+    const html = await req.edunetaService.getPage('/lib-student/DocDownloadDesno.aspx?akc=10', requestId);
     const result = parseFiles(html, requestId);
     const recent = result.files.slice(0, 10);
 

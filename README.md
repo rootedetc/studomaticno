@@ -5,6 +5,7 @@ Personal Modern PWA Dashboard for Eduneta student portal using a backend-proxy m
 ## Features
 
 - **Modern UI/UX** - Responsive mobile-first design
+- **Multi-User Support** - Multiple users can log in simultaneously with isolated sessions
 - **Dashboard Overview** - Today's timetable, notifications, messages, files
 - **Timetable** - Weekly and daily views
 - **Notifications** - Read/unread states
@@ -56,7 +57,6 @@ PORT=3001
 EDUNETA_BASE_URL=https://eduneta.hr
 SESSION_SECRET=your-super-secret-session-key
 FRONTEND_URL=http://localhost:5173
-ENFORCE_SINGLE_USER=true
 ```
 
 ### 3. Run Development
@@ -163,12 +163,12 @@ studomaticno/
 - HTTPS required for production
 - Credentials sent only during login
 - Session tokens protected against XSS
-- Single-user mode enforcement
+- Per-user session isolation with separate cookie jars
 - No credential storage in persistent storage
 
 ## License
 
-Personal use only. Not for redistribution.
+Personal use only.
 
 ## Author
 

@@ -1,13 +1,12 @@
 import express from 'express';
 import * as cheerio from 'cheerio';
-import edunetaService from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const html = await edunetaService.getPage('/lib-student/Indeks.aspx');
+    const html = await req.edunetaService.getPage('/lib-student/Indeks.aspx');
     const $ = cheerio.load(html);
 
     const courses = [];

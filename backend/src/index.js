@@ -14,29 +14,41 @@ import examsRoutes from './routes/exams.js';
 import gradesRoutes from './routes/grades.js';
 import regularityRoutes from './routes/regularity.js';
 import paymentsRoutes from './routes/payments.js';
-import edunetaService, { generateRequestId, log } from './services/eduneta.js';
+import serviceManager from './utils/service-manager.js';
+import { generateRequestId, log } from './services/eduneta.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Auto-generate session secret if not provided (persists for app lifetime)
+const SESSION_SECRET = process.env.SESSION_SECRET || require('crypto').randomBytes(32).toString('hex');
+if (!process.env.SESSION_SECRET) {
+  console.log('Warning: SESSION_SECRET not set, using auto-generated secret. Sessions will be invalidated on server restart.');
+}
+
+// CORS: Use FRONTEND_URL if set, otherwise allow same-origin requests (for DO App Platform where frontend/backend share domain)
+const corsOrigin = process.env.FRONTEND_URL || true;
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: corsOrigin,
   credentials: true
 }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'studomaticno-secret-key-change-in-production',
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000
+    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
   }
 }));
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/timetable', timetableRoutes);
@@ -63,6 +75,11 @@ app.get('/api/debug/page', async (req, res) => {
       return res.status(400).json({ error: 'URL parameter required' });
     }
 
+    if (!req.session.user) {
+      return res.status(401).json({ error: 'Not authenticated - login first to use debug routes' });
+    }
+
+    const edunetaService = serviceManager.getServiceForSession(req.sessionID);
     if (req.session.edunetaCookies) {
       edunetaService.loadCookiesFromSession(req.session.edunetaCookies, requestId);
     }
@@ -119,10 +136,10 @@ app.get('/api/debug/page', async (req, res) => {
 app.get('/api/debug/test-encoding', async (req, res) => {
   const requestId = generateRequestId();
   log('info', requestId, 'Encoding test');
-  
+
   try {
     const testPhrases = ['čćžšđ', 'ČĆŽŠĐ', 'Školski raspored', 'Poruke', 'Obavijesti'];
-    
+
     const results = testPhrases.map(phrase => ({
       original: phrase,
       encoded: Buffer.from(phrase).toString('binary'),

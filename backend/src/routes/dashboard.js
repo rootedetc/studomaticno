@@ -1,6 +1,5 @@
 import express from 'express';
 import * as cheerio from 'cheerio';
-import edunetaService from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -27,7 +26,7 @@ function extractStudentId(text) {
 
 router.get('/overview', requireAuth, async (req, res) => {
   try {
-    const homeHtml = await edunetaService.getPage('/lib-student/Default.aspx');
+    const homeHtml = await req.edunetaService.getPage('/lib-student/Default.aspx');
     const $ = cheerio.load(homeHtml);
 
     const korisnikText = $('#labKorisnik').text().trim() || '';
@@ -95,7 +94,7 @@ router.get('/overview', requireAuth, async (req, res) => {
 
 router.get('/user', requireAuth, async (req, res) => {
   try {
-    const homeHtml = await edunetaService.getPage('/lib-student/Default.aspx');
+    const homeHtml = await req.edunetaService.getPage('/lib-student/Default.aspx');
     const $ = cheerio.load(homeHtml);
 
     res.json({

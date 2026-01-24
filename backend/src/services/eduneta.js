@@ -149,13 +149,13 @@ class EdunetaService {
       while ((response.status === 302 || response.status === 301) && redirectCount < 10) {
         const location = response.headers.location;
         if (!location) break;
-        
+
         log('debug', rid, `Following redirect ${redirectCount + 1}`, { location });
-        
-        const redirectUrl = location.startsWith('http') 
-          ? location 
+
+        const redirectUrl = location.startsWith('http')
+          ? location
           : `${EDUNETA_BASE_URL}${location.startsWith('/') ? '' : '/lib-student/'}${location}`;
-        
+
         try {
           response = await axios({
             method: 'GET',
@@ -170,7 +170,7 @@ class EdunetaService {
             validateStatus: () => true,
             responseType: 'arraybuffer'
           });
-          
+
           this.parseCookies(response.headers['set-cookie'], rid);
           redirectCount++;
         } catch (error) {
@@ -186,31 +186,31 @@ class EdunetaService {
   async getLoginPage(requestId = null) {
     const rid = requestId || generateRequestId();
     log('info', rid, 'Fetching login page');
-    
+
     const response = await this.request('GET', EDUNETA_LOGIN_URL, null, true, rid);
     const html = this.decodeHtml(response.data, rid);
     const $ = cheerio.load(html);
-    
+
     const viewState = $('input[name="__VIEWSTATE"]').val();
     const eventValidation = $('input[name="__EVENTVALIDATION"]').val();
     const viewStateGenerator = $('input[name="__VIEWSTATEGENERATOR"]').val();
-    
+
     log('debug', rid, 'Login page parsed', {
       hasViewState: !!viewState,
       hasEventValidation: !!eventValidation,
       hasViewStateGenerator: !!viewStateGenerator
     });
-    
+
     return { viewState, eventValidation, viewStateGenerator };
   }
 
   async login(username, password, requestId = null) {
     const rid = requestId || generateRequestId();
     log('info', rid, `Login attempt for user: ${username}`);
-    
+
     try {
       this.cookies = {};
-      
+
       const loginData = await this.getLoginPage(rid);
 
       const formData = new URLSearchParams();
@@ -224,7 +224,7 @@ class EdunetaService {
       log('debug', rid, 'Submitting login form');
 
       const response = await this.request('POST', EDUNETA_LOGIN_URL, formData.toString(), true, rid);
-      
+
       if (!this.cookies.studomatic) {
         log('error', rid, 'Login failed - no studomatic cookie');
         throw new Error('Neispravno korisničko ime ili lozinka');
@@ -256,39 +256,39 @@ class EdunetaService {
   async getPage(url, requestId = null) {
     const rid = requestId || generateRequestId();
     log('info', rid, `Fetching page: ${url}`);
-    
+
     const fullUrl = url.startsWith('http') ? url : `${EDUNETA_BASE_URL}${url}`;
     const response = await this.request('GET', fullUrl, null, true, rid);
-    
+
     if (response.status !== 200) {
       log('error', rid, `Failed to fetch ${url}: ${response.status}`);
       throw new Error(`Failed to fetch ${url}: ${response.status}`);
     }
-    
+
     const html = this.decodeHtml(response.data, rid);
     log('debug', rid, `Page fetched: ${url}`, {
       htmlLength: html.length,
       hasContent: html.length > 0
     });
-    
+
     return html;
   }
 
   async postFormData(url, formData, requestId = null) {
     const rid = requestId || generateRequestId();
     log('info', rid, `Posting form to: ${url}`);
-    
+
     const fullUrl = url.startsWith('http') ? url : `${EDUNETA_BASE_URL}${url}`;
     const response = await this.request('POST', fullUrl, formData, true, rid);
-    
+
     if (response.status !== 200) {
       log('error', rid, `Failed to post ${url}: ${response.status}`);
       throw new Error(`Failed to post ${url}: ${response.status}`);
     }
-    
+
     const html = this.decodeHtml(response.data, rid);
     log('debug', rid, `Form posted: ${url}`, { htmlLength: html.length });
-    
+
     return html;
   }
 
@@ -299,7 +299,7 @@ class EdunetaService {
   async checkSession(requestId = null) {
     const rid = requestId || generateRequestId();
     log('debug', rid, 'Checking session');
-    
+
     try {
       if (!this.cookies.studomatic) {
         log('debug', rid, 'No studomatic cookie');
@@ -557,5 +557,6 @@ class EdunetaService {
   }
 }
 
-export default new EdunetaService();
-export { generateRequestId, log };
+// Export class for creating instances per session
+export { EdunetaService, generateRequestId, log };
+

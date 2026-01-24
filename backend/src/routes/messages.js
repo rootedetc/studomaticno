@@ -1,6 +1,6 @@
 import express from 'express';
 import * as cheerio from 'cheerio';
-import edunetaService, { generateRequestId, log } from '../services/eduneta.js';
+import { generateRequestId, log } from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -8,7 +8,7 @@ const router = express.Router();
 function parseMessages(html, requestId = 'unknown') {
   const rid = requestId || generateRequestId();
   log('info', rid, 'Parsing messages HTML');
-  
+
   const $ = cheerio.load(html);
   const messages = [];
 
@@ -25,11 +25,11 @@ function parseMessages(html, requestId = 'unknown') {
     const rows = $(selector);
     if (rows.length > 0) {
       log('debug', rid, `Found message table with selector: ${selector}`, { rowCount: rows.length });
-      
+
       rows.not('.trHead, trHeadAlt, tr.head').each((index, row) => {
         messageCount++;
         const cols = $(row).find('td');
-        
+
         if (cols.length < 6) {
           log('warn', rid, `Row ${index} has insufficient columns`, { count: cols.length });
           return;
@@ -60,13 +60,13 @@ function parseMessages(html, requestId = 'unknown') {
             hasAttachment,
             isRead
           };
-          
+
           log('debug', rid, `Message parsed: ${message.id}`, {
             subject: message.subject.substring(0, 50),
             isRead: message.isRead,
             hasAttachment: message.hasAttachment
           });
-          
+
           messages.push(message);
         }
       });
@@ -86,9 +86,9 @@ function parseMessages(html, requestId = 'unknown') {
 router.get('/inbox', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   log('info', requestId, 'Fetching inbox');
-  
+
   try {
-    const html = await edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=1', requestId);
+    const html = await req.edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=1', requestId);
     const messages = parseMessages(html, requestId);
 
     const unreadCount = messages.filter(m => !m.isRead).length;
@@ -113,9 +113,9 @@ router.get('/inbox', requireAuth, async (req, res) => {
 router.get('/unread', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   log('info', requestId, 'Fetching unread messages');
-  
+
   try {
-    const html = await edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=1', requestId);
+    const html = await req.edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=1', requestId);
     const messages = parseMessages(html, requestId);
     const unread = messages.filter(m => !m.isRead);
 
@@ -135,9 +135,9 @@ router.get('/unread', requireAuth, async (req, res) => {
 router.get('/sent', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   log('info', requestId, 'Fetching sent messages');
-  
+
   try {
-    const html = await edunetaService.getPage('/lib-student/PorukePoslane.aspx', requestId);
+    const html = await req.edunetaService.getPage('/lib-student/PorukePoslane.aspx', requestId);
     const $ = cheerio.load(html);
     const messages = [];
 
@@ -169,13 +169,13 @@ router.get('/sent', requireAuth, async (req, res) => {
   }
 });
 
-async function parseMessageDetail(id, messageId, requestId = null) {
+async function parseMessageDetail(edunetaService, id, messageId, requestId = null) {
   const rid = requestId || generateRequestId();
   log('info', rid, `Fetching message detail: id=${id}, messageId=${messageId}`);
 
   const html = await edunetaService.getPage(`/lib-student/PorukaPrikaz.aspx?idP=${id}&idPP=${messageId}`, rid);
   const $ = cheerio.load(html);
-  
+
   log('debug', rid, 'Detail page loaded', { htmlLength: html.length });
 
   const subjectSelectors = [
@@ -245,38 +245,38 @@ async function parseMessageDetail(id, messageId, requestId = null) {
       let remaining = html;
       const divOpen = '<div>';
       const divClose = '</div>';
-      
+
       while (remaining.length > 0) {
         const openIndex = remaining.indexOf(divOpen);
         const closeIndex = remaining.indexOf(divClose);
-        
+
         if (openIndex === -1 && closeIndex === -1) {
           result.push(remaining);
           break;
         }
-        
+
         if (closeIndex !== -1 && (openIndex === -1 || closeIndex < openIndex)) {
           result.push(remaining.substring(0, closeIndex));
           remaining = remaining.substring(closeIndex + divClose.length);
           continue;
         }
-        
+
         if (openIndex !== -1 && (closeIndex === -1 || openIndex < closeIndex)) {
           if (openIndex > 0) {
             result.push(remaining.substring(0, openIndex));
           }
           remaining = remaining.substring(openIndex + divOpen.length);
-          
+
           let depth = 1;
           let searchFrom = 0;
           let found = false;
-          
+
           while (searchFrom < remaining.length && depth > 0) {
             const nextOpen = remaining.indexOf(divOpen, searchFrom);
             const nextClose = remaining.indexOf(divClose, searchFrom);
-            
+
             if (nextClose === -1) break;
-            
+
             if (nextOpen !== -1 && nextOpen < nextClose) {
               result.push(remaining.substring(0, nextOpen));
               depth++;
@@ -302,14 +302,14 @@ async function parseMessageDetail(id, messageId, requestId = null) {
               }
             }
           }
-          
+
           if (!found) break;
         }
       }
-      
+
       return result.join('');
     };
-    
+
     body = parseDivs(body)
       .replace(/<span>(.*?)<\/span>/gi, '$1')
       .replace(/&nbsp;/gi, ' ')
@@ -387,11 +387,11 @@ async function parseMessageDetail(id, messageId, requestId = null) {
 router.get('/thread/:id', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   log('info', requestId, 'Fetching message thread', { id: req.params.id });
-  
+
   try {
     const { id } = req.params;
 
-    const inboxHtml = await edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=1', requestId);
+    const inboxHtml = await req.edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=1', requestId);
     const messages = parseMessages(inboxHtml, requestId);
 
     log('debug', requestId, 'Parsed messages', { count: messages.length, firstFewIds: messages.slice(0, 3).map(m => m.id) });
@@ -404,7 +404,7 @@ router.get('/thread/:id', requireAuth, async (req, res) => {
 
     log('info', requestId, 'Message found', { id: message.id, messageId: message.messageId, subject: message.subject?.substring(0, 50) });
 
-    const detail = await parseMessageDetail(message.id, message.messageId, requestId);
+    const detail = await parseMessageDetail(req.edunetaService, message.id, message.messageId, requestId);
 
     log('info', requestId, 'Message thread fetched', {
       id,

@@ -1,6 +1,6 @@
 import express from 'express';
 import * as cheerio from 'cheerio';
-import edunetaService, { generateRequestId, log } from '../services/eduneta.js';
+import { generateRequestId, log } from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -8,7 +8,7 @@ const router = express.Router();
 function parseNotifications(html, requestId = 'unknown') {
   const rid = requestId || generateRequestId();
   log('info', rid, 'Parsing notifications HTML');
-  
+
   const $ = cheerio.load(html);
   const notifications = [];
 
@@ -25,11 +25,11 @@ function parseNotifications(html, requestId = 'unknown') {
     const rows = $(selector);
     if (rows.length > 0) {
       log('debug', rid, `Found notifications table with selector: ${selector}`, { rowCount: rows.length });
-      
+
       rows.not('.trHead, trHeadAlt, tr.head').each((index, row) => {
         rowCount++;
         const cols = $(row).find('td');
-        
+
         if (cols.length < 7) {
           log('warn', rid, `Row ${index} has insufficient columns`, { count: cols.length });
           return;
@@ -56,12 +56,12 @@ function parseNotifications(html, requestId = 'unknown') {
             isNew: !isRead,
             link
           };
-          
+
           log('debug', rid, `Notification parsed: ${notification.id}`, {
             title: notification.title.substring(0, 50),
             isNew: notification.isNew
           });
-          
+
           notifications.push(notification);
         }
       });
@@ -81,9 +81,9 @@ function parseNotifications(html, requestId = 'unknown') {
 router.get('/', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   log('info', requestId, 'Fetching notifications');
-  
+
   try {
-    const html = await edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=2', requestId);
+    const html = await req.edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=2', requestId);
     const notifications = parseNotifications(html, requestId);
 
     const unreadCount = notifications.filter(n => n.isNew).length;
@@ -108,9 +108,9 @@ router.get('/', requireAuth, async (req, res) => {
 router.get('/unread', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   log('info', requestId, 'Fetching unread notifications');
-  
+
   try {
-    const html = await edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=2', requestId);
+    const html = await req.edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=2', requestId);
     const notifications = parseNotifications(html, requestId);
     const unread = notifications.filter(n => n.isNew);
 
@@ -138,7 +138,7 @@ router.get('/:id', requireAuth, async (req, res) => {
     const url = idPP
       ? `/lib-student/PorukaPrikaz.aspx?idP=${id}&idPP=${idPP}`
       : `/lib-student/PorukaPrikaz.aspx?idP=${id}`;
-    const html = await edunetaService.getPage(url, requestId);
+    const html = await req.edunetaService.getPage(url, requestId);
     const $ = cheerio.load(html);
 
     log('debug', requestId, 'Detail page loaded', { htmlLength: html.length, url });
@@ -205,38 +205,38 @@ router.get('/:id', requireAuth, async (req, res) => {
         let remaining = html;
         const divOpen = '<div>';
         const divClose = '</div>';
-        
+
         while (remaining.length > 0) {
           const openIndex = remaining.indexOf(divOpen);
           const closeIndex = remaining.indexOf(divClose);
-          
+
           if (openIndex === -1 && closeIndex === -1) {
             result.push(remaining);
             break;
           }
-          
+
           if (closeIndex !== -1 && (openIndex === -1 || closeIndex < openIndex)) {
             result.push(remaining.substring(0, closeIndex));
             remaining = remaining.substring(closeIndex + divClose.length);
             continue;
           }
-          
+
           if (openIndex !== -1 && (closeIndex === -1 || openIndex < closeIndex)) {
             if (openIndex > 0) {
               result.push(remaining.substring(0, openIndex));
             }
             remaining = remaining.substring(openIndex + divOpen.length);
-            
+
             let depth = 1;
             let searchFrom = 0;
             let found = false;
-            
+
             while (searchFrom < remaining.length && depth > 0) {
               const nextOpen = remaining.indexOf(divOpen, searchFrom);
               const nextClose = remaining.indexOf(divClose, searchFrom);
-              
+
               if (nextClose === -1) break;
-              
+
               if (nextOpen !== -1 && nextOpen < nextClose) {
                 result.push(remaining.substring(0, nextOpen));
                 depth++;
@@ -262,14 +262,14 @@ router.get('/:id', requireAuth, async (req, res) => {
                 }
               }
             }
-            
+
             if (!found) break;
           }
         }
-        
+
         return result.join('');
       };
-      
+
       body = parseDivs(body)
         .replace(/<span>(.*?)<\/span>/gi, '$1')
         .replace(/&nbsp;/gi, ' ')

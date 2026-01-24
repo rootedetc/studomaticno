@@ -1,13 +1,12 @@
 import express from 'express';
 import * as cheerio from 'cheerio';
-import edunetaService from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const html = await edunetaService.getPage('/lib-student/IzvPrijavljeniIspiti.aspx');
+    const html = await req.edunetaService.getPage('/lib-student/IzvPrijavljeniIspiti.aspx');
     const $ = cheerio.load(html);
 
     const parseExams = ($doc) => {
@@ -84,7 +83,7 @@ router.get('/', requireAuth, async (req, res) => {
           formData.append('__EVENTARGUMENT', '');
 
           try {
-            const sessionHtml = await edunetaService.postFormData('/lib-student/IzvPrijavljeniIspiti.aspx', formData.toString());
+            const sessionHtml = await req.edunetaService.postFormData('/lib-student/IzvPrijavljeniIspiti.aspx', formData.toString());
             const $session = cheerio.load(sessionHtml);
             return {
               ...parseExams($session),
@@ -132,7 +131,7 @@ router.get('/attempts', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Missing required parameters: idOS, idPred, idAKG' });
     }
 
-    const html = await edunetaService.getPage(`/lib-student/IzvIzlasciIspit.aspx?idOS=${idOS}&idPred=${idPred}&idAKG=${idAKG}`);
+    const html = await req.edunetaService.getPage(`/lib-student/IzvIzlasciIspit.aspx?idOS=${idOS}&idPred=${idPred}&idAKG=${idAKG}`);
     const $ = cheerio.load(html);
 
     const subject = $('#labPredmet').text().trim();
