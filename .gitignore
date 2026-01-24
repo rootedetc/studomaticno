@@ -43,3 +43,7 @@ backend/eduneta-scrape/
 .cache/
 *.tsbuildinfo
 opencode.json
+
+# Tooling/Audit
+AGENTS.md
+UX_AUDIT.md
