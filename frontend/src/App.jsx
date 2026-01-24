@@ -16,6 +16,7 @@ import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
 import DebugPanel from './components/DebugPanel';
 import SessionExpiredModal from './components/SessionExpiredModal';
+import ErrorBoundary from './components/ErrorBoundary';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { TranslationProvider } from './hooks/useTranslation.jsx';
 
@@ -111,26 +112,8 @@ function App() {
             </Routes>
           ) : isMobile ? (
             <div>
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/timetable" element={<Timetable />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/files" element={<Files />} />
-                <Route path="/grades" element={<Grades />} />
-                <Route path="/finance" element={<Finance />} />
-                <Route path="/ispiti" element={<Ispiti />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-              <MobileNav />
-            </div>
-          ) : (
-            <div className="sidebar-layout">
-              <aside className="sidebar bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-                <Sidebar />
-              </aside>
-              <main className="main-content">
+              <a href="#main-content" className="skip-link">Skip to main content</a>
+              <ErrorBoundary>
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/timetable" element={<Timetable />} />
@@ -143,10 +126,34 @@ function App() {
                   <Route path="/settings" element={<Settings />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
+              </ErrorBoundary>
+              <MobileNav />
+            </div>
+          ) : (
+            <div className="sidebar-layout">
+              <a href="#main-content" className="skip-link">Skip to main content</a>
+              <aside className="sidebar bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+                <Sidebar />
+              </aside>
+              <main className="main-content" id="main-content">
+                <ErrorBoundary>
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/timetable" element={<Timetable />} />
+                    <Route path="/notifications" element={<Notifications />} />
+                    <Route path="/messages" element={<Messages />} />
+                    <Route path="/files" element={<Files />} />
+                    <Route path="/grades" element={<Grades />} />
+                    <Route path="/finance" element={<Finance />} />
+                    <Route path="/ispiti" element={<Ispiti />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </ErrorBoundary>
               </main>
             </div>
           )}
-          <DebugPanel />
+          {import.meta.env.DEV && <DebugPanel />}
           <SessionExpiredModal
             isOpen={sessionExpired}
             onClose={() => setSessionExpired(false)}

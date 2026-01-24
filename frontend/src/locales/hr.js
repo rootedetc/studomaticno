@@ -9,7 +9,8 @@ export default {
     finance: 'Financije',
     exams: 'Ispiti',
     settings: 'Postavke',
-    logout: 'Odjava'
+    logout: 'Odjava',
+    more: 'Više'
   },
   settings: {
     title: 'Postavke',
@@ -45,6 +46,7 @@ export default {
     close: 'Zatvori',
     loading: 'Učitavanje...',
     error: 'Greška',
-    success: 'Uspjeh'
+    success: 'Uspjeh',
+    reload: 'Ponovno učitaj'
   }
 };

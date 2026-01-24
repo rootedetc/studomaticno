@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import useSettings from '../contexts/SettingsContext';
-import useTranslation from '../hooks/useTranslation.jsx';
+import useTranslation from '../hooks/useTranslation';
+import PageHeader from '../components/PageHeader';
+import Icon from '../components/Icon';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -28,17 +30,10 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center gap-4 sticky top-0 z-10">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-        >
-          <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
-      </header>
+      <PageHeader
+        title={t('settings.title')}
+        showBackButton={true}
+      />
 
       <main className="p-4 max-w-2xl mx-auto space-y-4">
         <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
@@ -76,7 +71,7 @@ export default function Settings() {
                       </svg>
                     )}
                     {themeOption === 'system' && (
-                      <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     )}
@@ -247,7 +242,7 @@ export default function Settings() {
             </div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">studomaticno</h3>
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">{t('settings.version')} 1.0.0</p>
-            <p className="text-gray-400 dark:text-gray-500 text-xs">Secure Student Portal</p>
+            <p className="text-gray-500 dark:text-gray-400 text-xs">Secure Student Portal</p>
           </div>
         </section>
       </main>

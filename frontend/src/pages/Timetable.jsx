@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
+import { getFriendlyErrorMessage } from '../utils/helpers';
 import { Skeleton, SkeletonCard } from '../components/Skeleton';
+import SegmentedControl from '../components/SegmentedControl';
+import EmptyState from '../components/EmptyState';
+import DayStrip from '../components/DayStrip';
 
 function Timetable() {
   const [timetable, setTimetable] = useState([]);
@@ -90,17 +94,17 @@ function Timetable() {
 
   if (error) {
     return (
-      <div className="p-4 lg:p-6">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-          {error}
+      <div className="loading-container">
+        <div className="error-banner">
+          {getFriendlyErrorMessage(error)}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full">
-      <div className="p-4 lg:p-6 flex-shrink-0">
+    <div className="page-container">
+      <div className="page-header">
         <div className="max-w-6xl mx-auto">
           {debugMode && (
             <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-xs font-mono">
@@ -111,7 +115,7 @@ function Timetable() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Raspored</h1>
-              <p className="text-gray-600 dark:text-gray-400">{weekInfo.weekStart} - {weekInfo.weekEnd}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{weekInfo.weekStart} - {weekInfo.weekEnd}</p>
             </div>
             <div className="flex items-center gap-2 mt-4 sm:mt-0">
               <button
@@ -136,68 +140,46 @@ function Timetable() {
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => setView('weekly')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                view === 'weekly' ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              Tjedan
-            </button>
-            <button
-              onClick={() => setView('daily')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                view === 'daily' ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              Dan
-            </button>
-          </div>
+          <SegmentedControl
+            options={[
+              { value: 'weekly', label: 'Tjedan' },
+              { value: 'daily', label: 'Dan' }
+            ]}
+            value={view}
+            onChange={(value) => setView(value)}
+          />
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 lg:px-6 pb-6">
+      <div className="page-content">
         <div className="max-w-6xl mx-auto fade-in">
           {view === 'daily' ? (
             <div>
-              <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
-                {timetable.map((day) => {
-                  const dateStr = day.lessons[0]?.date || '';
-                  const formattedDate = dateStr.replace(/\.$/, '');
-                  return (
-                    <button
-                      key={day.day}
-                      onClick={() => setSelectedDay(day.day)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                        selectedDay === day.day ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      }`}
-                    >
-                      <div className="flex flex-col items-center">
-                        <span>{day.day}</span>
-                        {formattedDate && <span className="text-xs font-normal opacity-75">{formattedDate}</span>}
-                      </div>
-                    </button>
-                  );
-                })}
+              <div className="mb-6">
+                 <DayStrip 
+                   days={timetable} 
+                   selectedDay={selectedDay} 
+                   onSelectDay={setSelectedDay} 
+                 />
               </div>
 
               {selectedDay ? (
                 (() => {
                   const dayData = timetable.find((d) => d.day === selectedDay);
                   if (!dayData || dayData.lessons.length === 0) {
-                    return <div className="card text-center py-12"><p className="text-gray-500 dark:text-gray-400">Nema predmeta za ovaj dan</p></div>;
+                    return <EmptyState icon="emptyTimetable" title="Nema predmeta za ovaj dan" />;
                   }
                   return (
                     <div className="space-y-3">
                       {dayData.lessons.map((lesson, index) => {
                         const isExam = lesson.type?.toLowerCase().includes('ispit');
+                        const lessonKey = `${selectedDay}-${lesson.subject}-${lesson.time}-${index}`;
                         return (
-                          <div key={index} className={`card ${isExam ? 'border-2 border-red-200 dark:border-red-800' : ''}`}>
+                          <div key={lessonKey} className={`card ${isExam ? 'border-2 border-red-200 dark:border-red-800' : ''}`}>
                             <div className="flex items-start gap-4">
                               <div className="flex-1">
                                 <h3 className="font-semibold text-gray-900 dark:text-white text-lg">{lesson.subject}</h3>
-                                <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-500 dark:text-gray-400">
                                   <span className="flex items-center gap-1">🕐 {lesson.time}</span>
                                   {lesson.room && <span>📍 {lesson.room}</span>}
                                   {lesson.professor && <span>👤 {lesson.professor}</span>}
@@ -216,7 +198,7 @@ function Timetable() {
                   );
                 })()
               ) : (
-                <div className="card text-center py-12"><p className="text-gray-500 dark:text-gray-400">Odaberite dan za prikaz rasporeda</p></div>
+                <EmptyState icon="emptyTimetable" title="Odaberite dan za prikaz rasporeda" />
               )}
             </div>
           ) : (
@@ -238,15 +220,16 @@ function Timetable() {
                       <div className="space-y-3">
                         {day.lessons.map((lesson, index) => {
                           const isExam = lesson.type?.toLowerCase().includes('ispit');
+                          const lessonKey = `${day.day}-${lesson.subject}-${lesson.time}-${index}`;
                           return (
-                            <div key={index} className={`flex items-center gap-4 p-3 rounded-lg ${isExam ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800' : 'bg-gray-50 dark:bg-gray-700'}`}>
+                            <div key={lessonKey} className={`flex items-center gap-4 p-3 rounded-lg ${isExam ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800' : 'bg-gray-50 dark:bg-gray-700'}`}>
                               <div className="text-center min-w-[70px]">
                                 <p className="text-sm font-medium text-gray-900 dark:text-white">{lesson.time}</p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">{lesson.room}</p>
                               </div>
                               <div className="flex-1">
                                 <p className="font-medium text-gray-900 dark:text-white">{lesson.subject}</p>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">{lesson.professor}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">{lesson.professor}</p>
                               </div>
                               {lesson.type && (
                                 <span className={`px-2 py-1 rounded text-xs font-medium ${isExam ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'}`}>

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { memo, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 
-function StickyAnnouncements({ announcements, onDismiss }) {
+const StickyAnnouncements = memo(function StickyAnnouncements({ announcements, onDismiss }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -12,25 +13,32 @@ function StickyAnnouncements({ announcements, onDismiss }) {
   const hasNext = currentIndex < announcements.length - 1;
   const hasPrev = currentIndex > 0;
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (hasNext) {
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(prev => prev + 1);
       setIsExpanded(false);
     }
-  };
+  }, [hasNext]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (hasPrev) {
-      setCurrentIndex(currentIndex - 1);
+      setCurrentIndex(prev => prev - 1);
       setIsExpanded(false);
     }
-  };
+  }, [hasPrev]);
 
-  const handleDismiss = () => {
-    if (onDismiss) {
-      onDismiss();
-    }
-  };
+  const handleDismiss = useCallback(() => {
+    onDismiss?.();
+  }, [onDismiss]);
+
+  const handleExpand = useCallback(() => {
+    setIsExpanded(prev => !prev);
+  }, []);
+
+  const counterText = useMemo(() => 
+    `${currentIndex + 1} / ${announcements.length}`,
+    [currentIndex, announcements.length]
+  );
 
   return (
     <div className="mb-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 rounded-lg p-4 shadow-sm">
@@ -43,7 +51,7 @@ function StickyAnnouncements({ announcements, onDismiss }) {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-amber-600 dark:text-amber-400">
-            {currentIndex + 1} / {announcements.length}
+            {counterText}
           </span>
           <button
             onClick={handleDismiss}
@@ -61,11 +69,11 @@ function StickyAnnouncements({ announcements, onDismiss }) {
 
       <div className="relative">
         <div className={`text-sm text-gray-700 dark:text-gray-300 ${isExpanded ? '' : 'line-clamp-2'}`}>
-          <div dangerouslySetInnerHTML={{ __html: current.body }} />
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(current.body || '') }} />
         </div>
         {current.body && current.body.length > 150 && (
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={handleExpand}
             className="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 mt-1"
           >
             {isExpanded ? 'Prikaži manje' : 'Pročitaj više'}
@@ -103,6 +111,6 @@ function StickyAnnouncements({ announcements, onDismiss }) {
       </div>
     </div>
   );
-}
+});
 
 export default StickyAnnouncements;

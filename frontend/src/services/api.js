@@ -148,6 +148,10 @@ class ApiService {
     return this.request(`/notifications/${encodeURIComponent(id)}${params}`);
   }
 
+  async markNotificationAsRead(id) {
+    return this.request(`/notifications/${encodeURIComponent(id)}/read`, { method: 'POST' });
+  }
+
   async getMessages(useCache = true) {
     const cacheKey = 'messages_inbox';
     if (useCache) {
@@ -159,8 +163,16 @@ class ApiService {
     return data;
   }
 
+  async markMessageAsRead(id) {
+    return this.request(`/messages/${encodeURIComponent(id)}/read`, { method: 'POST' });
+  }
+
   async getMessageThread(id) {
     return this.request(`/messages/thread/${encodeURIComponent(id)}`);
+  }
+
+  async markMessageAsRead(id) {
+    return this.request(`/messages/${encodeURIComponent(id)}/read`, { method: 'POST' });
   }
 
   async getFiles(akc = null) {

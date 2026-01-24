@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, createContext } from 'react';
+import { useState, useEffect, useContext, createContext, useMemo, useCallback } from 'react';
 import en from '../locales/en';
 import hr from '../locales/hr';
 
@@ -23,7 +23,7 @@ export function TranslationProvider({ children }) {
     return (saved === 'en' || saved === 'hr') ? saved : 'hr';
   });
 
-  const t = (key) => {
+  const t = useCallback((key) => {
     const keys = key.split('.');
     let value = translations[language];
     
@@ -32,15 +32,21 @@ export function TranslationProvider({ children }) {
     }
     
     return value || key;
-  };
+  }, [language]);
 
-  const changeLanguage = (lang) => {
+  const changeLanguage = useCallback((lang) => {
     setLanguage(lang);
     localStorage.setItem('language', lang);
-  };
+  }, []);
+
+  const value = useMemo(() => ({
+    t,
+    language,
+    changeLanguage
+  }), [t, language, changeLanguage]);
 
   return (
-    <TranslationContext.Provider value={{ t, language, changeLanguage }}>
+    <TranslationContext.Provider value={value}>
       {children}
     </TranslationContext.Provider>
   );

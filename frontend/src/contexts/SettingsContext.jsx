@@ -1,6 +1,7 @@
-import { useState, useEffect, useContext, createContext } from 'react';
+import { useState, useEffect, useContext, createContext, useCallback, useMemo } from 'react';
 import useTheme from '../hooks/useTheme';
 import useTranslation from '../hooks/useTranslation.jsx';
+import { useOptimisticUpdate } from '../hooks/useOptimisticUpdate';
 
 const SettingsContext = createContext();
 
@@ -24,23 +25,51 @@ export function SettingsProvider({ children }) {
     return saved === 'true';
   });
 
+  const toggleNotificationsOptimistic = useCallback(() => {
+    const newValue = !notifications;
+    setNotifications(newValue);
+    localStorage.setItem('notifications', String(newValue));
+    return newValue;
+  }, [notifications]);
+
+  const toggleDebugModeOptimistic = useCallback(() => {
+    const newValue = !debugMode;
+    setDebugMode(newValue);
+    localStorage.setItem('debugMode', String(newValue));
+    return newValue;
+  }, [debugMode]);
+
+  const notificationsUpdate = useOptimisticUpdate(async () => {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return { success: true };
+  });
+
+  const debugModeUpdate = useOptimisticUpdate(async () => {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return { success: true };
+  });
+
+  const toggleNotifications = useCallback(async () => {
+    const optimisticValue = toggleNotificationsOptimistic();
+    try {
+      await notificationsUpdate.execute(optimisticValue);
+    } catch (err) {
+    }
+  }, [toggleNotificationsOptimistic, notificationsUpdate]);
+
+  const toggleDebugMode = useCallback(async () => {
+    const optimisticValue = toggleDebugModeOptimistic();
+    try {
+      await debugModeUpdate.execute(optimisticValue);
+    } catch (err) {
+    }
+  }, [toggleDebugModeOptimistic, debugModeUpdate]);
+
   useEffect(() => {
     localStorage.setItem('language', language);
   }, [language]);
 
-  const toggleNotifications = () => {
-    const newValue = !notifications;
-    setNotifications(newValue);
-    localStorage.setItem('notifications', String(newValue));
-  };
-
-  const toggleDebugMode = () => {
-    const newValue = !debugMode;
-    setDebugMode(newValue);
-    localStorage.setItem('debugMode', String(newValue));
-  };
-
-  const clearCache = async () => {
+  const clearCache = useCallback(async () => {
     localStorage.clear();
     sessionStorage.clear();
 
@@ -53,22 +82,36 @@ export function SettingsProvider({ children }) {
     await Promise.all(cacheNames.map(name => caches.delete(name)));
 
     window.location.reload();
-  };
+  }, []);
+
+  const value = useMemo(() => ({
+    theme,
+    effectiveTheme,
+    setTheme,
+    toggleTheme,
+    language,
+    setLanguage: changeLanguage,
+    notifications,
+    toggleNotifications,
+    debugMode,
+    toggleDebugMode,
+    clearCache
+  }), [
+    theme,
+    effectiveTheme,
+    setTheme,
+    toggleTheme,
+    language,
+    changeLanguage,
+    notifications,
+    toggleNotifications,
+    debugMode,
+    toggleDebugMode,
+    clearCache
+  ]);
 
   return (
-    <SettingsContext.Provider value={{
-      theme,
-      effectiveTheme,
-      setTheme,
-      toggleTheme,
-      language,
-      setLanguage: changeLanguage,
-      notifications,
-      toggleNotifications,
-      debugMode,
-      toggleDebugMode,
-      clearCache
-    }}>
+    <SettingsContext.Provider value={value}>
       {children}
     </SettingsContext.Provider>
   );

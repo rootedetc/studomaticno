@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { Skeleton, SkeletonList } from '../components/Skeleton';
 import useTranslation from '../hooks/useTranslation.jsx';
+import TableCard from '../components/TableCard';
+import SegmentedControl from '../components/SegmentedControl';
+import EmptyState from '../components/EmptyState';
 
 function Ispiti() {
   const { t } = useTranslation();
@@ -63,6 +66,67 @@ function Ispiti() {
     return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30';
   };
 
+  const prijavljeniColumns = [
+    { key: 'year', label: 'Godina', priority: 'medium' },
+    { key: 'subject', label: 'Predmet', priority: 'high' },
+    { key: 'professor', label: 'Predavač', priority: 'medium' },
+    { key: 'examDate', label: 'Termin', priority: 'high' },
+    { key: 'room', label: 'Učionica', priority: 'medium' },
+    { key: 'enrollmentDate', label: 'Prijavljen', priority: 'low' },
+    {
+      key: 'grade',
+      label: 'Ocjena',
+      priority: 'high',
+      format: (value) => value ? (
+        <span className={`grade-badge ${getGradeColor(value)}`}>{value}</span>
+      ) : (
+        <span className="text-gray-500 dark:text-gray-400">-</span>
+      )
+    },
+  ];
+
+  const odjavljeniColumns = [
+    { key: 'year', label: 'Godina', priority: 'medium' },
+    { key: 'subject', label: 'Predmet', priority: 'high' },
+    { key: 'professor', label: 'Predavač', priority: 'medium' },
+    { key: 'examDate', label: 'Termin', priority: 'high' },
+    { key: 'room', label: 'Učionica', priority: 'medium' },
+    { key: 'cancellationDate', label: 'Odjavljen', priority: 'low' },
+  ];
+
+  const attemptsColumns = [
+    { key: 'attemptNumber', label: 'Br. izlaska', priority: 'high' },
+    { key: 'examPeriod', label: 'Naziv roka', priority: 'high' },
+    {
+      key: 'registered',
+      label: 'Prijavljen',
+      priority: 'medium',
+      format: (value) => value ? (
+        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+        </svg>
+      ) : (
+        <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      )
+    },
+    { key: 'examDate', label: 'Termin roka', priority: 'high' },
+    { key: 'professor', label: 'Predavač', priority: 'medium' },
+    { key: 'enrollmentTime', label: 'Vrijeme prijave', priority: 'low' },
+    { key: 'cancellationTime', label: 'Vrijeme odjave', priority: 'low' },
+    {
+      key: 'grade',
+      label: 'Ocjena',
+      priority: 'high',
+      format: (value) => value ? (
+        <span className={`grade-badge ${getGradeColor(value)}`}>{value}</span>
+      ) : (
+        <span className="text-gray-500 dark:text-gray-400">-</span>
+      )
+    },
+  ];
+
   if (loading) {
     return (
       <div className="p-4 lg:p-6">
@@ -90,31 +154,17 @@ function Ispiti() {
           </div>
         </div>
 
-        <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
-          <button
-            onClick={() => setActiveTab('prijavljeni')}
-            className={`px-4 py-2 font-medium transition-colors ${
-              activeTab === 'prijavljeni'
-                ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            Prijavljeni ispiti
-          </button>
-          <button
-            onClick={() => setActiveTab('izlasci')}
-            className={`px-4 py-2 font-medium transition-colors ${
-              activeTab === 'izlasci'
-                ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            Izlasci na ispit
-          </button>
-        </div>
+          <SegmentedControl
+            options={[
+              { value: 'prijavljeni', label: 'Prijavljeni ispiti' },
+              { value: 'izlasci', label: 'Izlasci na ispit' }
+            ]}
+            value={activeTab}
+            onChange={(value) => setActiveTab(value)}
+          />
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-4">
+          <div className="error-banner">
             {error}
           </div>
         )}
@@ -125,55 +175,72 @@ function Ispiti() {
           {activeTab === 'prijavljeni' ? (
             <>
               {exams?.prijavljeni?.length === 0 && exams?.odjavljeni?.length === 0 ? (
-                <div className="card text-center py-12">
-                  <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                  </svg>
-                  <p className="text-gray-500">Nema prijavljenih ispita za trenutni rok</p>
-                </div>
+                <EmptyState
+                  icon="emptyExams"
+                  title="Nema prijavljenih ispita za trenutni rok"
+                />
               ) : (
                 <div className="space-y-6">
                   {exams?.prijavljeni?.length > 0 && (
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Prijavljeni kolegiji</h2>
-                      <div className="overflow-x-auto">
-                        <table className="w-full card">
-                          <thead>
-                            <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Godina</th>
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Predmet</th>
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Predavač</th>
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Termin</th>
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Učionica</th>
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Prijavljen</th>
-                              <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Ocjena</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {exams.prijavljeni.map((exam, index) => (
-                              <tr 
-                                key={index}
-                                className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
-                              >
-                                <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{exam.year}</td>
-                                <td className="py-3 px-4 text-sm text-gray-900 dark:text-white font-medium">{exam.subject}</td>
-                                <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{exam.professor}</td>
-                                <td className="py-3 px-4 text-sm text-gray-900 dark:text-white">{exam.examDate}</td>
-                                <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{exam.room}</td>
-                                <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{exam.enrollmentDate}</td>
-                                <td className="py-3 px-4 text-center">
-                                  {exam.grade ? (
-                                    <span className={`inline-flex items-center justify-center w-10 h-10 rounded-lg font-bold text-lg ${getGradeColor(exam.grade)}`}>
-                                      {exam.grade}
-                                    </span>
-                                  ) : (
-                                    <span className="text-gray-400 dark:text-gray-500">-</span>
-                                  )}
-                                </td>
+                      
+                      <div className="hidden md:block table-container">
+                        <div className="overflow-x-auto">
+                          <table className="table">
+                            <thead>
+                              <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                                <th className="table-header-cell">Godina</th>
+                                <th className="table-header-cell">Predmet</th>
+                                <th className="table-header-cell">Predavač</th>
+                                <th className="table-header-cell">Termin</th>
+                                <th className="table-header-cell">Učionica</th>
+                                <th className="table-header-cell">Prijavljen</th>
+                                <th className="table-header-cell text-center">Ocjena</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              {exams.prijavljeni.map((exam, index) => {
+                                const examKey = `${exam.subject}-${exam.examDate}-${index}`;
+                                return (
+                                  <tr 
+                                    key={examKey}
+                                    className="table-row"
+                                  >
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{exam.year}</td>
+                                    <td className="table-cell font-medium">{exam.subject}</td>
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{exam.professor}</td>
+                                    <td className="table-cell">{exam.examDate}</td>
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{exam.room}</td>
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{exam.enrollmentDate}</td>
+                                    <td className="table-cell text-center">
+                                      {exam.grade ? (
+                                        <span className={`grade-badge ${getGradeColor(exam.grade)}`}>
+                                          {exam.grade}
+                                        </span>
+                                      ) : (
+                                        <span className="text-gray-500 dark:text-gray-400">-</span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <div className="md:hidden space-y-3">
+                        {exams.prijavljeni.map((exam, index) => {
+                          const examKey = `${exam.subject}-${exam.examDate}-${index}`;
+                          return (
+                            <TableCard
+                              key={examKey}
+                              data={exam}
+                              columns={prijavljeniColumns}
+                            />
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -181,34 +248,53 @@ function Ispiti() {
                   {exams?.odjavljeni?.length > 0 && (
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Odjavljeni kolegiji</h2>
-                      <div className="overflow-x-auto">
-                        <table className="w-full card">
-                          <thead>
-                            <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Godina</th>
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Predmet</th>
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Predavač</th>
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Termin</th>
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Učionica</th>
-                              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Odjavljen</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {exams.odjavljeni.map((exam, index) => (
-                              <tr 
-                                key={index}
-                                className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
-                              >
-                                <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{exam.year}</td>
-                                <td className="py-3 px-4 text-sm text-gray-900 dark:text-white font-medium">{exam.subject}</td>
-                                <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{exam.professor}</td>
-                                <td className="py-3 px-4 text-sm text-gray-900 dark:text-white">{exam.examDate}</td>
-                                <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{exam.room}</td>
-                                <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{exam.cancellationDate}</td>
+                      
+                      <div className="hidden md:block table-container">
+                        <div className="overflow-x-auto">
+                          <table className="table">
+                            <thead>
+                              <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                                <th className="table-header-cell">Godina</th>
+                                <th className="table-header-cell">Predmet</th>
+                                <th className="table-header-cell">Predavač</th>
+                                <th className="table-header-cell">Termin</th>
+                                <th className="table-header-cell">Učionica</th>
+                                <th className="table-header-cell">Odjavljen</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              {exams.odjavljeni.map((exam, index) => {
+                                const examKey = `${exam.subject}-${exam.examDate}-${index}`;
+                                return (
+                                  <tr 
+                                    key={examKey}
+                                    className="table-row"
+                                  >
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{exam.year}</td>
+                                    <td className="table-cell font-medium">{exam.subject}</td>
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{exam.professor}</td>
+                                    <td className="table-cell">{exam.examDate}</td>
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{exam.room}</td>
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{exam.cancellationDate}</td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <div className="md:hidden space-y-3">
+                        {exams.odjavljeni.map((exam, index) => {
+                          const examKey = `${exam.subject}-${exam.examDate}-${index}`;
+                          return (
+                            <TableCard
+                              key={examKey}
+                              data={exam}
+                              columns={odjavljeniColumns}
+                            />
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -227,13 +313,16 @@ function Ispiti() {
                     const course = grades?.courses?.find(c => c.course === e.target.value);
                     if (course) handleCourseChange(course);
                   }}
-                  className="w-full md:w-96 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="input"
                 >
-                  {grades?.courses?.map((course, index) => (
-                    <option key={index} value={course.course}>
-                      {course.course} ({course.examAttempts || 0} pokušaja)
-                    </option>
-                  ))}
+                  {grades?.courses?.map((course, index) => {
+                        const courseKey = `${course.course}-${index}`;
+                        return (
+                          <option key={courseKey} value={course.course}>
+                            {course.course} ({course.examAttempts || 0} pokušaja)
+                          </option>
+                        );
+                      })}
                 </select>
               </div>
 
@@ -249,76 +338,94 @@ function Ispiti() {
                     Povijest izlazaka: {examAttempts.subject}
                   </h2>
                   {examAttempts.attempts?.length === 0 ? (
-                    <div className="card text-center py-12">
-                      <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                      </svg>
-                      <p className="text-gray-500">Nema podataka o izlascima za ovaj kolegij</p>
-                    </div>
+                    <EmptyState
+                      icon="emptyExams"
+                      title="Nema podataka o izlascima za ovaj kolegij"
+                    />
                   ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full card">
-                        <thead>
-                          <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Br. izlaska</th>
-                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Naziv roka</th>
-                            <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Prijavljen</th>
-                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Termin roka</th>
-                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Predavač</th>
-                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Vrijeme prijave</th>
-                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Vrijeme odjave</th>
-                            <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Ocjena</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {examAttempts.attempts.map((attempt, index) => (
-                            <tr 
-                              key={index}
-                              className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
-                            >
-                              <td className="py-3 px-4 text-sm text-gray-900 dark:text-white font-medium">
-                                {attempt.attemptNumber}
-                              </td>
-                              <td className="py-3 px-4 text-sm text-gray-900 dark:text-white">
-                                {attempt.examPeriod}
-                              </td>
-                              <td className="py-3 px-4 text-center">
-                                {attempt.registered ? (
-                                  <svg className="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                  </svg>
-                                ) : (
-                                  <svg className="w-5 h-5 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                )}
-                              </td>
-                              <td className="py-3 px-4 text-sm text-gray-900 dark:text-white">
-                                {attempt.examDate}
-                              </td>
-                              <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                {attempt.professor}
-                              </td>
-                              <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                {attempt.enrollmentTime}
-                              </td>
-                              <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                {attempt.cancellationTime || '-'}
-                              </td>
-                              <td className="py-3 px-4 text-center">
-                                {attempt.grade ? (
-                                  <span className={`inline-flex items-center justify-center w-10 h-10 rounded-lg font-bold text-lg ${getGradeColor(attempt.grade)}`}>
-                                    {attempt.grade}
-                                  </span>
-                                ) : (
-                                  <span className="text-gray-400 dark:text-gray-500">-</span>
-                                )}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                    <>
+                      <div className="hidden md:block table-container">
+                        <div className="overflow-x-auto">
+                          <table className="table">
+                            <thead>
+                              <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                                <th className="table-header-cell">Br. izlaska</th>
+                                <th className="table-header-cell">Naziv roka</th>
+                                <th className="table-header-cell text-center">Prijavljen</th>
+                                <th className="table-header-cell">Termin roka</th>
+                                <th className="table-header-cell">Predavač</th>
+                                <th className="table-header-cell">Vrijeme prijave</th>
+                                <th className="table-header-cell">Vrijeme odjave</th>
+                                <th className="table-header-cell text-center">Ocjena</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {examAttempts.attempts.map((attempt, index) => {
+                                const attemptKey = `${attempt.examPeriod}-${attempt.attemptNumber}-${index}`;
+                                return (
+                                  <tr 
+                                    key={attemptKey}
+                                    className="table-row"
+                                  >
+                                    <td className="table-cell font-medium">
+                                      {attempt.attemptNumber}
+                                    </td>
+                                    <td className="table-cell">
+                                      {attempt.examPeriod}
+                                    </td>
+                                    <td className="table-cell text-center">
+                                      {attempt.registered ? (
+                                        <svg className="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                      ) : (
+                                        <svg className="w-5 h-5 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                      )}
+                                    </td>
+                                    <td className="table-cell">
+                                      {attempt.examDate}
+                                    </td>
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {attempt.professor}
+                                    </td>
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {attempt.enrollmentTime}
+                                    </td>
+                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {attempt.cancellationTime || '-'}
+                                    </td>
+                                    <td className="table-cell text-center">
+                                      {attempt.grade ? (
+                                        <span className={`grade-badge ${getGradeColor(attempt.grade)}`}>
+                                          {attempt.grade}
+                                        </span>
+                                      ) : (
+                                        <span className="text-gray-500 dark:text-gray-400">-</span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <div className="md:hidden space-y-3">
+                        {examAttempts.attempts.map((attempt, index) => {
+                          const attemptKey = `${attempt.examPeriod}-${attempt.attemptNumber}-${index}`;
+                          return (
+                            <TableCard
+                              key={attemptKey}
+                              data={attempt}
+                              columns={attemptsColumns}
+                            />
+                          );
+                        })}
+                      </div>
+                    </>
                   )}
                 </>
               ) : null}

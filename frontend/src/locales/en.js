@@ -9,7 +9,8 @@ export default {
     finance: 'Finance',
     exams: 'Exams',
     settings: 'Settings',
-    logout: 'Logout'
+    logout: 'Logout',
+    more: 'More'
   },
   settings: {
     title: 'Settings',
@@ -45,6 +46,7 @@ export default {
     close: 'Close',
     loading: 'Loading...',
     error: 'Error',
-    success: 'Success'
+    success: 'Success',
+    reload: 'Reload Page'
   }
 };

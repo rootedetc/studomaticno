@@ -42,3 +42,4 @@ backend/eduneta-scrape/
 # Cache
 .cache/
 *.tsbuildinfo
+opencode.json

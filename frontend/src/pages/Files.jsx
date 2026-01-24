@@ -1,8 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import api from '../services/api';
+import { getFriendlyErrorMessage } from '../utils/helpers';
 import { Skeleton, SkeletonCard } from '../components/Skeleton';
+import Icon from '../components/Icon';
+import EmptyState from '../components/EmptyState';
+import PageHeader from '../components/PageHeader';
 
-function TreeNode({ node, level, currentFolderId, onNavigate, expandedNodes, toggleExpand }) {
+const TreeNode = memo(function TreeNode({ node, level, currentFolderId, onNavigate, expandedNodes, toggleExpand }) {
   const hasChildren = node.children && node.children.length > 0;
   const nodeKey = node.id;
   const isExpanded = expandedNodes.has(nodeKey);
@@ -16,6 +20,14 @@ function TreeNode({ node, level, currentFolderId, onNavigate, expandedNodes, tog
         }`}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
         onClick={() => onNavigate(node)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onNavigate(node);
+          }
+        }}
       >
         <button
           onClick={(e) => {
@@ -25,19 +37,12 @@ function TreeNode({ node, level, currentFolderId, onNavigate, expandedNodes, tog
           className={`w-5 h-5 flex items-center justify-center transition-transform ${
             hasChildren ? '' : 'invisible'
           }`}
+          aria-expanded={hasChildren ? isExpanded : undefined}
+          aria-label={isExpanded ? 'Collapse' : 'Expand'}
         >
-          <svg
-            className={`w-3 h-3 text-gray-500 dark:text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-          </svg>
+          <Icon name="expand" className={`w-3 h-3 text-gray-500 dark:text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`} aria-hidden="true" />
         </button>
-        <svg className="w-4 h-4 text-yellow-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
-        </svg>
+        <Icon name="folder" className="w-4 h-4 text-yellow-500 flex-shrink-0" aria-hidden="true" />
         <span className="text-sm text-gray-900 dark:text-white truncate">{node.name}</span>
       </div>
       {hasChildren && isExpanded && (
@@ -57,9 +62,9 @@ function TreeNode({ node, level, currentFolderId, onNavigate, expandedNodes, tog
       )}
     </div>
   );
-}
+});
 
-function FileIcon({ type }) {
+const FileIcon = memo(function FileIcon({ type }) {
   const iconColors = {
     pdf: 'text-red-500 bg-red-50',
     doc: 'text-blue-500 bg-blue-50',
@@ -74,17 +79,10 @@ function FileIcon({ type }) {
 
   return (
     <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${colorClass}`}>
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-        />
-      </svg>
+      <Icon name="file" className="w-5 h-5" aria-hidden="true" />
     </div>
   );
-}
+});
 
 function Files() {
   const [tree, setTree] = useState([]);
@@ -276,16 +274,25 @@ function Files() {
     );
   }
 
+  const breadcrumbs = [
+    { label: 'Dokumenti', path: '/', onClick: () => loadFolder({ id: 'root', idHijer: 0, name: 'Dokumenti', path: [] }) },
+    ...currentFolder.path.map((item, index) => ({
+      label: item.name,
+      onClick: () => handleBreadcrumbClick(index + 1)
+    }))
+  ];
+
   return (
     <div className="flex-1 flex flex-col h-full">
-      <div className="p-4 lg:p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dokumenti</h1>
-        <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{files.length} datoteka</p>
-      </div>
+      <PageHeader
+        title="Dokumenti"
+        subtitle={`${files.length} datoteka`}
+        breadcrumbs={breadcrumbs}
+      />
 
       {error && (
-        <div className="mx-4 lg:mx-6 mt-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg flex-shrink-0">
-          {error}
+        <div className="mx-4 lg:mx-6 mt-4 error-banner flex-shrink-0">
+          {getFriendlyErrorMessage(error)}
         </div>
       )}
 
@@ -308,25 +315,6 @@ function Files() {
         </div>
 
         <div className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-gray-800">
-          <div className="px-6 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
-            <div className="flex items-center gap-2 text-sm flex-wrap">
-              {currentFolder.path.map((item, index) => (
-                <span key={index} className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleBreadcrumbClick(index + 1)}
-                    className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-                  >
-                    {item.name}
-                  </button>
-                  <svg className="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </span>
-              ))}
-              <span className="text-gray-900 dark:text-white font-medium">{currentFolder.name}</span>
-            </div>
-          </div>
-
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-6">
             {loading ? (
               <div className="space-y-6">
@@ -342,12 +330,10 @@ function Files() {
                 </div>
               </div>
             ) : files.length === 0 && getSubfoldersForCurrent().length === 0 ? (
-              <div className="card text-center py-12">
-                <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <p className="text-gray-500 dark:text-gray-400">Ova mapa je prazna</p>
-              </div>
+              <EmptyState
+                icon="emptyFiles"
+                title="Ova mapa je prazna"
+              />
             ) : (
               <div className="space-y-6 max-w-full overflow-hidden">
                 {getSubfoldersForCurrent().length > 0 && (
