@@ -1,7 +1,7 @@
 {
   "name": "studomaticno",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build",
+    "build": "cd frontend && npm install --include=dev && npm run build",
     "start": "cd backend && npm install && node src/index.js",
     "heroku-postbuild": "npm run build"
   },
