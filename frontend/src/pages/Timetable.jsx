@@ -24,9 +24,6 @@ function Timetable() {
   const lastRequestTimeRef = useRef(0);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setDebugMode(params.get('debug') === 'true');
-
     // Initial load - load the current week from the server
     loadInitialTimetable();
   }, []);
@@ -157,7 +154,6 @@ function Timetable() {
           const hasMatch = d.lessons.some(l => {
             const normL = normalizeDate(l.date);
             const isMatch = normL === normalizedSelected;
-            if (debugMode) console.log(`[Filter] Comparing ${normL} (lesson) === ${normalizedSelected} (selected) => ${isMatch}`);
             return isMatch;
           });
           return hasMatch;
