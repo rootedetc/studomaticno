@@ -215,7 +215,8 @@ function Files() {
     // folder = { ..., path: newPath.slice(0, index - 1) } 
     // So `path` is indeed parents.
 
-    const parents = treePath.slice(0, -1);
+    // Filter out root node (idHijer === 0) since we manually add it in breadcrumbs
+    const parents = treePath.slice(0, -1).filter(p => p.idHijer !== 0);
 
     loadFolder({
       id: node.id,
@@ -309,18 +310,22 @@ function Files() {
     );
   }
 
-  const breadcrumbs = [
-    { label: 'Dokumenti', path: '/', onClick: () => loadFolder({ id: 'root', idHijer: 0, name: 'Dokumenti', path: [] }) },
+  // Build breadcrumbs: root -> parents -> current folder (only when not at root)
+  const breadcrumbs = currentFolder.idHijer === 0 ? [] : [
+    { label: 'Dokumenti', onClick: () => loadFolder({ id: 'root', idHijer: 0, name: 'Dokumenti', path: [] }) },
+    // Add parent folders
     ...currentFolder.path.map((item, index) => ({
       label: item.name,
       onClick: () => handleBreadcrumbClick(index + 1)
-    }))
+    })),
+    // Add current folder (not clickable since we're already here)
+    { label: currentFolder.name }
   ];
 
   return (
     <div className="flex-1 flex flex-col h-full">
       <PageHeader
-        title="Dokumenti"
+        title="Datoteke"
         subtitle={`${files.length} datoteka`}
         breadcrumbs={breadcrumbs}
       />

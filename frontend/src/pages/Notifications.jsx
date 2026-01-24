@@ -11,6 +11,7 @@ import MobileHeader from '../components/MobileHeader';
 import useTranslation from '../hooks/useTranslation';
 import { usePullToRefresh, PullIndicator } from '../hooks/usePullToRefresh';
 import { useOptimisticUpdate } from '../hooks/useOptimisticUpdate';
+import BottomSheet from '../components/BottomSheet';
 
 function Notifications() {
   const { t } = useTranslation();
@@ -116,76 +117,58 @@ function Notifications() {
 
       <div ref={containerRef} className="page-content">
         <div className="max-w-4xl mx-auto fade-in">
-          {selectedNotification ? (
-            <div className="card md:p-6 p-0 border-0 md:border shadow-none md:shadow-sm bg-transparent md:bg-white md:dark:bg-gray-800">
-              {/* Mobile Header for Details */}
-              <div className="md:hidden">
-                <MobileHeader title="Detalji obavijesti" onBack={() => setSelectedNotification(null)} />
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 md:border-0 p-4 md:p-0">
-                <div className="hidden md:block">
-                  <PageHeader
-                    title={selectedNotification.title}
-                    breadcrumbs={[
-                      { label: 'Obavijesti', onClick: () => setSelectedNotification(null) }
-                    ]}
-                  />
-                </div>
-
-                {/* Mobile Title */}
-                <div className="md:hidden mb-4">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">{selectedNotification.title}</h2>
-                </div>
-
-                <div className="md:px-6 md:pb-4">
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4">
-                    <span className="flex items-center gap-1">
-                      <Icon name="user" className="w-4 h-4" aria-hidden="true" />
-                      <span className="font-medium text-gray-900 dark:text-white">{selectedNotification.author}</span>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Icon name="clock" className="w-4 h-4" aria-hidden="true" />
-                      {selectedNotification.date}
-                    </span>
-                  </div>
-
-                  <div className="prose prose-sm max-w-none text-gray-800 dark:text-gray-200">
-                    <div
-                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedNotification.content || '') }}
-                      style={{ lineHeight: '1.6' }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+          {notifications.length === 0 ? (
+            <EmptyState icon="emptyInbox" title="Nema obavijesti" />
           ) : (
-            <>
-              {notifications.length === 0 ? (
-                <EmptyState icon="emptyInbox" title="Nema obavijesti" />
-              ) : (
-                <div className="space-y-2">
-                  {notifications.map((notification) => (
-                    <ListItem
-                      key={notification.id}
-                      icon="notifications"
-                      title={notification.title}
-                      subtitle={notification.author}
-                      date={notification.date}
-                      isNew={notification.isNew}
-                      badge={notification.isNew && (
-                        <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded text-xs font-medium">Novo</span>
-                      )}
-                      onClick={() => loadNotificationDetail(notification)}
-                    />
-                  ))}
-                </div>
-              )}
-            </>
+            <div className="space-y-2">
+              {notifications.map((notification) => (
+                <ListItem
+                  key={notification.id}
+                  icon="notifications"
+                  title={notification.title}
+                  subtitle={notification.author}
+                  date={notification.date}
+                  isNew={notification.isNew}
+                  badge={notification.isNew && (
+                    <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded text-xs font-medium">Novo</span>
+                  )}
+                  onClick={() => loadNotificationDetail(notification)}
+                />
+              ))}
+            </div>
           )}
         </div>
       </div>
-    </div >
+
+      {/* Notification Detail Bottom Sheet */}
+      <BottomSheet
+        isOpen={!!selectedNotification}
+        onClose={() => setSelectedNotification(null)}
+        title={selectedNotification?.title || 'Obavijest'}
+      >
+        {selectedNotification && (
+          <div>
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4">
+              <span className="flex items-center gap-1">
+                <Icon name="user" className="w-4 h-4" aria-hidden="true" />
+                <span className="font-medium text-gray-900 dark:text-white">{selectedNotification.author}</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <Icon name="clock" className="w-4 h-4" aria-hidden="true" />
+                {selectedNotification.date}
+              </span>
+            </div>
+
+            <div className="prose prose-sm max-w-none text-gray-800 dark:text-gray-200">
+              <div
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedNotification.content || '') }}
+                style={{ lineHeight: '1.6' }}
+              />
+            </div>
+          </div>
+        )}
+      </BottomSheet>
+    </div>
   );
 }
 

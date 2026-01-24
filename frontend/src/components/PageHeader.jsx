@@ -45,7 +45,7 @@ function PageHeader({
                   {subtitle}
                 </p>
               )}
-                {breadcrumbs && breadcrumbs.length > 0 && (
+              {breadcrumbs && breadcrumbs.length > 0 && (
                 <nav className="flex items-center gap-1 mt-1 md:hidden" aria-label="Breadcrumb">
                   <ol className="flex items-center gap-1">
                     {breadcrumbs.map((crumb, index) => {
@@ -53,7 +53,7 @@ function PageHeader({
                       return (
                         <li key={index} className="flex items-center gap-1">
                           {index > 0 && (
-                            <Icon name="chevron-right" className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden="true" />
+                            <Icon name="chevronRight" className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden="true" />
                           )}
                           {isLast ? (
                             <span className="text-sm text-gray-900 dark:text-white font-medium truncate" aria-current="page">
@@ -88,7 +88,7 @@ function PageHeader({
                       return (
                         <li key={index} className="flex items-center gap-1">
                           {index > 0 && (
-                            <Icon name="chevron-right" className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden="true" />
+                            <Icon name="chevronRight" className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden="true" />
                           )}
                           {isLast ? (
                             <span className="text-sm text-gray-900 dark:text-white font-medium truncate" aria-current="page">
