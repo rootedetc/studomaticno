@@ -16,7 +16,6 @@ import MobileNav from './components/MobileNav';
 import DebugPanel from './components/DebugPanel';
 import SessionExpiredModal from './components/SessionExpiredModal';
 import ErrorBoundary from './components/ErrorBoundary';
-import PWAInstallBanner from './components/PWAInstallBanner';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { TranslationProvider } from './hooks/useTranslation.jsx';
 
@@ -152,7 +151,15 @@ function App() {
             </div>
           )}
           {import.meta.env.DEV && <DebugPanel />}
-          {user && <PWAInstallBanner />}
+          {user && (
+            <pwa-install
+              manifest-url="/manifest.webmanifest"
+              name="studomaticno"
+              description="studomaticno - Eduneta Dashboard"
+              icon="/icons/icon.svg"
+              use-local-storage
+            ></pwa-install>
+          )}
           <SessionExpiredModal
             isOpen={sessionExpired}
             onClose={() => setSessionExpired(false)}
