@@ -28,6 +28,29 @@ function Timetable() {
     loadInitialTimetable();
   }, []);
 
+  // Parse a date string from API (e.g., "26. 1." or "26. 1. 2026.") to a Date object
+  const parseWeekStartDate = (dateStr, referenceDate = new Date()) => {
+    if (!dateStr) return referenceDate;
+    try {
+      // Remove trailing dots, clean up spaces
+      const clean = dateStr.replace(/\.$/, '').trim();
+      const parts = clean.split('.').map(p => p.trim()).filter(p => p);
+
+      if (parts.length >= 2) {
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // JS months are 0-indexed
+        const year = parts[2] ? parseInt(parts[2], 10) : referenceDate.getFullYear();
+
+        if (!isNaN(day) && !isNaN(month)) {
+          return new Date(year, month, day);
+        }
+      }
+    } catch (e) {
+      console.error('Error parsing week start date:', e);
+    }
+    return referenceDate;
+  };
+
   // Load initial timetable (current week from server's perspective)
   const loadInitialTimetable = async () => {
     const requestTime = Date.now();
@@ -41,7 +64,12 @@ function Timetable() {
       if (requestTime === lastRequestTimeRef.current) {
         setTimetable(result.timetable || []);
         setWeekInfo({ weekStart: result.weekStart, weekEnd: result.weekEnd });
-        // Keep currentWeekDate as today for initial load
+
+        // Sync currentWeekDate with the actual week returned by the API
+        if (result.weekStart) {
+          const parsedDate = parseWeekStartDate(result.weekStart);
+          setCurrentWeekDate(parsedDate);
+        }
       }
     } catch (err) {
       if (requestTime === lastRequestTimeRef.current) {
@@ -69,7 +97,12 @@ function Timetable() {
       if (requestTime === lastRequestTimeRef.current) {
         setTimetable(result.timetable || []);
         setWeekInfo({ weekStart: result.weekStart, weekEnd: result.weekEnd });
-        // currentWeekDate is already set optimistically by handleWeekChange
+
+        // Sync currentWeekDate with the actual week returned by the API
+        if (result.weekStart) {
+          const parsedDate = parseWeekStartDate(result.weekStart);
+          setCurrentWeekDate(parsedDate);
+        }
       }
     } catch (err) {
       if (requestTime === lastRequestTimeRef.current) {
