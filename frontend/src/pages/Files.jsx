@@ -323,12 +323,36 @@ function Files() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col h-full">
-      <PageHeader
-        title="Datoteke"
-        subtitle={`${files.length} datoteka`}
-        breadcrumbs={breadcrumbs}
-      />
+    <div className="page-container h-full flex flex-col">
+      <div className="page-header flex-shrink-0">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Datoteke</h1>
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
+              {breadcrumbs.length > 0 && (
+                <nav className="flex items-center gap-1">
+                  {breadcrumbs.map((crumb, index) => (
+                    <div key={index} className="flex items-center gap-1">
+                      {index > 0 && <span className="text-gray-400">/</span>}
+                      {index === breadcrumbs.length - 1 ? (
+                        <span className="font-medium text-gray-900 dark:text-white">{crumb.label}</span>
+                      ) : (
+                        <button
+                          onClick={crumb.onClick}
+                          className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                        >
+                          {crumb.label}
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </nav>
+              )}
+              {breadcrumbs.length === 0 && <p>{files.length} datoteka</p>}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {error && (
         <div className="mx-4 lg:mx-6 mt-4 error-banner flex-shrink-0">

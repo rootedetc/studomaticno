@@ -121,12 +121,12 @@ function Finance() {
               </div>
               <div className="stat-card">
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Ukupno uplaćeno</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white text-green-600 dark:text-green-400">{summary.totalPayments.toFixed(2)} €</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white text-green-600 dark:text-green-400">{summary.totalPayments.toLocaleString('hr-HR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{summary.transactionCount} transakcija</p>
               </div>
               <div className="stat-card">
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Ukupno dugovanje</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white text-red-600 dark:text-red-400">{summary.totalDebt.toFixed(2)} €</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white text-red-600 dark:text-red-400">{summary.totalDebt.toLocaleString('hr-HR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Ukupni iznos</p>
               </div>
             </div>
@@ -156,7 +156,7 @@ function Finance() {
                         const isPayment = transaction.payment && transaction.payment.trim() !== '';
                         const isDebt = transaction.debt && transaction.debt.trim() !== '';
                         const transactionKey = `${transaction.date}-${transaction.name}-${index}`;
-                        
+
                         return (
                           <tr
                             key={transactionKey}

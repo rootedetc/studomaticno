@@ -28,20 +28,60 @@ function Timetable() {
     loadInitialTimetable();
   }, []);
 
-  // Parse a date string from API (e.g., "26. 1." or "26. 1. 2026.") to a Date object
+  // Parse a date string from API (e.g., "26. 1." or "26. 1. 2026." or "15. veljače 2026.") to a Date object
   const parseWeekStartDate = (dateStr, referenceDate = new Date()) => {
     if (!dateStr) return referenceDate;
     try {
       // Remove trailing dots, clean up spaces
       const clean = dateStr.replace(/\.$/, '').trim();
-      const parts = clean.split('.').map(p => p.trim()).filter(p => p);
+
+      // Handle Croatian month names
+      const monthMap = {
+        'siječnja': 0, 'siječanj': 0, '1.': 0,
+        'veljače': 1, 'veljača': 1, '2.': 1,
+        'ožujka': 2, 'ožujak': 2, '3.': 2,
+        'travnja': 3, 'travanj': 3, '4.': 3,
+        'svibnja': 4, 'svibanj': 4, '5.': 4,
+        'lipnja': 5, 'lipanj': 5, '6.': 5,
+        'srpnja': 6, 'srpanj': 6, '7.': 6,
+        'kolovoza': 7, 'kolovoz': 7, '8.': 7,
+        'rujna': 8, 'rujan': 8, '9.': 8,
+        'listopada': 9, 'listopad': 9, '10.': 9,
+        'studenoga': 10, 'studeni': 10, '11.': 10,
+        'prosinca': 11, 'prosinac': 11, '12.': 11
+      };
+
+      // Try matching month names first
+      // Regex to split by dots or spaces
+      const parts = clean.split(/[\.\s]+/).filter(p => p);
 
       if (parts.length >= 2) {
         const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1; // JS months are 0-indexed
-        const year = parts[2] ? parseInt(parts[2], 10) : referenceDate.getFullYear();
+        let month = -1;
+        let year = referenceDate.getFullYear();
 
-        if (!isNaN(day) && !isNaN(month)) {
+        // Check if second part is a number or text
+        if (!isNaN(parseInt(parts[1], 10))) {
+          month = parseInt(parts[1], 10) - 1;
+        } else {
+          // Try to look up month name (case insensitive)
+          const monthName = parts[1].toLowerCase();
+          Object.keys(monthMap).forEach(key => {
+            if (monthName.startsWith(key) || key.startsWith(monthName)) {
+              month = monthMap[key];
+            }
+          });
+        }
+
+        // Check for year
+        if (parts.length >= 3) {
+          const parsedYear = parseInt(parts[parts.length - 1], 10);
+          if (!isNaN(parsedYear) && parsedYear > 2000) {
+            year = parsedYear;
+          }
+        }
+
+        if (!isNaN(day) && month !== -1) {
           return new Date(year, month, day);
         }
       }
@@ -128,10 +168,13 @@ function Timetable() {
     try {
       const weekDays = getWeekDays(newDate);
       if (weekDays.length >= 7) {
-        const formatDate = (d) => `${d.getDate()}. ${d.getMonth() + 1}.`;
+        // We use our new util for better month formatting
+        const monthNames = ['siječnja', 'veljače', 'ožujka', 'travnja', 'svibnja', 'lipnja', 'srpnja', 'kolovoza', 'rujna', 'listopada', 'studenoga', 'prosinca'];
+        const formatHumanDate = (d) => `${d.getDate()}. ${monthNames[d.getMonth()]} ${d.getFullYear()}.`;
+
         setWeekInfo({
-          weekStart: formatDate(weekDays[0]),
-          weekEnd: formatDate(weekDays[6])
+          weekStart: formatHumanDate(weekDays[0]),
+          weekEnd: formatHumanDate(weekDays[6])
         });
       }
     } catch (e) {
@@ -275,7 +318,7 @@ function Timetable() {
                           const lessonKey = `${day.day}-${lesson.subject}-${lesson.time}-${index}`;
                           const isCalendarOpen = calendarOpenFor === lessonKey;
                           return (
-                            <div key={lessonKey} className={`relative flex items-center gap-4 p-3 rounded-lg ${isExam ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800' : 'bg-gray-50 dark:bg-gray-700'}`}>
+                            <div key={lessonKey} className={`relative flex items-center gap-4 p-3 rounded-lg transition-all duration-200 ${isExam ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800' : 'bg-gray-50 dark:bg-gray-700'} ${isCalendarOpen ? 'z-50 ring-2 ring-primary-400 shadow-md' : 'z-0'}`}>
                               <div className="text-center min-w-[70px]">
                                 <p className="text-sm font-medium text-gray-900 dark:text-white">{lesson.time}</p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">{lesson.room}</p>

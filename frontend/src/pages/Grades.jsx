@@ -37,8 +37,7 @@ function Grades() {
 
   const getGradeColor = (grade) => {
     const gradeNum = parseInt(grade);
-    if (gradeNum >= 5) return 'grade-high';
-    if (gradeNum >= 3) return 'grade-medium';
+    if (gradeNum > 1) return 'grade-high';
     return 'grade-low';
   };
 
@@ -58,7 +57,7 @@ function Grades() {
     },
     { key: 'ects', label: 'ECTS', priority: 'medium' },
     { key: 'examAttempts', label: 'Pokušaji', priority: 'low' },
-    { key: 'cancellations', label: 'Otkaž.', priority: 'low' },
+
     { key: 'professor', label: 'Profesor', priority: 'medium' },
   ];
 
@@ -101,14 +100,7 @@ function Grades() {
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{grades.summary.total}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Ukupno</p>
               </div>
-              <div className="stat-card">
-                <p className="text-xl md:text-2xl font-bold text-green-600 dark:text-green-400">{grades.summary.passed}/{grades.summary.total}</p>
-                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">Položeno</p>
-              </div>
-              <div className="stat-card hidden md:block">
-                <p className="text-2xl font-bold text-red-600 dark:text-red-400">{grades.summary.failed}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Nepoloženo</p>
-              </div>
+
               <div className="stat-card">
                 <p className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">{grades.summary.ectsTotal}</p>
                 <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">ECTS</p>
@@ -119,6 +111,11 @@ function Grades() {
               </div>
             </div>
           )}
+
+          <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <PassedCoursesChart grades={grades} />
+            <GradeTrendChart grades={grades} />
+          </div>
 
           {/* Year Filter */}
           {years.length > 0 && (
@@ -147,11 +144,6 @@ function Grades() {
             </div>
           )}
 
-          <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <PassedCoursesChart grades={grades} />
-            <GradeTrendChart grades={grades} />
-          </div>
-
           {filteredCourses.length === 0 ? (
             <EmptyState
               icon="emptyGrades"
@@ -171,7 +163,7 @@ function Grades() {
                           <th className="table-header-cell text-center">OCJENA</th>
                           <th className="table-header-cell text-center">ECTS</th>
                           <th className="table-header-cell text-center">Pokušaji</th>
-                          <th className="table-header-cell text-center">Otkaž.</th>
+
                           <th className="table-header-cell">Profesor</th>
                         </tr>
                       </thead>
@@ -195,7 +187,6 @@ function Grades() {
                             </td>
                             <td className="table-cell text-center">{course.ects}</td>
                             <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400 text-center">{course.examAttempts}</td>
-                            <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400 text-center">{course.cancellations}</td>
                             <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{course.professor}</td>
                           </tr>
                         ))}

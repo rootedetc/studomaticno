@@ -29,11 +29,14 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <PageHeader
-        title={t('settings.title')}
-        showBackButton={true}
-      />
+    <div className="page-container">
+      <div className="page-header">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
+          </div>
+        </div>
+      </div>
 
       <main className="p-4 max-w-2xl mx-auto space-y-4">
         <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
@@ -51,8 +54,8 @@ export default function Settings() {
                 key={themeOption}
                 onClick={() => setTheme(themeOption)}
                 className={`relative p-4 rounded-xl border-2 transition-all duration-200 ${theme === themeOption
-                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                    : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                  : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
               >
                 <div className="flex flex-col items-center gap-2">
@@ -108,8 +111,8 @@ export default function Settings() {
                 key={lang.code}
                 onClick={() => setLanguage(lang.code)}
                 className={`relative p-4 rounded-xl border-2 transition-all duration-200 ${language === lang.code
-                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                    : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                  : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
               >
                 <div className="flex items-center gap-3">

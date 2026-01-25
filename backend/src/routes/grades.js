@@ -30,8 +30,8 @@ router.get('/', requireAuth, async (req, res) => {
             idPred: linkMatch[2],
             idAKG: linkMatch[3]
           } : null,
-          cancellations: $(cols[9]).text().trim(),
-          professor: $(cols[10]).text().trim()
+          cancellations: null,
+          professor: $(cols[9]).text().trim()
         });
       }
     });

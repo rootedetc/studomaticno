@@ -1,6 +1,6 @@
 export default {
   nav: {
-    dashboard: 'Nadzorna ploča',
+    dashboard: 'Početna',
     timetable: 'Raspored',
     notifications: 'Obavijesti',
     messages: 'Poruke',

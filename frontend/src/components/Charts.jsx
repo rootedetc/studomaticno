@@ -28,10 +28,10 @@ export const GradeTrendChart = ({ grades }) => {
   if (data.length < 2) return null; // Need at least 2 points for a trend
 
   return (
-    <div className="card p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Prosjek po godinama</h3>
+    <div className="card p-4 h-full">
+      <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">Prosjek po godinama</h3>
 
-      <div className="relative h-48 w-full">
+      <div className="relative h-32 w-full">
         {/* Y-axis labels */}
         <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400" style={{ width: '24px' }}>
           {[5, 4, 3, 2].map(g => (
@@ -107,7 +107,7 @@ export const GradeTrendChart = ({ grades }) => {
       </div>
 
       {/* X-axis labels */}
-      <div className="flex justify-between mt-4 text-sm text-gray-500 dark:text-gray-400" style={{ marginLeft: '32px' }}>
+      <div className="flex justify-between mt-2 text-sm text-gray-500 dark:text-gray-400" style={{ marginLeft: '32px' }}>
         {data.map(d => (
           <div key={d.year} className="flex-1 text-center">
             <span className="font-medium">{d.year}. god</span>
@@ -133,12 +133,12 @@ export const PassedCoursesChart = ({ grades }) => {
   const passedLength = total > 0 ? (passed / total) * circumference : 0;
 
   return (
-    <div className="card p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Položeno kolegija</h3>
+    <div className="card p-4 h-full">
+      <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">Položeno kolegija</h3>
 
-      <div className="flex items-center justify-center py-4">
+      <div className="flex flex-row items-center justify-center py-2 gap-6">
         {/* Pie Chart */}
-        <div className="relative w-52 h-52 group cursor-pointer">
+        <div className="relative w-32 h-32 group cursor-pointer flex-shrink-0">
           <svg viewBox="0 0 180 180" className="transform -rotate-90 w-full h-full">
             {/* Background circle (remaining/failed) */}
             <circle
@@ -176,17 +176,27 @@ export const PassedCoursesChart = ({ grades }) => {
 
           {/* Center text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-300">
-            <span className="text-4xl font-bold text-gray-900 dark:text-white">{percentage}%</span>
+            <span className="text-3xl font-bold text-gray-900 dark:text-white">{percentage}%</span>
           </div>
 
-          {/* Hover tooltip */}
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
-            <div className="bg-gray-900 dark:bg-gray-700 text-white text-sm px-4 py-2 rounded-xl shadow-xl flex gap-4 whitespace-nowrap">
-              <span className="text-green-400 font-semibold">{passed} položeno</span>
-              <span className="text-gray-400">•</span>
-              <span className="text-red-400 font-semibold">{failed} preostalo</span>
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <span className="w-3 h-3 rounded-full bg-green-500 shadow-sm"></span>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-gray-900 dark:text-white">{passed}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">položeno</span>
             </div>
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-8 border-transparent border-b-gray-900 dark:border-b-gray-700" />
+          </div>
+          <div className="hidden"></div>
+          <div className="flex items-center gap-3">
+            <span className="w-3 h-3 rounded-full bg-red-200 dark:bg-red-900 shadow-sm"></span>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-gray-900 dark:text-white">{failed}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">preostalo</span>
+            </div>
           </div>
         </div>
       </div>
