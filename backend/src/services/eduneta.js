@@ -232,11 +232,20 @@ class EdunetaService {
 
       const html = this.decodeHtml(response.data, rid);
       const $ = cheerio.load(html);
-      const userName = $('#labKorisnik').text().trim();
+      let userName = $('#labKorisnik').text().trim();
 
       if (!userName) {
-        log('error', rid, 'Login failed - no user name found');
-        throw new Error('Prijava nije uspjela');
+        // Check if we were redirected to the sticky announcement page
+        const isStickyPage = $('title').text().includes('Prikaz poruke') ||
+          this.isStickyAnnouncementPage(html, rid);
+
+        if (isStickyPage) {
+          log('info', rid, `Login successful (redirected to sticky announcement) for user: ${username}`);
+          userName = username; // Use the provided username since we can't scrape it from this page
+        } else {
+          log('error', rid, 'Login failed - no user name found');
+          throw new Error('Prijava nije uspjela');
+        }
       }
 
       log('info', rid, `Login successful for: ${userName}`);
