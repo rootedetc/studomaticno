@@ -1,0 +1,528 @@
+[
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932126,
+    "url": "https://eduneta.hr/lib-student/Login.aspx",
+    "status": 200
+  },
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932136,
+    "url": "https://eduneta.hr/lib-student/wwwroot/css/portal.css",
+    "status": 200
+  },
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932136,
+    "url": "https://eduneta.hr/lib-student/wwwroot/js/Login.js",
+    "status": 200
+  },
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932139,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/nazPortala.gif",
+    "status": 200
+  },
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932140,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/styles/vern.css",
+    "status": 200
+  },
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932140,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/prijava.gif",
+    "status": 200
+  },
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932144,
+    "url": "https://eduneta.hr/lib-student/WebResource.axd?d=x2nkrMJGXkMELz33nwnakGTNIVhIRIRTA1N1q592D4fSoiYrv6Cr9YfAR1pnt57J9YQlX_KotdgbgCZN5hKNjkM4xyE1&t=638344119423008439",
+    "status": 200
+  },
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932146,
+    "url": "https://eduneta.hr/lib-student/wwwroot/EdunetaUst/lib/SlikeLogo/LogoPortaliLogin.gif",
+    "status": 200
+  },
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932148,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/pomoc.gif",
+    "status": 200
+  },
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932166,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/top.gif",
+    "status": 200
+  },
+  {
+    "step": 0,
+    "type": "RESPONSE",
+    "timestamp": 1768828932167,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/bottom.gif",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932940,
+    "url": "https://eduneta.hr/lib-student/Login.aspx",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932946,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/styles/vern.css",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932949,
+    "url": "https://eduneta.hr/lib-student/wwwroot/css/portal.css",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932949,
+    "url": "https://eduneta.hr/lib-student/wwwroot/js/Login.js",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932950,
+    "url": "https://eduneta.hr/lib-student/WebResource.axd?d=x2nkrMJGXkMELz33nwnakGTNIVhIRIRTA1N1q592D4fSoiYrv6Cr9YfAR1pnt57J9YQlX_KotdgbgCZN5hKNjkM4xyE1&t=638344119423008439",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932951,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/nazPortala.gif",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932951,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/prijava.gif",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932952,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/pomoc.gif",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932952,
+    "url": "https://eduneta.hr/lib-student/wwwroot/EdunetaUst/lib/SlikeLogo/LogoPortaliLogin.gif",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932954,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/top.gif",
+    "status": 200
+  },
+  {
+    "step": 2,
+    "type": "RESPONSE",
+    "timestamp": 1768828932954,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/bottom.gif",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "ERROR_SPAN",
+    "timestamp": 1768828934982,
+    "text": "Greška",
+    "style": "color:Red;visibility:hidden;"
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935043,
+    "url": "https://eduneta.hr/lib-student/Login.aspx",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935050,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/styles/vern.css",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935050,
+    "url": "https://eduneta.hr/lib-student/wwwroot/css/portal.css",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935050,
+    "url": "https://eduneta.hr/lib-student/wwwroot/js/Login.js",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935050,
+    "url": "https://eduneta.hr/lib-student/WebResource.axd?d=x2nkrMJGXkMELz33nwnakGTNIVhIRIRTA1N1q592D4fSoiYrv6Cr9YfAR1pnt57J9YQlX_KotdgbgCZN5hKNjkM4xyE1&t=638344119423008439",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935050,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/nazPortala.gif",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935051,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/prijava.gif",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935052,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/pomoc.gif",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935052,
+    "url": "https://eduneta.hr/lib-student/wwwroot/EdunetaUst/lib/SlikeLogo/LogoPortaliLogin.gif",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935056,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/top.gif",
+    "status": 200
+  },
+  {
+    "step": 3,
+    "type": "RESPONSE",
+    "timestamp": 1768828935056,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/login/bottom.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828946949,
+    "url": "https://eduneta.hr/lib-student/Login.aspx",
+    "status": 302
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948845,
+    "url": "https://eduneta.hr/lib-student/InitSession.aspx",
+    "status": 302
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948890,
+    "url": "https://eduneta.hr/lib-student/Default.aspx",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948905,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/styles/start.css",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948905,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/ImePortalaHeader.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948907,
+    "url": "https://eduneta.hr/lib-student/wwwroot/js/PorukaPrikaz.js",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948908,
+    "url": "https://eduneta.hr/lib-student/wwwroot/js/tglobal.js",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948908,
+    "url": "https://eduneta.hr/lib-student/wwwroot/ikone/semz.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948909,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/top_right.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948910,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/title_menu1.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948917,
+    "url": "https://eduneta.hr/lib-student/RadControls/Menu/Scripts/3_6_2/RadBrowser.js",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948917,
+    "url": "https://eduneta.hr/lib-student/RadControls/Menu/Scripts/3_6_2/RadHelper.js",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948922,
+    "url": "https://eduneta.hr/lib-student/RadControls/Menu/Scripts/3_6_2/RadMenu_Utils.js",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948923,
+    "url": "https://eduneta.hr/lib-student/RadControls/Menu/Scripts/3_6_2/RadMenu_Globals.js",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948932,
+    "url": "https://eduneta.hr/lib-student/RadControls/Menu/Scripts/3_6_2/RadMenu.js",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948932,
+    "url": "https://eduneta.hr/lib-student/RadControls/Menu/Scripts/3_6_2/RadMenu_Keyboard.js",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948938,
+    "url": "https://eduneta.hr/lib-student/wwwroot//eduneta/images/start/menu_button_out.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948938,
+    "url": "https://eduneta.hr/lib-student/RadControls/Menu/Scripts/3_6_2/RadImageCache.js",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948972,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/title_obavijesti_left.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948977,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/PorukePrimljene.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948982,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/title_obavijesti_right.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948988,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/title_poruke_left.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828948995,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/PorukePoslane.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949000,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/title_poruke_right.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949013,
+    "url": "https://eduneta.hr/lib-student/wwwroot/EdunetaUst/lib/SlikeLogo/LogoPortaliPocetna.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949014,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/title_prechaci1.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949017,
+    "url": "https://eduneta.hr/lib-student/wwwroot//eduneta/images/funkcije/prijava.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949018,
+    "url": "https://eduneta.hr/lib-student/wwwroot//eduneta/images/funkcije/odjava.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949019,
+    "url": "https://eduneta.hr/lib-student/wwwroot//eduneta/images/funkcije/financije.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949020,
+    "url": "https://eduneta.hr/lib-student/wwwroot//eduneta/images/funkcije/raspored.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949020,
+    "url": "https://eduneta.hr/lib-student/wwwroot//eduneta/images/funkcije/resursi.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949022,
+    "url": "https://eduneta.hr/lib-student/wwwroot//eduneta/images/funkcije/razno.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949022,
+    "url": "https://eduneta.hr/lib-student/wwwroot//eduneta/images/funkcije/ocjene.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949022,
+    "url": "https://eduneta.hr/lib-student/wwwroot//eduneta/images/start/title_resursi.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949022,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/developed_by.gif",
+    "status": 200
+  },
+  {
+    "step": 4,
+    "type": "RESPONSE",
+    "timestamp": 1768828949023,
+    "url": "https://eduneta.hr/lib-student/wwwroot/css/menu.css",
+    "status": 200
+  },
+  {
+    "step": 5,
+    "type": "RESPONSE",
+    "timestamp": 1768828949033,
+    "url": "https://eduneta.hr/lib-student/menu_button_over.gif",
+    "status": 200
+  },
+  {
+    "step": 5,
+    "type": "RESPONSE",
+    "timestamp": 1768828949033,
+    "url": "https://eduneta.hr/lib-student/menu_button_out.gif",
+    "status": 200
+  },
+  {
+    "step": 5,
+    "type": "RESPONSE",
+    "timestamp": 1768828949034,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/title_obavijesti_stretch.gif",
+    "status": 200
+  },
+  {
+    "step": 5,
+    "type": "RESPONSE",
+    "timestamp": 1768828949034,
+    "url": "https://eduneta.hr/lib-student/wwwroot/eduneta/images/start/title_poruke_stretch.gif",
+    "status": 200
+  },
+  {
+    "step": 5,
+    "type": "USER_INFO",
+    "timestamp": 1768828949045,
+    "user": "MARKO KOJIĆ - 0013-24",
+    "program": "DIU MOD (2.god)",
+    "semester": "zimski sem. 25/26 (z)"
+  }
+]

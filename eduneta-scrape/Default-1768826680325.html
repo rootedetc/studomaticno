@@ -1,0 +1,926 @@
+<!DOCTYPE html><html><head><title>
+	Eduneta - početna stranica
+</title><meta http-equiv="Content-Type" content="text/html; charset=windows-1250"><link href="wwwroot/eduneta/styles/start.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans&amp;display=swap" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style type="text/css">
+        .tdPrecaci {
+            BORDER-RIGHT: medium none;
+            BORDER-TOP: medium none;
+            PADDING-BOTTOM: 5px;
+            BORDER-LEFT: medium none;
+            BORDER-BOTTOM: medium none
+        }
+
+        .razmak {
+            padding-bottom: 5px;
+        }
+
+        .anketaHeader {
+            font-family: 'Lucida Console', Monaco, monospace;
+            font-size: 14px;
+            color: #145684;
+            font-weight: 600;
+            text-decoration: rgb(232, 230, 227);
+            font-style: normal;
+            font-variant: normal;
+            text-transform: none;
+            width: 135px;
+        }
+
+        .anketaButton {
+            background-color: #145684;
+            border-radius: 2px;
+            display: inline-block;
+            cursor: pointer;
+            font-family: Arial;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 4px 24px;
+            text-decoration: none;
+            margin-top: 5px;
+        }
+
+            .anketaButton:hover {
+                background-color: #0d3959;
+            }
+
+            .anketaButton:active {
+                position: relative;
+                top: 1px;
+            }
+
+            .anketaButton:link {
+                text-decoration: none;
+                color: #E6E6E6;
+                font-size: 10px;
+            }
+
+        /*.rbLineHeight {
+            line-height: 25px;
+        }*/
+
+        html {
+            height: 100%;
+        }
+
+        .brMargin > br {
+            margin-bottom: 5px;
+        }
+
+
+        body {
+            position: absolute;
+            top: 0;
+            bottom: 5px;
+            right: 5px;
+            left: 0;
+        }
+    </style>
+
+    <script src="wwwroot/js/tglobal.js"></script>
+    <script src="wwwroot/js/PorukaPrikaz.js"></script>
+    <script language="JavaScript">
+
+        function getSelectedCheckBoxValues(containerId) {
+            var container = document.getElementById(containerId);
+            // Select the span elements that have a data-value attribute and are ancestors of input[type=checkbox]
+            var checkBoxWrappers = container.querySelectorAll('span[data-value] > input[type=checkbox]');
+            var checkedValues = [];
+
+            checkBoxWrappers.forEach(function (checkBox) {
+                if (checkBox.checked) {
+                    // Navigate to the parent span to get the data-value attribute
+                    var value = checkBox.parentNode.getAttribute('data-value');
+                    checkedValues.push(value);
+                }
+            });
+
+            console.log(checkedValues);
+            return checkedValues;
+        }
+
+
+        function prikaziRezAnkete(mode) {
+            var idOdg, idPrc, idPrcAnketaRaznoVrsta, url;
+            idPrc = document.Form1.idPrc.value;
+            idPrcAnketaRaznoVrsta = document.Form1.hihIdPrcAnketaRaznoVrsta.value;
+
+            if (idPrcAnketaRaznoVrsta == 2) {
+                idOdg = getSelectedCheckBoxValues('cbAnketa')
+            }
+            else {              
+                idOdg = getSelectedRadioValue(document.Form1.rbAnketa)   //document.Form1.rbAnketa.selectedvalue;
+            }
+
+            url = 'AnketaRaznoRez.aspx?idPrc=' + encodeURIComponent(idPrc) +
+                '&idOdg=' + encodeURIComponent(idOdg) +
+                '&mode=' + encodeURIComponent(mode) +
+                '&idPrcAnketaRaznoVrsta=' + encodeURIComponent(idPrcAnketaRaznoVrsta);
+            
+            window.open(url, '', 'height=400,width=500,left=100,top=50,toolbar=0,location=0,directories=0,fullscreen=0,resizable=1,menubar=0,scrollbars=1,status=0,titlebar=0');
+        }
+
+        function prikaziRezAnkete2(mode) {
+            var idOdg, idPrc, idPrcAnketaRaznoVrsta, url;
+            idPrc = document.Form1.idPrc2.value;
+            idPrcAnketaRaznoVrsta = document.Form1.hihIdPrcAnketaRaznoVrsta2.value;
+
+            if (idPrcAnketaRaznoVrsta == 2) {
+                idOdg = getSelectedCheckBoxValues('cbAnketa2')
+            }
+            else {
+                idOdg = getSelectedRadioValue(document.Form1.rbAnketa2)   //document.Form1.rbAnketa.selectedvalue;
+            }
+
+            url = 'AnketaRaznoRez.aspx?idPrc=' + encodeURIComponent(idPrc) +
+                '&idOdg=' + encodeURIComponent(idOdg) +
+                '&mode=' + encodeURIComponent(mode) +
+                '&idPrcAnketaRaznoVrsta=' + encodeURIComponent(idPrcAnketaRaznoVrsta);
+
+            window.open(url, '', 'height=400,width=500,left=100,top=50,toolbar=0,location=0,directories=0,fullscreen=0,resizable=1,menubar=0,scrollbars=1,status=0,titlebar=0');
+        }
+
+    </script>
+
+    <script language="JavaScript" type="text/JavaScript">
+        function MM_preloadImages() { //v3.0
+            var d = document; if (d.images) {
+                if (!d.MM_p) d.MM_p = new Array();
+                var i, j = d.MM_p.length, a = MM_preloadImages.arguments; for (i = 0; i < a.length; i++)
+                    if (a[i].indexOf("#") != 0) { d.MM_p[j] = new Image; d.MM_p[j++].src = a[i]; }
+            }
+        }
+
+        function MM_swapImgRestore() { //v3.0
+            var i, x, a = document.MM_sr; for (i = 0; a && i < a.length && (x = a[i]) && x.oSrc; i++) x.src = x.oSrc;
+        }
+
+        function MM_findObj(n, d) { //v4.01
+            var p, i, x; if (!d) d = document; if ((p = n.indexOf("?")) > 0 && parent.frames.length) {
+                d = parent.frames[n.substring(p + 1)].document; n = n.substring(0, p);
+            }
+            if (!(x = d[n]) && d.all) x = d.all[n]; for (i = 0; !x && i < d.forms.length; i++) x = d.forms[i][n];
+            for (i = 0; !x && d.layers && i < d.layers.length; i++) x = MM_findObj(n, d.layers[i].document);
+            if (!x && d.getElementById) x = d.getElementById(n); return x;
+        }
+
+        function MM_swapImage() { //v3.0
+            var i, j = 0, x, a = MM_swapImage.arguments; document.MM_sr = new Array; for (i = 0; i < (a.length - 2); i += 3)
+                if ((x = MM_findObj(a[i])) != null) { document.MM_sr[j++] = x; if (!x.oSrc) x.oSrc = x.src; x.src = a[i + 2]; }
+        }
+    </script>
+</head>
+<body>
+    <div style="height: 100%; width: 100%;" class="border-outer">
+        <form name="Form1" method="post" action="./Default.aspx" id="Form1" style="width: 100%; height: 100%">
+<div>
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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">
+</div>
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="4356894C">
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="oGF3TPuxM+ZxHXOQsTDDnFzGZCRlgHnuDzNH3M/bE5LOBX9qnjFjfEOqekclQd1NQHynlRCeOl2KK/DvWM8K6COMzbw3GYkN9qRuQtRV0hhRlR7xZ5GbAK8tg0eTDOVHNfLZVAuiErPEsHxMZd+y+15JGkIId8CrghZHGoW8pPojsijY">
+</div>
+            <input name="idPrc" type="hidden" id="idPrc">
+            <input name="hihIdPrcAnketaRaznoVrsta" type="hidden" id="hihIdPrcAnketaRaznoVrsta">
+            <input name="idPrc2" type="hidden" id="idPrc2">
+            <input name="hihIdPrcAnketaRaznoVrsta2" type="hidden" id="hihIdPrcAnketaRaznoVrsta2">
+
+            <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+                <tbody><tr style="background-color: #E6E6E6; line-height: 10px;">
+                    <!-- BEGIN header row-->
+                    <!-- slika ImePortalaHeader mora biti u istom retku kao td!!! -->
+                    <td height="14">
+                        <!-- BEGIN lijevi stupac header-->
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tbody><tr>
+                                <!--<td width="3" align="left">
+                                    <img src="wwwroot/eduneta/images/start/top_left_left.gif" width="3" height="24">
+                                </td>-->
+                                <td align="center">
+                                    <img style="margin-top: -5px; margin-bottom: -5px;" src="wwwroot/ikone/ImePortalaHeader.gif" height="24">
+                                </td>
+                                <!--<td width="1" align="right">
+                                    <img src="wwwroot/eduneta/images/start/top_left_right.gif" width="1" height="24">
+                                </td>-->
+                            </tr>
+                        </tbody></table>
+                        <!-- END lijevi stupac header-->
+                    </td>
+
+                    <td align="right" valign="middle" height="14">
+                        <!-- BEGIN srednji stupac header-->
+                        <div style="max-height: 14px;">
+                            <img id="imgZona" src="wwwroot/ikone/semz.gif" alt="Trenutno si u zoni plaćanja: zeleno" align="absbottom" style="border-width:0px;margin-top: -5px; margin-bottom: -2px;">
+                            <span id="labKorisnik">MARKO KOJIĆ - 0013-24</span>
+                            <span id="labSepOsoba"> | </span>
+                            <span id="labProgram">DIU MOD (2.god)</span>
+                            
+                            <span id="labAkadGodSem">zimski sem. 25/26 (z)</span>
+                            &nbsp;|
+					        <span id="labDatum">19.01.2026 13:44</span>
+                        </div>
+
+                    </td>
+                    <!-- BEGIN srednji stupac header-->
+
+                    <td height="14">
+                        <!-- BEGIN desni stupac header-->
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tbody><tr>
+                                <!-- slika top_left_right mora biti u istom retku kao td!!! -->
+                                <!--<td width="1" align="left">
+                                    <img src="wwwroot/eduneta/images/start/top_left_right.gif" width="1" height="24">
+                                </td>-->
+                                <!--<td class="topLeftStretch" align="center">&nbsp;</td>-->
+                                <td width="75" align="right">
+                                    <a href="Logout.aspx?st=kraj">
+                                        <img style="margin-top: -3px; margin-right: -3px;" src="wwwroot/eduneta/images/start/top_right.gif" name="Image6" height="24" border="0" id="Image6" onmouseover="MM_swapImage('Image6','','wwwroot/eduneta/images/start/top_right_over.gif',1)" onmouseout="MM_swapImgRestore()"></a>
+                                </td>
+                            </tr>
+                        </tbody></table>
+                        <!-- END desni stupac header-->
+                    </td>
+                </tr>
+
+                <tr style="background-color: #E6E6E6">
+                    <!-- BEGIN main row-->
+                    <td width="154" valign="top">
+                        <!-- BEGIN lijevi stupac main -->
+
+                        <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tbody><tr>
+                                <td width="3" valign="top">
+                                    <!--<img src="wwwroot/eduneta/images/start/left_left.gif" width="3" height="100">-->
+                                </td>
+                                <td align="center" valign="top">
+                                    <!-- BEGIN ćelija s menijem,anketama,prijavama -->
+
+
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody><tr>
+                                            <td align="center">
+                                                <img src="wwwroot/eduneta/images/start/title_menu1.gif">
+
+                                                <script type="text/javascript" src="/lib-student/RadControls/Menu/Scripts/3_6_2/RadBrowser.js"></script><script type="text/javascript" src="/lib-student/RadControls/Menu/Scripts/3_6_2/RadHelper.js"></script><script type="text/javascript" src="/lib-student/RadControls/Menu/Scripts/3_6_2/RadMenu_Utils.js"></script><script type="text/javascript" src="/lib-student/RadControls/Menu/Scripts/3_6_2/RadMenu_Globals.js"></script><script type="text/javascript" src="/lib-student/RadControls/Menu/Scripts/3_6_2/RadMenu.js"></script><script type="text/javascript" src="/lib-student/RadControls/Menu/Scripts/3_6_2/RadMenu_Keyboard.js"></script><script type="text/javascript" src="/lib-student/RadControls/Menu/Scripts/3_6_2/RadImageCache.js"></script><span id="rmStyleSheetHolder" style="display:none"></span><script type="text/javascript">RadMenuNamespace.RadMenuAppendStyleSheet(false, 'rm', 'wwwroot/css/menu.css');</script><link rel="stylesheet" type="text/css" href="wwwroot/css/menu.css"><div id="gr98_g" style="position:absolute;left:-500px;top:-2000px;width:0px;height:0px;visibility:hidden;z-index:901;"><table class="MenuGroup" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td unselectable="on"><table id="gr98_g_0" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Prijava na 1. zimski ispitni rok (DIU Libertas 25/26)                                        </td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr98_g_1" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Odjava na 1. zimski ispitni rok (DIU Libertas 25/26)                                        </td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+</tbody></table>
+</div><div id="gr81_g" style="position:absolute;left:-500px;top:-2000px;width:0px;height:0px;visibility:hidden;z-index:901;"><table class="MenuGroup" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td unselectable="on"><table id="gr81_g_0" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Kolegiji na roku/predroku</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr81_g_1" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Redovitost na nastavi</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr81_g_2" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Financijske obaveze</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr81_g_3" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Kolegiji bez potpisa</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr81_g_4" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Raspored</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr81_g_5" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Moj indeks</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr81_g_6" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Moje prijave na razne aktivnosti</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+</tbody></table>
+</div><div id="gr87_g" style="position:absolute;left:-500px;top:-2000px;width:0px;height:0px;visibility:hidden;z-index:901;"><table class="MenuGroup" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td unselectable="on"><table id="gr87_g_0" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Primjer popunjene uplatnice</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+</tbody></table>
+</div><div id="gr84_g" style="position:absolute;left:-500px;top:-2000px;width:0px;height:0px;visibility:hidden;z-index:901;"><table class="MenuGroup" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td unselectable="on"><table id="gr84_g_0" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Rezultati raznih anketa</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+</tbody></table>
+</div><div id="gr85_g" style="position:absolute;left:-500px;top:-2000px;width:0px;height:0px;visibility:hidden;z-index:901;"><table class="MenuGroup" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td unselectable="on"><table id="gr85_g_0" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Promjena lozinke</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr85_g_1" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Promjena podataka</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr85_g_2" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Moje postavke</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr85_g_3" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Promjena email adrese</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+</tbody></table>
+</div><div id="gr82_g" style="position:absolute;left:-500px;top:-2000px;width:0px;height:0px;visibility:hidden;z-index:901;"><table class="MenuGroup" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td unselectable="on"><table id="gr82_g_0" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Primljene obavijesti</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+</tbody></table>
+</div><div id="rm_g"><table class="MenuGroup" cellpadding="0" cellspacing="0" style="width:130px;height:0px;">
+	<tbody><tr>
+		<td unselectable="on"><table id="gr81" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Izvještaji                              </td>
+				<td align="right" style="width:5px;" unselectable="on"><img style="border:none;" src="wwwroot//eduneta/images/start/menu_button_out.gif" alt=""></td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr87" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Obrasci                                 </td>
+				<td align="right" style="width:5px;" unselectable="on"><img style="border:none;" src="wwwroot//eduneta/images/start/menu_button_out.gif" alt=""></td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr98" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Ispitni rok                             </td>
+				<td align="right" style="width:5px;" unselectable="on"><img style="border:none;" src="wwwroot//eduneta/images/start/menu_button_out.gif" alt=""></td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr83" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Poruke                                  </td>
+				<td align="right" style="width:5px;" unselectable="on"><img style="border:none;" src="wwwroot//eduneta/images/start/menu_button_out.gif" alt=""></td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr82" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Obavijesti                              </td>
+				<td align="right" style="width:5px;" unselectable="on"><img style="border:none;" src="wwwroot//eduneta/images/start/menu_button_out.gif" alt=""></td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr84" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Ankete                                  </td>
+				<td align="right" style="width:5px;" unselectable="on"><img style="border:none;" src="wwwroot//eduneta/images/start/menu_button_out.gif" alt=""></td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr85" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Ostalo                                  </td>
+				<td align="right" style="width:5px;" unselectable="on"><img style="border:none;" src="wwwroot//eduneta/images/start/menu_button_out.gif" alt=""></td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="rm_g_7" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Dokumenti</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="rm_g_8" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Pomoć</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="rm_g_9" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Kraj rada</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+</tbody></table>
+</div><div id="gr83_g" style="position:absolute;left:-500px;top:-2000px;width:0px;height:0px;visibility:hidden;z-index:901;"><table class="MenuGroup" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td unselectable="on"><table id="gr83_g_0" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Brza poruka</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr83_g_1" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Primljene poruke</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td unselectable="on"><table id="gr83_g_2" class="MenuItem" cellpadding="0" cellspacing="0">
+			<tbody><tr>
+				<td align="left" style="width:5px;" unselectable="on">&nbsp;</td>
+				<td style="white-space:nowrap;" unselectable="on">Poslane poruke</td>
+				<td align="right" style="width:5px;" unselectable="on">&nbsp;</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+</tbody></table>
+</div><script type="text/javascript">
+/* <![CDATA[
+ */window["rmImagesData"] = [
+["menu_button_over.gif","menu_button_out.gif"]
+];
+window["rmMenuData"] = [
+["rm",0,900,,"wwwroot//eduneta/images/start/",0,0,0,0,0,,0,1,0,0,130,0,0,,,"MenuItemLevelCss","MenuItem","MenuItemOver","MenuItemClicked","MenuItemDisabled",0,5,0,"topscroll.gif","topscrolld.gif","bottomscroll.gif","bottomscrolld.gif","arrow.gif","leftscroll.gif","leftscrolld.gif","rightscroll.gif","rightscrolld.gif","MenuScroll","MenuScrollOver","MenuScrollClicked","MenuScrollDisabled",6,1,500,100,0,"Black",500,"MenuGroup",0,"rm_g","/lib-student/RadControls/Menu/Images/",,,,]];
+window["rmGroupData"] = [
+["gr98_g",,"gr98",5,5,1,0,,,,,,,0,0,,],
+["gr81_g",,"gr81",5,5,1,0,,,,,,,0,0,,],
+["gr87_g",,"gr87",5,5,1,0,,,,,,,0,0,,],
+["gr84_g",,"gr84",5,5,1,0,,,,,,,0,0,,],
+["gr85_g",,"gr85",5,5,1,0,,,,,,,0,0,,],
+["gr82_g",,"gr82",5,5,1,0,,,,,,,0,0,,],
+["rm_g",,,5,5,0,0,,,,,,,0,0,,],
+["gr83_g",,"gr83",5,5,1,0,,,,,,,0,0,,]];
+window["rmItemData"] = [
+["gr98_g_0","gr98_g",1,0,0,,,,,,,,,,,,,,,,,,,"Prijava na 1. zimski ispitni rok (DIU Libertas 25/26)                                        ",,,,,"PrijavaIspita.aspx?idGrPrc=828",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr98_g_1","gr98_g",1,0,0,,,,,,,,,,,,,,,,,,,"Odjava na 1. zimski ispitni rok (DIU Libertas 25/26)                                        ",,,,,"OdjavaIspita.aspx?idGrPrc=828",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr81_g_0","gr81_g",1,0,0,,,,,,,,,,,,,,,,,,,"Kolegiji na roku/predroku",,,,,"IzvPrijavljeniIspiti.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr81_g_1","gr81_g",1,0,0,,,,,,,,,,,,,,,,,,,"Redovitost na nastavi",,,,,"IzvRedovitost.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr81_g_2","gr81_g",1,0,0,,,,,,,,,,,,,,,,,,,"Financijske obaveze",,,,,"IzvPlaceneRate.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr81_g_3","gr81_g",1,0,0,,,,,,,,,,,,,,,,,,,"Kolegiji bez potpisa",,,,,"IzvPotpis.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr81_g_4","gr81_g",1,0,0,,,,,,,,,,,,,,,,,,,"Raspored",,,,,"raspored.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr81_g_5","gr81_g",1,0,0,,,,,,,,,,,,,,,,,,,"Moj indeks",,,,,"Indeks.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr81_g_6","gr81_g",1,0,0,,,,,,,,,,,,,,,,,,,"Moje prijave na razne aktivnosti",,,,,"IzvPrijave.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr87_g_0","gr87_g",1,0,0,,,,,,,,,,,,,,,,,,,"Primjer popunjene uplatnice",,,,,"uplatVirm.aspx?akc=1",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr84_g_0","gr84_g",1,0,0,,,,,,,,,,,,,,,,,,,"Rezultati raznih anketa",,,,,"IzvAnketaRezProsli.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr85_g_0","gr85_g",1,0,0,,,,,,,,,,,,,,,,,,,"Promjena lozinke",,,,,"PromjenaLozinke.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr85_g_1","gr85_g",1,0,0,,,,,,,,,,,,,,,,,,,"Promjena podataka",,,,,"adresa_promjena.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr85_g_2","gr85_g",1,0,0,,,,,,,,,,,,,,,,,,,"Moje postavke",,,,,"MojePostavke.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr85_g_3","gr85_g",1,0,0,,,,,,,,,,,,,,,,,,,"Promjena email adrese",,,,,"EmailPromjena.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr82_g_0","gr82_g",1,0,0,,,,,,,,,,,,,,,,,,,"Primljene obavijesti",,,,,"PorukePrimljene.aspx?idPV=2",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr81","rm_g",0,0,0,,,,,,,,,"menu_button_out.gif","menu_button_over.gif",,,,,,,,,"Izvještaji                              ",,,,,,,,,,,,,,,,,,,0,1,1,1,0,,,,"gr81_g",,,,,0,],
+["gr87","rm_g",0,0,0,,,,,,,,,"menu_button_out.gif","menu_button_over.gif",,,,,,,,,"Obrasci                                 ",,,,,,,,,,,,,,,,,,,0,1,1,1,0,,,,"gr87_g",,,,,0,],
+["gr98","rm_g",0,0,0,,,,,,,,,"menu_button_out.gif","menu_button_over.gif",,,,,,,,,"Ispitni rok                             ",,,,,,,,,,,,,,,,,,,0,1,1,1,0,,,,"gr98_g",,,,,0,],
+["gr83","rm_g",0,0,0,,,,,,,,,"menu_button_out.gif","menu_button_over.gif",,,,,,,,,"Poruke                                  ",,,,,,,,,,,,,,,,,,,0,1,1,1,0,,,,"gr83_g",,,,,0,],
+["gr82","rm_g",0,0,0,,,,,,,,,"menu_button_out.gif","menu_button_over.gif",,,,,,,,,"Obavijesti                              ",,,,,,,,,,,,,,,,,,,0,1,1,1,0,,,,"gr82_g",,,,,0,],
+["gr84","rm_g",0,0,0,,,,,,,,,"menu_button_out.gif","menu_button_over.gif",,,,,,,,,"Ankete                                  ",,,,,,,,,,,,,,,,,,,0,1,1,1,0,,,,"gr84_g",,,,,0,],
+["gr85","rm_g",0,0,0,,,,,,,,,"menu_button_out.gif","menu_button_over.gif",,,,,,,,,"Ostalo                                  ",,,,,,,,,,,,,,,,,,,0,1,1,1,0,,,,"gr85_g",,,,,0,],
+["rm_g_7","rm_g",0,0,0,,,,,,,,,,,,,,,,,,,"Dokumenti",,,,,"DocDownloadFS.aspx?akc=10",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["rm_g_8","rm_g",0,0,0,,,,,,,,,,,,,,,,,,,"Pomoć",,,,,"pomoc.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["rm_g_9","rm_g",0,0,0,,,,,,,,,,,,,,,,,,,"Kraj rada",,,,,"Logout.aspx?st=kraj",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr83_g_0","gr83_g",1,0,0,,,,,,,,,,,,,,,,,,,"Brza poruka",,,,,"Poruka1na1.aspx",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr83_g_1","gr83_g",1,0,0,,,,,,,,,,,,,,,,,,,"Primljene poruke",,,,,"PorukePrimljene.aspx?idPV=1",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,],
+["gr83_g_2","gr83_g",1,0,0,,,,,,,,,,,,,,,,,,,"Poslane poruke",,,,,"PorukePoslane.aspx?idPV=1",,,,,,,,,,,,,,0,1,1,1,0,,,,,,,,,0,]];
+window["rmItemCustomData"] = [
+];
+window["rm"] =  new RadMenu(rmMenuData,rmGroupData,rmItemData,rmItemCustomData);
+
+
+var icrm = new ImageCache(rmImagesData, function(){rm.ImagePreload();});
+/* ]]>
+ */</script>
+  <noscript>
+    <ol>
+        <li><a href="PrijavaIspita.aspx?idGrPrc=828">Prijava na 1. zimski ispitni rok (DIU Libertas 25/26)                                        </a></li>
+        <li><a href="OdjavaIspita.aspx?idGrPrc=828">Odjava na 1. zimski ispitni rok (DIU Libertas 25/26)                                        </a></li>
+        <li><a href="IzvPrijavljeniIspiti.aspx">Kolegiji na roku/predroku</a></li>
+        <li><a href="IzvRedovitost.aspx">Redovitost na nastavi</a></li>
+        <li><a href="IzvPlaceneRate.aspx">Financijske obaveze</a></li>
+        <li><a href="IzvPotpis.aspx">Kolegiji bez potpisa</a></li>
+        <li><a href="raspored.aspx">Raspored</a></li>
+        <li><a href="Indeks.aspx">Moj indeks</a></li>
+        <li><a href="IzvPrijave.aspx">Moje prijave na razne aktivnosti</a></li>
+        <li><a href="uplatVirm.aspx?akc=1">Primjer popunjene uplatnice</a></li>
+        <li><a href="IzvAnketaRezProsli.aspx">Rezultati raznih anketa</a></li>
+        <li><a href="PromjenaLozinke.aspx">Promjena lozinke</a></li>
+        <li><a href="adresa_promjena.aspx">Promjena podataka</a></li>
+        <li><a href="MojePostavke.aspx">Moje postavke</a></li>
+        <li><a href="EmailPromjena.aspx">Promjena email adrese</a></li>
+        <li><a href="PorukePrimljene.aspx?idPV=2">Primljene obavijesti</a></li>
+        <li><a href="DocDownloadFS.aspx?akc=10">Dokumenti</a></li>
+        <li><a href="pomoc.aspx">Pomoć</a></li>
+        <li><a href="Logout.aspx?st=kraj">Kraj rada</a></li>
+        <li><a href="Poruka1na1.aspx">Brza poruka</a></li>
+        <li><a href="PorukePrimljene.aspx?idPV=1">Primljene poruke</a></li>
+        <li><a href="PorukePoslane.aspx?idPV=1">Poslane poruke</a></li>
+
+    </ol>
+  </noscript>
+
+
+                                                
+                                                <br>
+                                                <!-- BEGIN notifikacija -->
+                                                
+                                                <br>
+                                                <!-- BEGIN Eduneta 2.0 -->
+                                               <a style="text-decoration: none" href="Nova_eduneta.aspx" class="linkMenu">
+                                                    
+                                                </a>
+                                                <!-- END Eduneta 2.0 -->
+                                                <!-- BEGIN Anketa -->
+                                                
+                                                <!-- END Anketa -->
+
+                                                <!-- BEGIN Anketa2 -->
+                                                
+                                                <!-- END Anketa -->
+
+                                                <!-- BEGIN Prijava -->
+                                                
+                                                
+                                                <!-- END Prijave-->
+
+                                            </td>
+                                        </tr>
+                                    </tbody></table>
+
+                                    <!-- END ćelija s menijem,anketama,prijavama -->
+                                </td>
+
+                                <!-- ispod: ćelija s desnim rubom za meni,anketu,prijavu -->
+                                <!--<td width="1">
+                                    <img src="wwwroot/eduneta/images/start/left_right.gif" width="1" height="100">
+                                </td>-->
+                            </tr>
+                        </tbody></table>
+
+                        <!-- END lijevi stupac main -->
+                    </td>
+
+                    <td align="center" valign="top" class="border-outer" style="background-color: white;">
+                        <!-- BEGIN središnji dio: obavijesti,poruke -->
+                        <table width="99%" height="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tbody><tr>
+                                <td height="126" valign="top">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tbody><tr>
+                                            <td width="178">
+                                                <img src="wwwroot/eduneta/images/start/title_obavijesti_left.gif" width="178" height="29">
+                                            </td>
+                                            <td class="obavijestiBgStretch" valign="middle" align="right">
+                                                
+                                                &nbsp;
+            
+                                                &nbsp;
+            <a href="PorukePrimljene.aspx?idPV=2" title="Primljene obavijesti">
+                <img src="wwwroot/eduneta/images/start/PorukePrimljene.gif" alt="Primljene obavijesti" border="0"></a>
+                                            </td>
+                                            <td width="11" align="right">
+                                                <img src="wwwroot/eduneta/images/start/title_obavijesti_right.gif">
+                                            </td>
+                                        </tr>
+                                    </tbody></table>
+
+                                    <!-- BEGIN table obavijesti -->
+                                    
+                                    <!-- END table obavijesti -->
+
+                                    <div id="divNemaObav" align="center" class="razmak">
+                                        Nema nepročitanih obavijesti.
+                                    </div>
+
+                                    
+
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tbody><tr>
+                                            <td width="132">
+                                                <div>
+                                                    <img src="wwwroot/eduneta/images/start/title_poruke_left.gif" width="132">
+                                                </div>
+
+                                            </td>
+                                            <td height="25" align="right">
+                                                <div class="porukeBgStretch" style="margin-top: -2px">
+                                                    <!--<a href="PorukaObavFS.aspx?akc=0" title="Nova poruka"><img src="wwwroot/eduneta/images/start/PorukaNova.gif" alt="Nova poruka" border="0"></a>&nbsp; -->
+                                                    <a href="PorukePoslane.aspx?idPV=1" title="Poslane poruke" style="text-decoration: none;">
+                                                        <img src="wwwroot/eduneta/images/start/PorukePoslane.gif" alt="Poslane poruke" border="0" style="margin-top: 4px;">
+                                                    </a>                                                
+                                                    &nbsp;
+                                                    <a href="PorukePrimljene.aspx?idPV=1" title="Primljene poruke">
+                                                        <img src="wwwroot/eduneta/images/start/PorukePrimljene.gif" alt="Primljene poruke" border="0">
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td width="11" align="right">
+                                                <img src="wwwroot/eduneta/images/start/title_poruke_right.gif">
+                                            </td>
+                                        </tr>
+                                    </tbody></table>
+
+                                    <!-- BEGIN table poruke -->
+                                    
+                                    <!-- END table poruke -->
+
+                                    <div id="divNemaPoruka" align="center" class="razmak">
+                                        Nema nepročitanih poruka.
+                                    </div>
+
+                                    
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <!--<td height="5">
+                                    <img src="wwwroot/eduneta/images/start/pixel_bijeli.gif" width="1" height="1">
+                                </td>-->
+                            </tr>
+                        </tbody></table>
+                        <!-- END središnji dio: obavijesti,poruke -->
+                    </td>
+
+                    <td width="184" align="center" valign="top">
+
+                        <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tbody><tr>
+                                <!--<td width="1">
+                                    <img src="wwwroot/eduneta/images/start/left_right.gif" width="1" height="100">
+                                </td>-->
+                                <td align="center" valign="top" bgcolor="#E6E6E6">
+
+                                    <!-- BEGIN desni stupac: logo, prečaci -->
+                                    <div style="margin-top: 20px; margin-bottom: 20px;">
+                                        <img src="wwwroot/EdunetaUst/lib/SlikeLogo/LogoPortaliPocetna.gif" id="imgLogoUst">
+                                    </div>
+
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tbody><tr>
+                                            <td align="center">
+                                                <img src="wwwroot/eduneta/images/start/title_prechaci1.gif" width="137" height="17">
+                                            </td>
+                                        </tr>
+                                    </tbody></table>
+
+                                    <table cellspacing="5" border="0" id="dgPrecaci" style="width:98%;">
+	<tbody><tr>
+		<td align="center" valign="middle" style="width:33px;">
+                                                    <a href="IzvPlaceneRate.aspx" id="dgPrecaci_ctl02_aFun" title="Financijske obaveze">
+                                                        <img src="wwwroot//eduneta/images/funkcije/financije.gif" id="dgPrecaci_ctl02_imgFun" border="0"></a>
+                                                </td><td class="tdPrecaci">
+                                                    <a id="dgPrecaci_ctl02_lnkPrecac" href="IzvPlaceneRate.aspx">Financijske obaveze</a>
+                                                </td>
+	</tr><tr>
+		<td align="center" valign="middle" style="width:33px;">
+                                                    <a href="PrijavaIspita.aspx?idGrPrc=828" id="dgPrecaci_ctl03_aFun" title="Prijava na 1. zimski ispitni rok (DIU Libertas 25/26)">
+                                                        <img src="wwwroot//eduneta/images/funkcije/prijava.gif" id="dgPrecaci_ctl03_imgFun" border="0"></a>
+                                                </td><td class="tdPrecaci">
+                                                    <a id="dgPrecaci_ctl03_lnkPrecac" href="PrijavaIspita.aspx?idGrPrc=828">Prijava na 1. zimski ispitni rok (DIU Libertas 25/26)</a>
+                                                </td>
+	</tr><tr>
+		<td align="center" valign="middle" style="width:33px;">
+                                                    <a href="raspored.aspx" id="dgPrecaci_ctl04_aFun" title="Raspored">
+                                                        <img src="wwwroot//eduneta/images/funkcije/raspored.gif" id="dgPrecaci_ctl04_imgFun" border="0"></a>
+                                                </td><td class="tdPrecaci">
+                                                    <a id="dgPrecaci_ctl04_lnkPrecac" href="raspored.aspx">Raspored</a>
+                                                </td>
+	</tr><tr>
+		<td align="center" valign="middle" style="width:33px;">
+                                                    <a href="OdjavaIspita.aspx?idGrPrc=828" id="dgPrecaci_ctl05_aFun" title="Odjava na 1. zimski ispitni rok (DIU Libertas 25/26)">
+                                                        <img src="wwwroot//eduneta/images/funkcije/odjava.gif" id="dgPrecaci_ctl05_imgFun" border="0"></a>
+                                                </td><td class="tdPrecaci">
+                                                    <a id="dgPrecaci_ctl05_lnkPrecac" href="OdjavaIspita.aspx?idGrPrc=828">Odjava na 1. zimski ispitni rok (DIU Libertas 25/26)</a>
+                                                </td>
+	</tr><tr>
+		<td align="center" valign="middle" style="width:33px;">
+                                                    <a href="Indeks.aspx" id="dgPrecaci_ctl06_aFun" title="Moj indeks">
+                                                        <img src="wwwroot//eduneta/images/funkcije/ocjene.gif" id="dgPrecaci_ctl06_imgFun" border="0"></a>
+                                                </td><td class="tdPrecaci">
+                                                    <a id="dgPrecaci_ctl06_lnkPrecac" href="Indeks.aspx">Moj indeks</a>
+                                                </td>
+	</tr>
+</tbody></table>
+
+                                    <br>
+                                    <div id="pnlVern">
+	<table cellspacing="5" border="0" id="dgPrecaci" style="width:98%;">
+<tbody><tr>
+<td align="center" valign="middle" style="width:33px;">
+<a href="stud_komentari_mail.aspx">
+<img src="wwwroot//eduneta/images/funkcije/razno.gif" border="0" title="Prijedlozi i komentari">
+</a>
+</td>
+<td class="tdPrecaci">
+<a href="stud_komentari_mail.aspx" target="_blank">Prijedlozi i komentari</a>
+</td>
+</tr></tbody></table>
+<table cellspacing="5" border="0" id="dgPrecaci" style="width:98%;">
+<tbody><tr>
+<td align="center" valign="middle" colspan="2">
+<img src="wwwroot//eduneta/images/start/title_resursi.gif" width="137" height="17" title="dokumenti">
+</td>
+</tr>
+<tr>
+<td align="center" valign="middle" style="width:33px;">
+<a href="https://issp.srce.hr/e-potvrda/" title="resurs" target="blank">
+<img src="wwwroot//eduneta/images/funkcije/resursi.gif" border="0" title="Link na e-Zapis o statusu studenta (potvrda)">
+</a>
+</td>
+<td class="tdPrecaci">
+<a href="https://issp.srce.hr/e-potvrda/" target="blank">Link na e-Zapis o statusu studenta (potvrda)</a>
+</td>
+</tr>
+</tbody></table>
+<br><br>
+</div>
+                                </td>
+                                <!--<td width="3">
+                                    <img src="wwwroot/eduneta/images/start/right_right.gif" width="3" height="100">
+                                </td>-->
+                            </tr>
+                        </tbody></table>
+
+                        <!-- END desni stupac: logo, prečaci -->
+                    </td>
+
+                </tr>
+
+                <tr style="background-color: #E6E6E6; line-height: 8px;">
+                    <!-- BEGIN footer row-->
+
+                    <td>
+                        <!--<table width="100%" height="17" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td width="3" align="left">
+                                    <img src="wwwroot/eduneta/images/start/bot_left_left.gif" width="3" height="17">
+                                </td>
+                                <td class="botLeftStretch" align="center">&nbsp;</td>
+                                <td width="1" align="right">
+                                    <img src="wwwroot/eduneta/images/start/bot_left_right.gif" width="1" height="17">
+                                </td>
+                            </tr>
+                        </table>-->
+                    </td>
+                    <td align="center" valign="top" style="height: 10px;">
+                        <a href="https://www.bip.hr">
+                            <img src="wwwroot/eduneta/images/start/developed_by.gif" width="95" height="17" border="0" style="margin-top: -1px; margin-bottom: -3px;">
+                        </a>
+                    </td>
+
+                    <td>
+                        <!--<table width="100%" height="17" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td width="1" align="left">
+                                    <img src="wwwroot/eduneta/images/start/bot_right_left.gif" width="1" height="17"></td>
+                                <td class="botRightStretch" align="center">&nbsp;</td>
+                                <td width="3" align="right">
+                                    <img src="wwwroot/eduneta/images/start/bot_right_right.gif" width="3" height="17"></td>
+                            </tr>
+                        </table>-->
+                    </td>
+
+                    <!-- END footer row-->
+                </tr>
+            </tbody></table>
+
+
+        </form>
+    </div>
+
+
+</body></html>

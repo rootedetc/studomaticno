@@ -1,0 +1,268 @@
+<!DOCTYPE html><html><head><title>
+	Eduneta - početna stranica
+</title><meta http-equiv="Content-Type" content="text/html; charset=windows-1250"><link href="wwwroot/eduneta/styles/start.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans&amp;display=swap" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style type="text/css">
+        .tdPrecaci {
+            BORDER-RIGHT: medium none;
+            BORDER-TOP: medium none;
+            PADDING-BOTTOM: 5px;
+            BORDER-LEFT: medium none;
+            BORDER-BOTTOM: medium none
+        }
+
+        .razmak {
+            padding-bottom: 5px;
+        }
+
+        .anketaHeader {
+            font-family: 'Lucida Console', Monaco, monospace;
+            font-size: 14px;
+            color: #145684;
+            font-weight: 600;
+            text-decoration: rgb(232, 230, 227);
+            font-style: normal;
+            font-variant: normal;
+            text-transform: none;
+            width: 135px;
+        }
+
+        .anketaButton {
+            background-color: #145684;
+            border-radius: 2px;
+            display: inline-block;
+            cursor: pointer;
+            font-family: Arial;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 4px 24px;
+            text-decoration: none;
+            margin-top: 5px;
+        }
+
+            .anketaButton:hover {
+                background-color: #0d3959;
+            }
+
+            .anketaButton:active {
+                position: relative;
+                top: 1px;
+            }
+
+            .anketaButton:link {
+                text-decoration: none;
+                color: #E6E6E6;
+                font-size: 10px;
+            }
+
+        /*.rbLineHeight {
+            line-height: 25px;
+        }*/
+
+        html {
+            height: 100%;
+        }
+
+        .brMargin > br {
+            margin-bottom: 5px;
+        }
+
+
+        body {
+            position: absolute;
+            top: 0;
+            bottom: 5px;
+            right: 5px;
+            left: 0;
+        }
+    </style>
+
+    <script src="wwwroot/js/tglobal.js"></script>
+    <script src="wwwroot/js/PorukaPrikaz.js"></script>
+    <script language="JavaScript">
+
+        function getSelectedCheckBoxValues(containerId) {
+            var container = document.getElementById(containerId);
+            // Select the span elements that have a data-value attribute and are ancestors of input[type=checkbox]
+            var checkBoxWrappers = container.querySelectorAll('span[data-value] > input[type=checkbox]');
+            var checkedValues = [];
+
+            checkBoxWrappers.forEach(function (checkBox) {
+                if (checkBox.checked) {
+                    // Navigate to the parent span to get the data-value attribute
+                    var value = checkBox.parentNode.getAttribute('data-value');
+                    checkedValues.push(value);
+                }
+            });
+
+            console.log(checkedValues);
+            return checkedValues;
+        }
+
+
+        function prikaziRezAnkete(mode) {
+            var idOdg, idPrc, idPrcAnketaRaznoVrsta, url;
+            idPrc = document.Form1.idPrc.value;
+            idPrcAnketaRaznoVrsta = document.Form1.hihIdPrcAnketaRaznoVrsta.value;
+
+            if (idPrcAnketaRaznoVrsta == 2) {
+                idOdg = getSelectedCheckBoxValues('cbAnketa')
+            }
+            else {              
+                idOdg = getSelectedRadioValue(document.Form1.rbAnketa)   //document.Form1.rbAnketa.selectedvalue;
+            }
+
+            url = 'AnketaRaznoRez.aspx?idPrc=' + encodeURIComponent(idPrc) +
+                '&idOdg=' + encodeURIComponent(idOdg) +
+                '&mode=' + encodeURIComponent(mode) +
+                '&idPrcAnketaRaznoVrsta=' + encodeURIComponent(idPrcAnketaRaznoVrsta);
+            
+            window.open(url, '', 'height=400,width=500,left=100,top=50,toolbar=0,location=0,directories=0,fullscreen=0,resizable=1,menubar=0,scrollbars=1,status=0,titlebar=0');
+        }
+
+        function prikaziRezAnkete2(mode) {
+            var idOdg, idPrc, idPrcAnketaRaznoVrsta, url;
+            idPrc = document.Form1.idPrc2.value;
+            idPrcAnketaRaznoVrsta = document.Form1.hihIdPrcAnketaRaznoVrsta2.value;
+
+            if (idPrcAnketaRaznoVrsta == 2) {
+                idOdg = getSelectedCheckBoxValues('cbAnketa2')
+            }
+            else {
+                idOdg = getSelectedRadioValue(document.Form1.rbAnketa2)   //document.Form1.rbAnketa.selectedvalue;
+            }
+
+            url = 'AnketaRaznoRez.aspx?idPrc=' + encodeURIComponent(idPrc) +
+                '&idOdg=' + encodeURIComponent(idOdg) +
+                '&mode=' + encodeURIComponent(mode) +
+                '&idPrcAnketaRaznoVrsta=' + encodeURIComponent(idPrcAnketaRaznoVrsta);
+
+            window.open(url, '', 'height=400,width=500,left=100,top=50,toolbar=0,location=0,directories=0,fullscreen=0,resizable=1,menubar=0,scrollbars=1,status=0,titlebar=0');
+        }
+
+    </script>
+
+    <script language="JavaScript" type="text/JavaScript">
+        function MM_preloadImages() { //v3.0
+            var d = document; if (d.images) {
+                if (!d.MM_p) d.MM_p = new Array();
+                var i, j = d.MM_p.length, a = MM_preloadImages.arguments; for (i = 0; i < a.length; i++)
+                    if (a[i].indexOf("#") != 0) { d.MM_p[j] = new Image; d.MM_p[j++].src = a[i]; }
+            }
+        }
+
+        function MM_swapImgRestore() { //v3.0
+            var i, x, a = document.MM_sr; for (i = 0; a && i < a.length && (x = a[i]) && x.oSrc; i++) x.src = x.oSrc;
+        }
+
+        function MM_findObj(n, d) { //v4.01
+            var p, i, x; if (!d) d = document; if ((p = n.indexOf("?")) > 0 && parent.frames.length) {
+                d = parent.frames[n.substring(p + 1)].document; n = n.substring(0, p);
+            }
+            if (!(x = d[n]) && d.all) x = d.all[n]; for (i = 0; !x && i < d.forms.length; i++) x = d.forms[i][n];
+            for (i = 0; !x && d.layers && i < d.layers.length; i++) x = MM_findObj(n, d.layers[i].document);
+            if (!x && d.getElementById) x = d.getElementById(n); return x;
+        }
+
+        function MM_swapImage() { //v3.0
+            var i, j = 0, x, a = MM_swapImage.arguments; document.MM_sr = new Array; for (i = 0; i < (a.length - 2); i += 3)
+                if ((x = MM_findObj(a[i])) != null) { document.MM_sr[j++] = x; if (!x.oSrc) x.oSrc = x.src; x.src = a[i + 2]; }
+        }
+    </script>
+</head>
+<body>
+    <div style="height: 100%; width: 100%;" class="border-outer">
+        <form name="Form1" method="post" action="./Default.aspx" id="Form1" style="width: 100%; height: 100%">
+<div>
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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">
+</div>
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="4356894C">
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="Q0mm3cw5Z8WjXaerNlRvysCsN4O2B0W5TOtY+VY/lv7/CP+yteJ3eAFz6U2eCJrL00xqWPyvyZ5zFP+tsnFjrphcllBhdiXE2pwGYQQk6Cc3oKME1Kny1Dwh8hfHbkCEIcSQyCKVczAokwWAlejHONg/EYJcU2EsF2NjxS+kFxhtF0DQ">
+</div>
+            <input name="idPrc" type="hidden" id="idPrc">
+            <input name="hihIdPrcAnketaRaznoVrsta" type="hidden" id="hihIdPrcAnketaRaznoVrsta">
+            <input name="idPrc2" type="hidden" id="idPrc2">
+            <input name="hihIdPrcAnketaRaznoVrsta2" type="hidden" id="hihIdPrcAnketaRaznoVrsta2">
+
+            <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+                <tbody><tr style="background-color: #E6E6E6; line-height: 10px;">
+                    <!-- BEGIN header row-->
+                    <!-- slika ImePortalaHeader mora biti u istom retku kao td!!! -->
+                    <td height="14">
+                        <!-- BEGIN lijevi stupac header-->
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tbody><tr>
+                                <!--<td width="3" align="left">
+                                    <img src="wwwroot/eduneta/images/start/top_left_left.gif" width="3" height="24">
+                                </td>-->
+                                <td align="center">
+                                    <img style="margin-top: -5px; margin-bottom: -5px;" src="wwwroot/ikone/ImePortalaHeader.gif" height="24">
+                                </td>
+                                <!--<td width="1" align="right">
+                                    <img src="wwwroot/eduneta/images/start/top_left_right.gif" width="1" height="24">
+                                </td>-->
+                            </tr>
+                        </tbody></table>
+                        <!-- END lijevi stupac header-->
+                    </td>
+
+                    <td align="right" valign="middle" height="14">
+                        <!-- BEGIN srednji stupac header-->
+                        <div style="max-height: 14px;">
+                            <img id="imgZona" src="wwwroot/ikone/semz.gif" alt="Trenutno si u zoni plaćanja: zeleno" align="absbottom" style="border-width:0px;margin-top: -5px; margin-bottom: -2px;">
+                            <span id="labKorisnik">MARKO KOJIĆ - 0013-24</span>
+                            <span id="labSepOsoba"> | </span>
+                            <span id="labProgram">DIU MOD (2.god)</span>
+                            
+                            <span id="labAkadGodSem">zimski sem. 25/26 (z)</span>
+                            &nbsp;|
+					        <span id="labDatum">19.01.2026 13:45</span>
+                        </div>
+
+                    </td>
+                    <!-- BEGIN srednji stupac header-->
+
+                    <td height="14">
+                        <!-- BEGIN desni stupac header-->
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tbody><tr>
+                                <!-- slika top_left_right mora biti u istom retku kao td!!! -->
+                                <!--<td width="1" align="left">
+                                    <img src="wwwroot/eduneta/images/start/top_left_right.gif" width="1" height="24">
+                                </td>-->
+                                <!--<td class="topLeftStretch" align="center">&nbsp;</td>-->
+                                <td width="75" align="right">
+                                    <a href="Logout.aspx?st=kraj">
+                                        <img style="margin-top: -3px; margin-right: -3px;" src="wwwroot/eduneta/images/start/top_right.gif" name="Image6" height="24" border="0" id="Image6" onmouseover="MM_swapImage('Image6','','wwwroot/eduneta/images/start/top_right_over.gif',1)" onmouseout="MM_swapImgRestore()"></a>
+                                </td>
+                            </tr>
+                        </tbody></table>
+                        <!-- END desni stupac header-->
+                    </td>
+                </tr>
+
+                <tr style="background-color: #E6E6E6">
+                    <!-- BEGIN main row-->
+                    <td width="154" valign="top">
+                        <!-- BEGIN lijevi stupac main -->
+
+                        <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tbody><tr>
+                                <td width="3" valign="top">
+                                    <!--<img src="wwwroot/eduneta/images/start/left_left.gif" width="3" height="100">-->
+                                </td>
+                                <td align="center" valign="top">
+                                    <!-- BEGIN ćelija s menijem,anketama,prijavama -->
+
+
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody><tr>
+                                            <td align="center">
+                                                <img src="wwwroot/eduneta/images/start/title_menu1.gif">
+
+                                                <script type="text/javascript" src="/lib-student/RadControls/Menu/Scripts/3_6_2/RadBrowser.js"></script></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></form></div></body></html>

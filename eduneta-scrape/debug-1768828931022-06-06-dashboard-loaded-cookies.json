@@ -1,0 +1,22 @@
+[
+  {
+    "name": "ASP.NET_SessionId",
+    "value": "jegpb34nalwnzijufqw00rd1",
+    "domain": "eduneta.hr",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "studomatic",
+    "value": "FDF971D02037EF2315400BB28C96E959E487099448938C66FCD2059F81FBE02CECA01CA78F92ADDFEB1813CF4C49BBDD825355631D97BAB5845E383293D8F20E0894D8AA93DE304E22A8A02F7F3479C18F40D90BF2676AC6BEFECCE781D82CA7F9A6B32FA4517A15B4096C535AEEE01D07111B61E5F663523DF10DFCFD639A63B17299DD60529661E03D6B4A699A6D35EDD31605",
+    "domain": "eduneta.hr",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  }
+]

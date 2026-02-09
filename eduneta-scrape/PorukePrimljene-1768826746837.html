@@ -1,0 +1,932 @@
+<!DOCTYPE html><html><head><title>
+	Primljene poruke i obavijesti
+</title><meta http-equiv="Content-Type" content="text/html; charset=windows-1250"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="wwwroot/css/portal.css" rel="stylesheet"><link href="wwwroot/eduneta/styles/vern.css" rel="stylesheet">
+    <script src="wwwroot/js/PorukaPrikaz.js"></script>
+    <style type="text/css">
+        td {
+            padding-left: 6px;
+            padding-right: 6px
+        }
+    </style>
+</head>
+<body>
+    <form name="form1" method="post" action="./PorukePrimljene.aspx?idPV=2" id="form1">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="E4EE3626">
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="g9ZpJI9Jiht85+bbxy47CNOGmu8i90tKiVEAHxY4TyCIlTOz9rDl8nrkkCU/1ez7joJIGGVhY9Yyala6xG0pcDjK3squSdB660D8wT596s0Alq9a1YnagG2yjVCx7Ijv28IKZFvUYqWGrdCanMwnniFZWrNMTNBVkhtFP0Uwvi+g4WMsftWfUGTqIytOhzUZDUYOsLZj2CmMQVnhXXaRJldPWcIrBiprffiW7lnxcfbln5Nbglyh9HY8eDWNLj3VNQ1vGhT2U7SZqDqcuvcO5p9vSP6ivXH1xVqXxV7vGXLVPVv2CEi0R2Zq9FjkmUod2srilzJJJmXYYRxkctbOsz9nqAZbQn6mjOC/wUkdgI+oh1gVcMdj9BVvPoNY4AVh7aouttVeYxPvCc4fxnub9e9tZpmbbbrNiiqPq003soTd40v/LHl+Bn0odKWzArHe0iUtjvgYUFgQWxgUVi8j4kI1zjIPIwvB9/6Vu1liMFKRtBgGZjGbZy+dsyiFSAyzH74oyrJcZSexEu6GKdulGuQgzr40w1l42kCRBCvIFNrjpKawW+56eFOQt6QQ3W1mCYZwxqyaFuk/0Wlah+ZS9LRJ28wpdBrVzRevRSPippaVdqPfXnyV2q/Dlk1uhGT+0ZVmligS5EU0SqgFnnGG5TvEuoAEZdwCYTxCEMjXKaw3X8ucLNlCVizi1PAMchSyBEkPK4piT9XqI+zn+A9Mh6WaTJGdEg4u6LMuFQj1Vd68f8WjjIXMK+Nz9GNb5pn+W8FmoawjcrJEWMRsC5SA+FAJ+68h8CUKMavv1vnENIfOERu0TjUBrP9NHV4fvEygiJQ72/S/EibsUhhtvGAfSKZmmpdfAzcSaAXDbP8tA2hBQlY6Fn8NOOFJlaSL/I0JySqxRyNm53ANtSoSGyUJr/x3wdYQpPdCxN5DCOVl5/U8rVABYUIY6ZKVEA/9tH8H912oyUVQmsm4ALUbKMyvZ6JkM15X9H2xxuez1kZkUmo4kV+V8SFUjVpkc+0erHxc6m9bTOOTubBRZk9/GL6sq/nw8H36fARkm9YOQbX8BjR89bR3zqVV771+/ohn7i3+sBQ1VfXJaAaH5kPruraxJ12fjIaKBp+R7VnipxJocgfCQ5mS9eC018WX6BlnaNDZHdqaag==">
+</div>
+        <div>
+            
+<div>
+    <table width="100%" border="0" cellspacing="0" class="topBar">
+        <tbody><tr id="trColor">
+	<td>
+                <div>
+                    
+                    <a id="lnkHome" class="topBar1" title="Početna stranica" href="Default.aspx" target="_top">LIB - Studomatic</a>
+                    
+                    
+                    <span id="labSepKraj">&nbsp;&nbsp; | &nbsp;</span>
+                    <a id="lnkKraj" class="topBarKraj" href="Logout.aspx?st=kraj" target="_top">Kraj rada</a>
+                </div>
+            </td>
+	<td align="right" class="topBarText">
+                <img id="imgZona" src="wwwroot/ikone/semz.gif" alt="Trenutno si u zoni plaćanja: zeleno" align="absbottom" style="border-width:0px;">
+                <span id="labKorisnik">MARKO KOJIĆ - 0013-24</span>
+                <span id="labSepOsoba"> | </span>
+                <span id="labProgram">DIU MOD (2.god)</span>
+                <span id="labSepProgram"> | </span>
+                <span id="labAkadGodSem">zimski sem. 25/26 (z)</span>&nbsp;|
+				<span id="labDatum">19.01.2026 13:45</span>
+            </td>
+</tr>
+
+    </tbody></table>
+    <table border="0" width="75%" align="center">
+        <tbody><tr>
+            <td align="center">
+                <span id="labNaslov" class="topBarNaslov">Primljene obavijesti</span>
+                <span id="labPodnaslov" class="topBarPodnaslov"></span></td>
+        </tr>
+        <tr id="trParam">
+	<td align="center">
+                <span id="labParametri" class="topBarParam"></span>
+            </td>
+</tr>
+
+    </tbody></table>
+</div>
+
+        </div>
+        <div>
+            
+    <p>
+        Prikaži:&nbsp;
+        <select name="ctl00$contentBody$lstNacin" onchange="javascript:setTimeout('__doPostBack(\'ctl00$contentBody$lstNacin\',\'\')', 0)" id="lstNacin">
+	<option selected="selected" value="1">sve obavijesti</option>
+	<option value="2">nepročitane obavijesti</option>
+
+</select>
+    </p>
+
+    <p>
+        Pretraži po pošiljatelju:
+			   <input name="ctl00$contentBody$txtPosiljatelj" type="text" value="upiši prezime..." id="txtPosiljatelj" onfocus="if (this.value == 'upiši prezime...') this.value = '';" onblur="if (this.value == '') this.value = 'upiši prezime...';">
+        <input type="submit" name="ctl00$contentBody$btnSearch" value="Traži" id="btnSearch">
+    </p>
+
+    <div id="divGrid">
+        <div>
+	<table cellspacing="0" cellpadding="2" border="0" id="dgPoruke" style="border-width:0px;border-collapse:collapse;">
+		<tbody><tr class="trHead" align="left" style="font-size:Small;">
+			<th scope="col">&nbsp;</th><th scope="col">&nbsp;</th><th scope="col">&nbsp;</th><th scope="col">Poslano</th><th scope="col">Pošiljatelj</th><th scope="col">Primatelj</th><th scope="col">Naslov</th><th scope="col">Pročitano</th><th scope="col">Odgovoreno</th>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl02$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>19.01.2026 08:34</td><td>
+                        Stipe Buzar
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(357254,13203496)">
+                            Stipe Buzar - izvanredni termin konzultacija
+                        </a>
+                    </td><td>19.01.2026 12:32</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl03$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>17.01.2026 17:57</td><td>
+                        Davorin Žagar
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(357216,13199487)">
+                            Obavijest o rezultatima predroka (i ostale informacije)
+                        </a>
+                    </td><td>17.01.2026 21:34</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl04$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>15.01.2026 08:29</td><td>
+                        Davorin Žagar
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(357052,13197276)">
+                            Orijentacija uoči predroka, pomoć
+                        </a>
+                    </td><td>17.01.2026 21:33</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl05$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>14.01.2026 11:48</td><td>
+                        Stipe Buzar
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356992,13196840)">
+                            Etika u međunarodnim odnosima - rezultati predroka od 8. 1. 2026.
+                        </a>
+                    </td><td>14.01.2026 17:18</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl06$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>13.01.2026 10:14</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356882,13194165)">
+                            Odgoda predavanja iz kolegija Poslovanje u međunarodnoj trgovini - profesor Heri Bezić
+                        </a>
+                    </td><td>13.01.2026 16:58</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl07$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>09.01.2026 06:17</td><td>
+                        Maroje Višić
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356637,13187133)">
+                            Obavijest o konzultacijama
+                        </a>
+                    </td><td>14.01.2026 17:18</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl08$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>08.01.2026 09:00</td><td>
+                        Davorin Žagar
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356584,13183166)">
+                            Predrok "Diplomatske tehnike i vještine": obavijest o dvorani i rasporedu
+                        </a>
+                    </td><td>09.01.2026 18:32</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl09$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>07.01.2026 16:07</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356558,13178174)">
+                            Konzultacije kod prof. Merkaša
+                        </a>
+                    </td><td>09.01.2026 18:32</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl10$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>07.01.2026 14:28</td><td>
+                        Stipe Buzar
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356551,13174862)">
+                            Podsjetnik na predrok iz Etike u međunarodnim odnosima
+                        </a>
+                    </td><td>14.01.2026 17:18</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl11$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>07.01.2026 12:49</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356538,13172762)">
+                            KONZULTACIJE KOD PROFESORA MIRKA BILANDŽIĆA
+                        </a>
+                    </td><td>14.01.2026 17:18</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl12$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>05.01.2026 17:04</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356478,13164958)">
+                            Zimski ispitni rok 2025./2026.
+                        </a>
+                    </td><td>07.01.2026 11:30</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl13$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>28.12.2025 17:08</td><td>
+                        Martina Ostojić
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356420,13162242)">
+                            Rezultati predroka iz kolegija Komunikacijske vještine - 22.12.25.
+                        </a>
+                    </td><td>28.12.2025 18:00</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl14$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>28.12.2025 15:36</td><td>
+                        Martina Ostojić
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356419,13162159)">
+                            Rezultati predroka iz kolegija Pregovaranje i razrješavanje sukoba - 23.12.2025.
+                        </a>
+                    </td><td>28.12.2025 17:57</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl15$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>21.12.2025 15:22</td><td>
+                        Davorin Žagar
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356360,13160955)">
+                            Prezentacija-vlp M. Privora
+                        </a>
+                    </td><td>21.12.2025 17:59</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl16$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>18.12.2025 09:20</td><td>
+                          Rektorat
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356265,13159094)">
+                            Božićna čestitka
+                        </a>
+                    </td><td>20.12.2025 16:57</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl17$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>16.12.2025 12:21</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356175,13153267)">
+                            KONZULTACIJE KOD PROFESORICE JADRANKE POLOVIĆ
+                        </a>
+                    </td><td>20.12.2025 16:57</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl18$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>15.12.2025 11:07</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(356103,13148976)">
+                            15.12.2025.
+                        </a>
+                    </td><td>15.12.2025 23:36</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl19$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>09.12.2025 10:11</td><td>
+                        Stipe Buzar
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355910,13143882)">
+                            Buzar - jednokratna promjena termina konzultacija - 10. 12. 2025.
+                        </a>
+                    </td><td>15.12.2025 00:22</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl20$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>09.12.2025 09:51</td><td>
+                        Studentski zbor
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355909,13139718)">
+                            Božićno druženje - Studentski zbor
+                        </a>
+                    </td><td>09.12.2025 23:10</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl21$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>08.12.2025 20:13</td><td>
+                        Davorin Žagar
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355897,13136271)">
+                            Obavijest o održavanju predroka "Diplomatske tehnike i vještine" i literatura
+                        </a>
+                    </td><td>09.12.2025 23:10</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl22$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>08.12.2025 10:40</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355857,13134539)">
+                            Radno vrijeme Biblioteke
+                        </a>
+                    </td><td>09.12.2025 23:08</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl23$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>05.12.2025 09:47</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355802,13129226)">
+                            Poziv na 4. međunarodnu znanstvenu konferenciju “4 Healthy Academic Society”
+                        </a>
+                    </td><td>15.12.2025 00:22</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl24$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>03.12.2025 14:08</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355716,13123743)">
+                            POZIV STUDENTIMA — HUMANITARNI BOŽIĆNI SAJAM I AUKCIJA
+                        </a>
+                    </td><td>09.12.2025 23:08</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl25$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>01.12.2025 17:53</td><td>
+                        Davorin Žagar
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355645,13118924)">
+                            Obavijest o promjeni jednog termina konzultacija
+                        </a>
+                    </td><td>09.12.2025 23:08</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl26$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>26.11.2025 11:45</td><td>
+                        Martina Glavan
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355448,13110965)">
+                            European Central Bank: Traineeships in Banking Supervision - Systems profile (12932)
+                        </a>
+                    </td><td>15.12.2025 00:22</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl27$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>25.11.2025 18:32</td><td>
+                        Stipe Buzar
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355416,13106314)">
+                            Buzar - jednokratna promjena termina konzultacija - 26. 11. 2025.
+                        </a>
+                    </td><td>15.12.2025 00:22</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl28$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>24.11.2025 10:46</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355303,13100710)">
+                            Konzultacije profesora Mladića
+                        </a>
+                    </td><td>09.12.2025 23:08</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl29$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>24.11.2025 10:40</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355302,13092746)">
+                            Konzultacije profesora Merkaša
+                        </a>
+                    </td><td>09.12.2025 23:08</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl30$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>24.11.2025 10:30</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355301,13083353)">
+                            Konzultacije kod profesorice Martine Petković
+                        </a>
+                    </td><td>09.12.2025 23:08</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl31$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>17.11.2025 19:30</td><td>
+                        Ivor Altaras Penda 
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355098,13076460)">
+                            Najava 39. sveučilišnog druženja - 13. 12. 2025
+                        </a>
+                    </td><td>09.12.2025 23:08</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl32$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>15.11.2025 09:48</td><td>
+                        Davorin Žagar
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355069,13072818)">
+                            Diplomatske tenike i vještine: informacije
+                        </a>
+                    </td><td>09.12.2025 23:08</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl33$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>13.11.2025 16:35</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355019,13071327)">
+                            Odgoda predavanja iz kolegija Etika u međunarodnim odnosima   - profesor Buzar
+                        </a>
+                    </td><td>09.12.2025 23:06</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl34$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>13.11.2025 13:29</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355012,13070557)">
+                            Promjena dvorane predavanja Multilateralna diplomacija prof. Vedran Jerbić 13.11.2025.
+                        </a>
+                    </td><td>09.12.2025 23:06</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl35$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>13.11.2025 13:18</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(355010,13070289)">
+                            Promjena dvorane predavanja Multilateralna diplomacija prof. Vedran Jerbić 13.11.2025.
+                        </a>
+                    </td><td>09.12.2025 23:06</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl36$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>12.11.2025 09:44</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(354948,13068840)">
+                            Konzultacije
+                        </a>
+                    </td><td>15.12.2025 00:22</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl37$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>09.11.2025 19:31</td><td>
+                        Studentska referada
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(354833,13063258)">
+                            Apsolventski ispitni rok - 2025./2026.
+                        </a>
+                    </td><td>10.11.2025 17:23</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl38$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>04.11.2025 12:47</td><td>
+                        Martina Ostojić
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(354611,13057374)">
+                            Termin predroka iz kolegija Pregovaranje i razrješavanje sukoba
+                        </a>
+                    </td><td>10.11.2025 17:23</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl39$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>04.11.2025 12:44</td><td>
+                        Martina Ostojić
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(354609,13057285)">
+                            Termin predroka iz kolegija Komunikacijske vještine
+                        </a>
+                    </td><td>10.11.2025 17:23</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl40$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>01.11.2025 18:42</td><td>
+                        Davor Perkov
+                    </td><td>
+                        2. godina MOD
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(354501,13055708)">
+                            zamolba prof. Davora Perkova
+                        </a>
+                    </td><td>10.11.2025 17:23</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr class="trAltI">
+			<td align="center" style="width:15px;">
+                        <input id="chkPoruka" type="checkbox" name="ctl00$contentBody$dgPoruke$ctl41$chkPoruka">
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td align="center" style="width:18px;">
+                        
+                    </td><td>31.10.2025 15:13</td><td>
+                        Lorena  Vokić Kvesić
+                    </td><td>
+                        2. Diplomski studiji
+                    </td><td>
+                        <a href="javascript:prikaziPoruku(354477,13054466)">
+                            STIPENDIJE GRADA ZAGREBA ZA AKADEMSKU GODINU 2025./26. - više godine studija
+                        </a>
+                    </td><td>10.11.2025 17:23</td><td>
+                        <a href="">
+                            
+                        </a>
+                    </td>
+		</tr><tr>
+			<td colspan="9"><table border="0">
+				<tbody><tr>
+					<td><span>1</span></td><td><a href="javascript:__doPostBack('ctl00$contentBody$dgPoruke','Page$2')">2</a></td><td><a href="javascript:__doPostBack('ctl00$contentBody$dgPoruke','Page$3')">3</a></td><td><a href="javascript:__doPostBack('ctl00$contentBody$dgPoruke','Page$4')">4</a></td>
+				</tr>
+			</tbody></table></td>
+		</tr>
+	</tbody></table>
+</div>
+
+        <p>
+            <a id="lnkPorukeIzbor" href="javascript:__doPostBack('ctl00$contentBody$lnkPorukeIzbor','')">Obriši označene poruke</a>
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+				<a id="lnkPorukeSpremi" href="javascript:__doPostBack('ctl00$contentBody$lnkPorukeSpremi','')">Spremi označene poruke</a>
+        </p>
+    </div>
+
+    
+
+        </div>
+    </form>
+
+
+</body></html>

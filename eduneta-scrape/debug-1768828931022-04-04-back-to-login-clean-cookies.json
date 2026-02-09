@@ -1,0 +1,12 @@
+[
+  {
+    "name": "ASP.NET_SessionId",
+    "value": "jegpb34nalwnzijufqw00rd1",
+    "domain": "eduneta.hr",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  }
+]

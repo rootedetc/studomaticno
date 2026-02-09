@@ -1,0 +1,348 @@
+<!DOCTYPE html><html><head><title>
+	Raspored
+</title><meta http-equiv="Content-Type" content="text/html; charset=windows-1250"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="wwwroot/css/portal.css" rel="stylesheet"><link href="wwwroot/eduneta/styles/vern.css" rel="stylesheet">
+    <link href="wwwroot/lib/jquery/jquery-ui.css" rel="stylesheet">
+    <script src="wwwroot/lib/jquery/jquery-1.7.1.min.js"></script>
+    <script src="wwwroot/lib/jquery/jquery-ui.js"></script>
+    <script src="wwwroot/js/jquery.ui.datepicker-hr.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#puiDatum').datepicker({ dateFormat: "DD, dd. mm. yy." });
+        });
+    </script>
+    <style type="text/css">
+        .ui-datepicker th {
+            font-weight: normal;
+        }
+
+        .ui-state-highlight {
+            border: 1px solid #FCEFA1;
+            color: #CC6699;
+        }
+
+        .ui-widget-header {
+            background: none repeat scroll 0 0 #E6E6E6;
+            border: 1px solid #888;
+            font-weight: bold;
+        }
+
+        .ui-widget-content .ui-state-default {
+            background: #e6e6e6;
+            border: 1px solid #888;
+            border-radius: 4px;
+        }
+
+        .ui-widget-content .ui-state-active {
+            color: #336699;
+            font-weight: bold;
+            border: 1px solid #222;
+        }
+
+        .ui-widget-content .ui-state-highlight {
+            background: url("wwwroot/images/ui-bg_glass_55_fbf9ee_1x400.png") repeat-x scroll 50% 50% #FBF9EE;
+            color: #CC6699;
+        }
+
+        .ui-datepicker .ui-datepicker-title {
+            color: #336699;
+            line-height: 1.8em;
+            text-align: center;
+        }
+
+        .ui-widget {
+            font-family: Arial,Helvetica,sans-serif;
+            font-size: 1.1em;
+        }
+
+        .ui-widget-content .ui-state-hover {
+            color: #336699;
+        }
+
+        .ui-datepicker .ui-datepicker-header {
+            padding: 2px 0;
+        }
+
+        .raspored {
+            width: 100%;
+            margin-top: 5px;
+            border-spacing: 12px 0px;
+        }
+
+            .raspored table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            .raspored td td {
+                padding: 5px;
+                border-bottom: 1px solid #888;
+                border-left: 1px solid #888;
+                border-right: 1px solid #888;
+            }
+
+            .raspored tr td {
+                width: 33%;
+            }
+
+            .raspored td tr td:first-child {
+                width: 75px;
+            }
+
+            .raspored td tr td:last-child {
+                width: 250px;
+            }
+
+        .header {
+            padding: 7px;
+            background-color: #e6e6e6;
+            color: #4e7593;
+            text-align: center;
+            font-size: 14px;
+            font-family: Arial;
+            font-weight: bold;
+            border: 1px solid #888;
+        }
+
+        .prev {
+            float: left;
+            margin-left: 15px;
+            margin-top: 15px;
+        }
+
+        .next {
+            float: right;
+            margin-right: 15px;
+            margin-top: 15px;
+        }
+
+        .centre {
+            text-align: center;
+        }
+
+        .leftm {
+            margin-left: 10px;
+        }
+
+        .prev:link, .next:link {
+            color: #777;
+        }
+
+        .prev:hover, .next:hover {
+            color: #4e7593;
+        }
+    </style>
+</head>
+<body>
+    <form name="form1" method="post" action="./raspored.aspx" id="form1">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="XaN+4ozyGTGxMYqFrFKVvVaqVpR8k4r5+XShAHlczdIkj7Bqrb7/NmBm7+F89wY7fb7lw0swcii0aGn7c6XfcTRisYj5ZUO8ECOTtlsYWa3yyArnQWlHzO+FJbyCn69l7dZmM4etHSi87X8Av3B9wGD5euwbFgs8359hGM0gjRv1A4HkbmYfIPENdIWGmnx5VnZctitGJ58h1BgIaH+KUZzBBLlH9RNYZVHXY6HYNyKV3SUDx/Hunnxaapdi39rI8iXI19rV38dLisDRFXd77n/M3WcnX1u6CY6mpVoGvhRuTg6k0dDb/sXSWYklHHpenkX3Suod1vMpbEht4rBYTm8KXhsNceSbjjan8lD/jxMFBZD+LnouP7br9QUCGGdUOAByw6vmFlcmm7GoldkpbCpG6Aoz5S02LiQx7qrSeUpBexCb2tDRMNcm+CALnfkc07OME+Uo4PRkO/2dqwgH49VzGAWBXFTBrlQjmF/CLJvWu6er561LqaLIeOYQNefLuFqy+fhg+6Uo25nmsUIs72T/I6n389T61/WjKKX0YpgtHRbvpm6JmeB010Yj0jkbZwxxdhth+s02L/Rj1WUda2yQyrmrD4F9brgjc4abfzHPlOL6r+Vp3t3SFyPUl0ibWpeTf2O/8MPbr9J24kKQM3TQ+lUy8sLMTCeey0YFH4zfv+5eP7j/NOh3KEPAkIekESfMqrAXpeib22F3TXS58Fk4rKSmqtMtB7fyj8gSpTIMDaD0WQtqXjMrsPw/kJy3VPHgGdQjwXHXgIKp0lvVXTLSer2A12vAGSD72SJ+RJb3GGa34rNevvKQWSjuPe19w1yzBi9Do7oUlLkFcF78H3yr53/7wWaEGHicWryXg5Jw/vnojKyNL82yqQHVscyUL7jfDiDaW7ZXjOrPbePRD9jTaCgITt6v14pxcXhdSK/1/7SeBXLQY8WRG9LtteXumLj++8i4HqVJiAx6IUuJWZ389I044N3I8GTayjIwr+uNkWqQO8gvqFdHmQTTNIizEAof8WsRn+zEPYGHC1Q2QN6HHtiQrqaxuflI8jty5faCH+OuhEwapjaSvI2pDkUB1An5GP/SNVLPXLd0Ux/u6TWrZ6AJNQxWFOcT2jvgrrIVVTQoj3gBpy3xzGomKFUpzNNNnghlt0dkCA3IBn03Z9jUxYDSfkv0FJlB7y950J+1MTaRWe/vy6e5ZgX5cpB3AUZq5tseBvZ5uw9yAa1EI4NsKTUo8+KE8JNsUFa/gam+/KmHymQAxXcOUAvFshacMehT7ZcIHfPrJ07bvnIAKD7qV7oq5QwWggAbiiPS/mErWh+fDdCcS6e0wFmYHFQ4lvTfLNQZxQ8bdAsl62/1/qrKVAvAm9xZ4RVaGQW7qtwg0m2lWv1zxz8JGncO2vR7i2Y2RzRysoIfQA8ZsmBpk8DVJlEFwYIp9zdIq/sJuUrhwx8Cd0u70p6AuY7K1v8InGcTzaP0ujOjAdqSVU7cSDQFnTK+jp8VYLZUBc4zPi5Vah8XSwI0LuNldv/SgVqFEa1ePRW4w5O1PU7Mo3H2QUPDeHnp4hofnFt/J0+CJTtaiwfmwvveIyumsHgAqHD9KgjKGg5vz5MPXPhnXaEp/OyN5O4XbX94pv/97zvTeWKNtVCKbvC9S+hFEPKXUxejAXPfyQ==">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/lib-student/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZFOpWJ0Y_w0nWZ2ct_N943iLF8Om6WLJBHyjBpj9zVAvhbn2Ng2&amp;t=638344119423008439" type="text/javascript"></script>
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="552C4AEC">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="WwssElSS4hAK270lmWgaBVEVuZ5JJ2iYUTEbPJO2bemYirWuIXYsaRbe9nD3CfcdrRAmOiUFM2BTg2iRqEfEXOY1MHkqEBBgo8x2KDundwT759QHxAr0xVahn+WSsuUlvm7EeIgse5gJlvR/egktAardCBI=">
+</div>
+        <div>
+            
+<div>
+    <table width="100%" border="0" cellspacing="0" class="topBar">
+        <tbody><tr id="trColor">
+	<td>
+                <div>
+                    
+                    <a id="lnkHome" class="topBar1" title="Početna stranica" href="Default.aspx" target="_top">LIB - Studomatic</a>
+                    
+                    
+                    <span id="labSepKraj">&nbsp;&nbsp; | &nbsp;</span>
+                    <a id="lnkKraj" class="topBarKraj" href="Logout.aspx?st=kraj" target="_top">Kraj rada</a>
+                </div>
+            </td>
+	<td align="right" class="topBarText">
+                <img id="imgZona" src="wwwroot/ikone/semz.gif" alt="Trenutno si u zoni plaćanja: zeleno" align="absbottom" style="border-width:0px;">
+                <span id="labKorisnik">MARKO KOJIĆ - 0013-24</span>
+                <span id="labSepOsoba"> | </span>
+                <span id="labProgram">DIU MOD (2.god)</span>
+                <span id="labSepProgram"> | </span>
+                <span id="labAkadGodSem">zimski sem. 25/26 (z)</span>&nbsp;|
+				<span id="labDatum">19.01.2026 13:44</span>
+            </td>
+</tr>
+
+    </tbody></table>
+    <table border="0" width="75%" align="center">
+        <tbody><tr>
+            <td align="center">
+                <span id="labNaslov" class="topBarNaslov">IZVJEŠTAJI &gt; </span>
+                <span id="labPodnaslov" class="topBarPodnaslov">Raspored</span></td>
+        </tr>
+        <tr id="trParam">
+	<td align="center">
+                <span id="labParametri" class="topBarParam"></span>
+            </td>
+</tr>
+
+    </tbody></table>
+</div>
+
+        </div>
+        <div>
+            
+    <table style="margin-left: 5px">
+        <tbody><tr>
+            <td>&nbsp; Datum:&nbsp;&nbsp;</td>
+            <td>
+                <input name="ctl00$contentBody$puiDatum" type="text" value="ponedjeljak, 22. 12. 2025." onchange="javascript:setTimeout('__doPostBack(\'ctl00$contentBody$puiDatum\',\'\')', 0)" onkeypress="if (WebForm_TextBoxKeyHandler(event) == false) return false;" id="puiDatum" class="centre hasDatepicker" style="width:180px;"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td align="center"><small>(Kliknite za promjenu datuma)</small></td>
+        </tr>
+    </tbody></table>
+
+    <br>
+
+    <div style="text-align: center">
+        <a id="puiPrethodni" class="prev" href="javascript:__doPostBack('ctl00$contentBody$puiPrethodni','')">&lt;&lt; Prethodni tjedan</a>
+        <a id="puiSljedeci" class="next" href="javascript:__doPostBack('ctl00$contentBody$puiSljedeci','')">Sljedeći tjedan &gt;&gt;</a>
+        Prikazani tjedan:<br>
+        <span id="puiTjedanPocetak" style="font-weight:bold;">22. prosinca. 2025.</span>
+        - 
+    <span id="puiTjedanKraj" style="font-weight:bold;">28. prosinca. 2025.</span>
+    </div>
+
+    <div id="puiRaspored">
+	
+        <table class="raspored" cellpadding="0">
+            <tbody><tr>
+                <td class="header">PONEDJELJAK</td>
+                <td class="header">UTORAK</td>
+                <td class="header">SRIJEDA</td>
+            </tr>
+
+            <tr>
+                <td valign="top">
+                    <table>
+                        
+                                <tbody><tr>
+                                    <td valign="middle" align="center">
+                                        22.12.2025.<br>
+                                        17:30<br>
+                                        P-5
+                                    </td>
+                                    <td valign="middle">
+                                        Ostojić Martina<br>
+                                        <strong>Komunikacijske vještine</strong><br>
+                                        <small>predavanja                                        </small><br>
+                                        3.šk.h., 2. godina MOD<br>
+                                        <i></i>
+                                    </td>
+                                </tr>
+                            
+                    </tbody></table>
+                </td>
+                <td valign="top">
+                    <table>
+                        
+                                <tbody><tr>
+                                    <td valign="middle" align="center">
+                                        23.12.2025.<br>
+                                        17:30<br>
+                                        P-5
+                                    </td>
+                                    <td valign="middle">
+                                        Ostojić Martina<br>
+                                        <strong>Pregovaranje i razrješavanje sukoba</strong><br>
+                                        <small>predavanja                                        </small><br>
+                                        3.šk.h., 2. godina MOD<br>
+                                        <i></i>
+                                    </td>
+                                </tr>
+                            
+                    </tbody></table>
+                </td>
+                <td valign="top">
+                    <table>
+                        
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+
+            <tr>
+                <td class="header">ČETVRTAK</td>
+                <td class="header">PETAK</td>
+                <td class="header">SUBOTA</td>
+            </tr>
+
+            <tr>
+                <td valign="top">
+                    <table>
+                        
+                    </table>
+                </td>
+                <td valign="top">
+                    <table>
+                        
+                    </table>
+                </td>
+                <td valign="top">
+                    <table>
+                        
+                    </table>
+                </td>
+            </tr>
+
+
+
+            
+
+
+
+        </tbody></table>
+    
+</div>
+
+    <br>
+    <br>
+    
+
+    
+
+    <br>
+    <br>
+    <span id="puiPorukaIspiti" class="leftm" style="font-weight:bold;">U izabranom tjednu nemate ispitnih rokova.</span>
+
+
+        </div>
+    </form>
+
+
+<div id="ui-datepicker-div" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div></body></html>

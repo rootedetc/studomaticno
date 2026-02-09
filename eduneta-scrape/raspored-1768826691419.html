@@ -1,0 +1,253 @@
+<!DOCTYPE html><html><head><title>
+	Raspored
+</title><meta http-equiv="Content-Type" content="text/html; charset=windows-1250"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="wwwroot/css/portal.css" rel="stylesheet"><link href="wwwroot/eduneta/styles/vern.css" rel="stylesheet">
+    <link href="wwwroot/lib/jquery/jquery-ui.css" rel="stylesheet">
+    <script src="wwwroot/lib/jquery/jquery-1.7.1.min.js"></script>
+    <script src="wwwroot/lib/jquery/jquery-ui.js"></script>
+    <script src="wwwroot/js/jquery.ui.datepicker-hr.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#puiDatum').datepicker({ dateFormat: "DD, dd. mm. yy." });
+        });
+    </script>
+    <style type="text/css">
+        .ui-datepicker th {
+            font-weight: normal;
+        }
+
+        .ui-state-highlight {
+            border: 1px solid #FCEFA1;
+            color: #CC6699;
+        }
+
+        .ui-widget-header {
+            background: none repeat scroll 0 0 #E6E6E6;
+            border: 1px solid #888;
+            font-weight: bold;
+        }
+
+        .ui-widget-content .ui-state-default {
+            background: #e6e6e6;
+            border: 1px solid #888;
+            border-radius: 4px;
+        }
+
+        .ui-widget-content .ui-state-active {
+            color: #336699;
+            font-weight: bold;
+            border: 1px solid #222;
+        }
+
+        .ui-widget-content .ui-state-highlight {
+            background: url("wwwroot/images/ui-bg_glass_55_fbf9ee_1x400.png") repeat-x scroll 50% 50% #FBF9EE;
+            color: #CC6699;
+        }
+
+        .ui-datepicker .ui-datepicker-title {
+            color: #336699;
+            line-height: 1.8em;
+            text-align: center;
+        }
+
+        .ui-widget {
+            font-family: Arial,Helvetica,sans-serif;
+            font-size: 1.1em;
+        }
+
+        .ui-widget-content .ui-state-hover {
+            color: #336699;
+        }
+
+        .ui-datepicker .ui-datepicker-header {
+            padding: 2px 0;
+        }
+
+        .raspored {
+            width: 100%;
+            margin-top: 5px;
+            border-spacing: 12px 0px;
+        }
+
+            .raspored table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            .raspored td td {
+                padding: 5px;
+                border-bottom: 1px solid #888;
+                border-left: 1px solid #888;
+                border-right: 1px solid #888;
+            }
+
+            .raspored tr td {
+                width: 33%;
+            }
+
+            .raspored td tr td:first-child {
+                width: 75px;
+            }
+
+            .raspored td tr td:last-child {
+                width: 250px;
+            }
+
+        .header {
+            padding: 7px;
+            background-color: #e6e6e6;
+            color: #4e7593;
+            text-align: center;
+            font-size: 14px;
+            font-family: Arial;
+            font-weight: bold;
+            border: 1px solid #888;
+        }
+
+        .prev {
+            float: left;
+            margin-left: 15px;
+            margin-top: 15px;
+        }
+
+        .next {
+            float: right;
+            margin-right: 15px;
+            margin-top: 15px;
+        }
+
+        .centre {
+            text-align: center;
+        }
+
+        .leftm {
+            margin-left: 10px;
+        }
+
+        .prev:link, .next:link {
+            color: #777;
+        }
+
+        .prev:hover, .next:hover {
+            color: #4e7593;
+        }
+    </style>
+</head>
+<body>
+    <form name="form1" method="post" action="./raspored.aspx" id="form1">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="3GyQVA/140aymJHD0eexP/S8g6eedOYDdQJzJ4H1LnkyX3IQ3Uerlp/OYR/B/Y9GvqrWup2u3IS1sseRUmES9yglABO8jTvj/brFwsa65dTiAmGYLoqFhC1XvRRRTMCmD2j0XL3R04qn2kaAOaEqXVykgJj3nxNfRzXbkGEwzhZ8WkPAKB+sHmqbbORQhD8LxBbLxOXE1oIWTaoBSp2ZEVtGWW+zMou6shSPTbwBlEIdBz2h23faCyOrln1me5DJjTgsLyxnHSmGTsZL1MiKeCPwvCFPA9qihet2POSAuhd+54d0SADDEiSR3EH0JgUJPhJTu6jY982Pg8Ri+1NLG7TAGxiGgsIg+L6elTxIA0EZcwqheZz3z9KQqjkWg980KsKSVsOLjh96NAS2BU/nJejrA/3tNd5D/5zZey/KiFoFqiTts8yy5PQl8y3Wql+TUlxfi+qaSL6MKyxGjeiF8piyLld1Y+CmgNQ4bKl6DQTatAS0varJwVSJT494/5GHPbCq+lDjqMdHdzYzgqIj1338Ka3Ra6fOsGbVyMPvHPPryOS4fl8BpM+qa9dSorK2MPqA1gvKyOsMvoxaJqiCcyMT0EIYaCot4e00dvF0F4Spn/Bo4yW/IMZxL6sy7VfCUp53Bh0OmraeLvh7AYcibwNSxl2SBXWqUwFM8T++eanL9eA2jZuBNiYe7J8AbW3qsrvR3LMo/XfLPashWpBTFn58CgWnNKr6sSqqIpEK1nMzEIz35Ddg4I6Tb4HthgAhb8hB/uqPKPGetbxmcmL314ugiIrqTTPrgeKhtKGEMy70COSdcZAe5iUT8lmWvyXuExQLQ4gBkEFzhcNT8zqMjk7gVEY8qE7vh4kWaYWiOkcdk+tOpLMgTRHhDMdGG8HxpWpJWuUlkvOdNQidkHMKPbC55jhCyLseGXx+JWdVANI18XuEYDq8t5r+Vh1GIGrz7F9F4tN7KZAasJmfK6x79qe2w449zZlvel/yFedf1dxKPK4Oau0Nz6L8BOvmMHCbGc7WmLKOSH8kUAdtO2rGsllWoQ6GcVBb+sBGmoD8A1+Z26+c/i87DTWrtG0ORIf8RlCfFoHZMvyB49uGAcAJSEXfoBb4TcHOqv/rrttfzbw0cpd+7QEOpgkWju1k/yfY/X/NqUz0LqT51zn+gD9twVSLTkI=">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/lib-student/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZFOpWJ0Y_w0nWZ2ct_N943iLF8Om6WLJBHyjBpj9zVAvhbn2Ng2&amp;t=638344119423008439" type="text/javascript"></script>
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="552C4AEC">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="1aIzX+HRe4OUrUfLNLGGbRO30OIiZgTUetDq4XwhZ7Br2XSgNYugWVO7rX2wifZRG1OlJiEINgOUVVt8FqVYLHwke1s5Zpg1awHhXjwIv3C632Aymogc32cBEtw14suk22/Z+F4PgLRjMduUis59XmvCuig=">
+</div>
+        <div>
+            
+<div>
+    <table width="100%" border="0" cellspacing="0" class="topBar">
+        <tbody><tr id="trColor">
+	<td>
+                <div>
+                    
+                    <a id="lnkHome" class="topBar1" title="Početna stranica" href="Default.aspx" target="_top">LIB - Studomatic</a>
+                    
+                    
+                    <span id="labSepKraj">&nbsp;&nbsp; | &nbsp;</span>
+                    <a id="lnkKraj" class="topBarKraj" href="Logout.aspx?st=kraj" target="_top">Kraj rada</a>
+                </div>
+            </td>
+	<td align="right" class="topBarText">
+                <img id="imgZona" src="wwwroot/ikone/semz.gif" alt="Trenutno si u zoni plaćanja: zeleno" align="absbottom" style="border-width:0px;">
+                <span id="labKorisnik">MARKO KOJIĆ - 0013-24</span>
+                <span id="labSepOsoba"> | </span>
+                <span id="labProgram">DIU MOD (2.god)</span>
+                <span id="labSepProgram"> | </span>
+                <span id="labAkadGodSem">zimski sem. 25/26 (z)</span>&nbsp;|
+				<span id="labDatum">19.01.2026 13:44</span>
+            </td>
+</tr>
+
+    </tbody></table>
+    <table border="0" width="75%" align="center">
+        <tbody><tr>
+            <td align="center">
+                <span id="labNaslov" class="topBarNaslov">IZVJEŠTAJI &gt; </span>
+                <span id="labPodnaslov" class="topBarPodnaslov">Raspored</span></td>
+        </tr>
+        <tr id="trParam">
+	<td align="center">
+                <span id="labParametri" class="topBarParam"></span>
+            </td>
+</tr>
+
+    </tbody></table>
+</div>
+
+        </div>
+        <div>
+            
+    <table style="margin-left: 5px">
+        <tbody><tr>
+            <td>&nbsp; Datum:&nbsp;&nbsp;</td>
+            <td>
+                <input name="ctl00$contentBody$puiDatum" type="text" value="ponedjeljak, 12. 01. 2026." onchange="javascript:setTimeout('__doPostBack(\'ctl00$contentBody$puiDatum\',\'\')', 0)" onkeypress="if (WebForm_TextBoxKeyHandler(event) == false) return false;" id="puiDatum" class="centre hasDatepicker" style="width:180px;"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td align="center"><small>(Kliknite za promjenu datuma)</small></td>
+        </tr>
+    </tbody></table>
+
+    <br>
+
+    <div style="text-align: center">
+        <a id="puiPrethodni" class="prev" href="javascript:__doPostBack('ctl00$contentBody$puiPrethodni','')">&lt;&lt; Prethodni tjedan</a>
+        <a id="puiSljedeci" class="next" href="javascript:__doPostBack('ctl00$contentBody$puiSljedeci','')">Sljedeći tjedan &gt;&gt;</a>
+        Prikazani tjedan:<br>
+        <span id="puiTjedanPocetak" style="font-weight:bold;">12. siječnja. 2026.</span>
+        - 
+    <span id="puiTjedanKraj" style="font-weight:bold;">18. siječnja. 2026.</span>
+    </div>
+
+    
+
+    <br>
+    <br>
+    <span id="puiPorukaRaspored" class="leftm" style="font-weight:bold;">U izabranom tjednu nemate nastavu.</span>
+
+    
+
+    <br>
+    <br>
+    <span id="puiPorukaIspiti" class="leftm" style="font-weight:bold;">U izabranom tjednu nemate ispitnih rokova.</span>
+
+
+        </div>
+    </form>
+
+
+<div id="ui-datepicker-div" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div></body></html>

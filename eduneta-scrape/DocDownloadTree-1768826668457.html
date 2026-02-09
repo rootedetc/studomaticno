@@ -1,0 +1,70 @@
+<!DOCTYPE html><html><head>
+    <title>Dokumenti</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1250">
+    <link href="wwwroot/eduneta/styles/vern.css" rel="stylesheet">
+    <link href="wwwroot/css/portal.css" rel="stylesheet">
+    <script src="wwwroot/js/tglobal.js"></script>
+    <script src="wwwroot/eduneta/scripts/JSErrorLog.js"></script>
+
+    <script language="JavaScript">
+    var curNodeValue;
+
+    function OnTreeClick(node) {
+
+        curNodeValue = node.Value;
+        curNodeText = node.Text;
+
+        var hidAkc = document.Form1.hidAkc.value;
+        var FileName;
+        if (hidAkc == 10)
+            FileName = "DocDownloadDesno.aspx";
+        else
+            FileName = "DocMojiDesno.aspx";
+
+        parent.frames["frmMain"].location.href = FileName + "?idHijer=" + curNodeValue;
+    }
+
+    function OnSelectChange() {
+        parent.frames["frmMain"].location.href = "DocMojiDesno.aspx";
+    }
+    </script>
+</head>
+<body>
+    <form name="Form1" method="post" action="./DocDownloadTree.aspx?akc=10" id="Form1">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="FE/i65g580o7fAjxb7y/pN6fwgNIcdTYjbLPN/k6oIcEZ3SmrL/yzFKnCFqlKU9UWtasPaYP7GoiouDOwx154sps4l5G/LDEE2QjR9l71vc7bKgAUwve8VLBg0FVBkrPHEFNYQ==">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['Form1'];
+if (!theForm) {
+    theForm = document.Form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="A77A776D">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="0sCQtYbu/KWbxx40xn6krmFyKw4aO9yToZaKIMskNM2MMlzzEh1v9o62s9sQRT41TeQP4NvekS9PDces1AgxoiTW25tzrLsIMp9fKeSKKqtdJ3Z7">
+</div>
+        <input name="hidAkc" type="hidden" id="hidAkc" value="10">
+        <table border="0">
+            <tbody><tr>
+                <td valign="top">
+                    <div class="razmak">
+                        
+                    </div>
+
+                    <script type="text/javascript" src="/lib-student/RadControls/TreeView/Scripts/5_1_3/RadTreeView.js"></script><span id="tvStyleSheetHolder" style="display:none"></span><script type="text/javascript">rtvAppendStyleSheet('tv', '/lib-student/RadControls/TreeView/Skins/Classic/style.css');</script><link rel="stylesheet" type="text/css" href="/lib-student/RadControls/TreeView/Skins/Classic/style.css"></td></tr></tbody></table></form></body></html>
