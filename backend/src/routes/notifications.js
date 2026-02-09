@@ -328,4 +328,30 @@ router.get('/:id', requireAuth, async (req, res) => {
   }
 });
 
+router.post('/:id/read', requireAuth, async (req, res) => {
+  const requestId = generateRequestId();
+  const { id } = req.params;
+  const { idPP } = req.query;
+
+  log('info', requestId, 'Marking notification as read', { id, idPP });
+
+  try {
+    const url = idPP
+      ? `/lib-student/PorukaPrikaz.aspx?idP=${id}&idPP=${idPP}`
+      : `/lib-student/PorukaPrikaz.aspx?idP=${id}`;
+
+    await req.edunetaService.getPage(url, requestId);
+
+    log('info', requestId, 'Notification marked as read successfully', { id });
+
+    res.json({
+      success: true,
+      message: 'Notification marked as read'
+    });
+  } catch (error) {
+    log('error', requestId, `Failed to mark notification as read: ${error.message}`);
+    res.status(500).json({ error: 'Failed to mark notification as read' });
+  }
+});
+
 export default router;

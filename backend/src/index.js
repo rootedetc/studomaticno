@@ -18,6 +18,7 @@ import examsRoutes from './routes/exams.js';
 import gradesRoutes from './routes/grades.js';
 import regularityRoutes from './routes/regularity.js';
 import paymentsRoutes from './routes/payments.js';
+import calendarRoutes from './routes/calendar.js';
 import serviceManager from './utils/service-manager.js';
 import { generateRequestId, log } from './services/eduneta.js';
 
@@ -31,19 +32,18 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Trust first proxy (required for secure cookies behind reverse proxy like DigitalOcean App Platform)
-// This tells Express that the X-Forwarded-Proto header is trustworthy
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
-}
+// Trust proxy for secure cookies behind reverse proxy
+app.set('trust proxy', 1);
 
-// Auto-generate session secret if not provided (persists for app lifetime)
-const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+// Use fixed secret for development stability if env var not set
+const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-session-secret-constant-key';
 if (!process.env.SESSION_SECRET) {
-  console.log('Warning: SESSION_SECRET not set, using auto-generated secret. Sessions will be invalidated on server restart.');
+  console.log('Warning: SESSION_SECRET not set, using fixed dev secret. Do not use in production!');
 }
 
-// CORS: Use FRONTEND_URL if set, otherwise allow same-origin requests (for DO App Platform where frontend/backend share domain)
-const corsOrigin = process.env.FRONTEND_URL || true;
+// CORS: Use FRONTEND_URL if set, otherwise explicitly allow local dev frontend
+// Must specify exact origin when using credentials (cannot use wildcard)
+const corsOrigin = process.env.FRONTEND_URL || ['http://localhost:5173', 'http://127.0.0.1:5173'];
 
 app.use(cors({
   origin: corsOrigin,
@@ -56,10 +56,12 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    // FORCE SECURE FALSE for local development to ensure cookies are set over HTTP
+    secure: false, 
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
+    // FORCE LAX for local development to ensure cookies are sent
+    sameSite: 'lax'
   }
 }));
 
@@ -74,6 +76,7 @@ app.use('/api/exams', examsRoutes);
 app.use('/api/grades', gradesRoutes);
 app.use('/api/regularity', regularityRoutes);
 app.use('/api/payments', paymentsRoutes);
+app.use('/api/calendar', calendarRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -177,15 +180,32 @@ app.get('/api/debug/test-encoding', async (req, res) => {
   }
 });
 
+const setNoCacheHeaders = (res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+};
+
 // Serve static frontend files in production
 // The frontend build output is at ../frontend/dist relative to backend root
 const frontendDistPath = path.join(__dirname, '../../frontend/dist');
-app.use(express.static(frontendDistPath));
+app.use(express.static(frontendDistPath, {
+  setHeaders: (res, filePath) => {
+    if (
+      filePath.endsWith('index.html') ||
+      filePath.endsWith('sw.js') ||
+      filePath.endsWith('manifest.webmanifest')
+    ) {
+      setNoCacheHeaders(res);
+    }
+  }
+}));
 
 // SPA fallback - serve index.html for all non-API routes
 app.get('*', (req, res) => {
   // Only serve index.html for non-API routes
   if (!req.path.startsWith('/api')) {
+    setNoCacheHeaders(res);
     res.sendFile(path.join(frontendDistPath, 'index.html'));
   } else {
     res.status(404).json({ error: 'API endpoint not found' });

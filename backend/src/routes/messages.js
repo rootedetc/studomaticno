@@ -426,4 +426,42 @@ router.get('/thread/:id', requireAuth, async (req, res) => {
   }
 });
 
+router.post('/:id/read', requireAuth, async (req, res) => {
+  const requestId = generateRequestId();
+  const { id } = req.params;
+
+  log('info', requestId, 'Marking message as read', { id });
+
+  try {
+    const inboxHtml = await req.edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=1', requestId);
+    const messages = parseMessages(inboxHtml, requestId);
+
+    const message = messages.find(m => String(m.id) === String(id) || String(m.messageId) === String(id));
+    if (!message) {
+      log('warn', requestId, 'Message not found for marking as read', { id });
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    log('info', requestId, 'Fetching message detail to mark as read', {
+      id: message.id,
+      messageId: message.messageId
+    });
+
+    await req.edunetaService.getPage(
+      `/lib-student/PorukaPrikaz.aspx?idP=${message.id}&idPP=${message.messageId}`,
+      requestId
+    );
+
+    log('info', requestId, 'Message marked as read successfully', { id });
+
+    res.json({
+      success: true,
+      message: 'Message marked as read'
+    });
+  } catch (error) {
+    log('error', requestId, `Failed to mark message as read: ${error.message}`);
+    res.status(500).json({ error: 'Failed to mark message as read' });
+  }
+});
+
 export default router;
