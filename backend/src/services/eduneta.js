@@ -475,30 +475,132 @@ class EdunetaService {
     return announcement;
   }
 
-  async markStickyAnnouncementAsRead(idPP, requestId = null) {
+  async markStickyAnnouncementAsRead(stickyPageHtml, announcement, requestId = null) {
     const rid = requestId || generateRequestId();
-    log('info', rid, `Marking sticky announcement as read: idPP=${idPP}`);
+    const { idPP, id: idP } = announcement;
+    log('info', rid, `Marking sticky announcement as read: idPP=${idPP}, idP=${idP}`);
 
     try {
-      const html = await this.getPage('/lib-student/Default.aspx', rid);
-      const $ = cheerio.load(html);
+      const $ = cheerio.load(stickyPageHtml);
 
-      const viewState = $('input[name="__VIEWSTATE"]').val();
-      const viewStateGenerator = $('input[name="__VIEWSTATEGENERATOR"]').val();
+      const viewState = $('input[name="__VIEWSTATE"]').val() || '';
+      const viewStateGenerator = $('input[name="__VIEWSTATEGENERATOR"]').val() || '';
+      const eventValidation = $('input[name="__EVENTVALIDATION"]').val() || '';
+
+      const formAction = $('form').attr('action') || '/lib-student/Default.aspx';
+      const postUrl = formAction.startsWith('/') ? formAction : `/lib-student/${formAction}`;
+
+      // Discover __doPostBack event target from zatvori() inline function.
+      // zatvori() is not in any external JS — it's defined inline on the sticky page
+      // and almost certainly wraps __doPostBack('CONTROL_NAME', idPP).
+      let eventTarget = '';
+      let eventArgument = idPP || '';
+
+      const scripts = [];
+      $('script').each((_, el) => {
+        const content = $(el).html();
+        if (content) scripts.push(content);
+      });
+      const allScripts = scripts.join('\n');
+
+      // Regex: function zatvori(xxx) { ... __doPostBack('EVENT_TARGET', xxx) ... }
+      const zatvoriMatch = allScripts.match(
+        /function\s+zatvori\s*\([^)]*\)\s*\{[^}]*__doPostBack\s*\(\s*['"]([^'"]+)['"]/
+      );
+      if (zatvoriMatch) {
+        eventTarget = zatvoriMatch[1];
+        log('info', rid, `Discovered zatvori event target from inline script: ${eventTarget}`);
+      }
+
+      // Fallback: look for LinkButton/Button elements with zatvori/procitano in ID
+      if (!eventTarget) {
+        const zatvoriControl = $('a[id*="atvori"], input[id*="atvori"], a[id*="rocitano"], input[id*="rocitano"]').first();
+        if (zatvoriControl.length) {
+          const href = zatvoriControl.attr('href') || '';
+          const postBackMatch = href.match(/__doPostBack\s*\(\s*['"]([^'"]+)['"]/);
+          if (postBackMatch) {
+            eventTarget = postBackMatch[1];
+            log('info', rid, `Discovered event target from zatvori control href: ${eventTarget}`);
+          } else {
+            const controlName = zatvoriControl.attr('name');
+            if (controlName) {
+              eventTarget = controlName;
+              log('info', rid, `Using zatvori control name as event target: ${eventTarget}`);
+            }
+          }
+        }
+      }
+
+      // Fallback: try common ASP.NET naming conventions (ctl00$contentBody$...)
+      if (!eventTarget) {
+        const likelyCandidates = [
+          'ctl00$contentBody$lnkZatvori',
+          'ctl00$contentBody$btnZatvori',
+          'ctl00$contentBody$lnkProcitano',
+          'ctl00$contentBody$btnProcitano',
+        ];
+
+        for (const candidate of likelyCandidates) {
+          if ($(`[name="${candidate}"]`).length > 0) {
+            eventTarget = candidate;
+            log('info', rid, `Found matching control in DOM: ${eventTarget}`);
+            break;
+          }
+        }
+
+        if (!eventTarget) {
+          eventTarget = likelyCandidates[0];
+          log('warn', rid, `Could not discover event target, using best guess: ${eventTarget}`);
+        }
+      }
+
+      // Log inline scripts for debugging — needed to discover zatvori() definition
+      const zatvoriRelated = allScripts.split('\n').filter(
+        line => /zatvori|procitano|Zatvori|Procitano/i.test(line)
+      );
+      if (zatvoriRelated.length > 0) {
+        log('info', rid, 'Zatvori-related script lines found:', { lines: zatvoriRelated });
+      } else {
+        log('warn', rid, 'No zatvori-related script lines found in sticky page. Full inline scripts logged for debugging.', {
+          scriptCount: scripts.length,
+          totalLength: allScripts.length,
+          scriptSnippets: scripts.map(s => s.substring(0, 200))
+        });
+      }
 
       const formData = new URLSearchParams();
-      formData.append('__VIEWSTATE', viewState || '');
-      formData.append('__VIEWSTATEGENERATOR', viewStateGenerator || '');
-      formData.append('__EVENTTARGET', '');
-      formData.append('__EVENTARGUMENT', '');
-      formData.append('__EVENTVALIDATION', '');
+      formData.append('__VIEWSTATE', viewState);
+      formData.append('__VIEWSTATEGENERATOR', viewStateGenerator);
+      formData.append('__EVENTVALIDATION', eventValidation);
+      formData.append('__EVENTTARGET', eventTarget);
+      formData.append('__EVENTARGUMENT', eventArgument);
 
-      log('debug', rid, 'Marking sticky as read with form data', { idPP });
+      log('info', rid, 'Posting sticky mark-as-read', {
+        postUrl,
+        eventTarget,
+        eventArgument,
+        hasViewState: !!viewState,
+        hasEventValidation: !!eventValidation,
+      });
 
-      await this.postFormData('/lib-student/Default.aspx', formData.toString(), rid);
+      const responseHtml = await this.postFormData(postUrl, formData.toString(), rid);
+
+      const stillSticky = this.isStickyAnnouncementPage(responseHtml, rid);
+      if (stillSticky) {
+        const newAnnouncement = this.parseStickyAnnouncement(responseHtml, rid);
+        if (newAnnouncement.idPP === idPP) {
+          log('error', rid, `Mark as read FAILED - still showing same announcement idPP=${idPP}`, {
+            eventTarget,
+            eventArgument,
+          });
+          return { success: false, sameAnnouncement: true };
+        }
+        log('info', rid, `Mark as read succeeded, but another sticky announcement remains`, {
+          newIdPP: newAnnouncement.idPP
+        });
+      }
 
       log('info', rid, 'Sticky announcement marked as read', { idPP });
-
       return { success: true };
     } catch (error) {
       log('error', rid, `Failed to mark sticky as read: ${error.message}`);
@@ -532,9 +634,12 @@ class EdunetaService {
     const rid = requestId || generateRequestId();
     log('info', rid, 'Processing sticky announcements');
 
+    const MAX_ITERATIONS = 20;
     const processedAnnouncements = [];
+    let iterations = 0;
 
-    while (true) {
+    while (iterations < MAX_ITERATIONS) {
+      iterations++;
       const { html, isSticky } = await this.getHomePage(rid);
 
       if (!isSticky) {
@@ -545,7 +650,7 @@ class EdunetaService {
       const announcement = this.parseStickyAnnouncement(html, rid);
       processedAnnouncements.push(announcement);
 
-      log('info', rid, `Found sticky announcement (${processedAnnouncements.length})`, {
+      log('info', rid, `Found sticky announcement (${processedAnnouncements.length}/${iterations})`, {
         id: announcement.id,
         title: announcement.title?.substring(0, 50),
         remainingCount: announcement.remainingCount
@@ -555,11 +660,21 @@ class EdunetaService {
         await onAnnouncement(announcement);
       }
 
-      await this.markStickyAnnouncementAsRead(announcement.idPP, rid);
+      const result = await this.markStickyAnnouncementAsRead(html, announcement, rid);
+
+      if (result && !result.success && result.sameAnnouncement) {
+        log('error', rid, `Failed to dismiss sticky announcement idPP=${announcement.idPP}, aborting to prevent infinite loop`);
+        break;
+      }
+    }
+
+    if (iterations >= MAX_ITERATIONS) {
+      log('error', rid, `Sticky announcement processing hit max iterations (${MAX_ITERATIONS}), aborting`);
     }
 
     log('info', rid, 'All sticky announcements processed', {
-      totalProcessed: processedAnnouncements.length
+      totalProcessed: processedAnnouncements.length,
+      iterations
     });
 
     return processedAnnouncements;
