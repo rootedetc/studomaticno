@@ -71,7 +71,12 @@ export default function AddToCalendar({ lesson, onClose, anchorRef }) {
         };
     };
 
-    const handleAppleCalendar = async () => {
+    const handleAppleCalendar = () => {
+        if (!lesson.date || !lesson.time) {
+            console.error('Missing date or time for calendar event');
+            return;
+        }
+
         const params = new URLSearchParams({
             subject: lesson.subject || '',
             professor: lesson.professor || '',
@@ -81,24 +86,11 @@ export default function AddToCalendar({ lesson, onClose, anchorRef }) {
             type: lesson.type || ''
         });
         
-        try {
-            const response = await fetch(`/api/calendar/event?${params.toString()}`);
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `${(lesson.subject || 'event').replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_')}.ics`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            
-            setShowSuccess('apple');
-            setTimeout(() => onClose?.(), 1500);
-        } catch (error) {
-            console.error('Failed to download calendar event:', error);
-        }
+        const url = `/api/calendar/event?${params.toString()}`;
+        window.location.href = url;
+        
+        setShowSuccess('apple');
+        setTimeout(() => onClose?.(), 1500);
     };
 
     const handleGoogleCalendar = () => {
