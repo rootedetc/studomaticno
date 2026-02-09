@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import {
     getWeekDays,
     addWeeks,
-    getMonthDays,
     formatMonthYear,
     isSameDay,
     isToday,
@@ -12,15 +11,16 @@ import Icon from './Icon';
 
 /**
  * WeekRibbon component for timetable navigation.
- * 
+ *
  * Props:
  * - selectedDate: The currently selected date (for highlighting a specific day)
  * - currentDate: The reference date for the currently displayed week (controlled by parent)
+ * - daysWithEvents: Array of date strings (e.g., "26. 1. 2026.") that have lessons/events
  * - onWeekChange: Called when navigating weeks (prev/next arrows) - takes (newDate, direction)
  * - onDaySelect: Called when user clicks a specific day - triggers day view
  * - onDatePickerSelect: Called when user selects a date from the expanded calendar (could be different week)
  */
-export default function WeekRibbon({ selectedDate, currentDate, onWeekChange, onDaySelect, onDatePickerSelect }) {
+export default function WeekRibbon({ selectedDate, currentDate, daysWithEvents = [], onWeekChange, onDaySelect, onDatePickerSelect }) {
     // The date to use for week display - always use parent's currentDate
     const displayDate = currentDate || new Date();
 
@@ -77,6 +77,11 @@ export default function WeekRibbon({ selectedDate, currentDate, onWeekChange, on
                     {weekDays.map((date, i) => {
                         const isSelected = isSameDay(date, selectedDate);
                         const isTodayDate = isToday(date);
+                        const dateStr = `${date.getDate()}. ${date.getMonth() + 1}. ${date.getFullYear()}.`;
+                        const normalizeDateStr = (str) => str.replace(/\s+/g, '').replace(/\.$/, '');
+                        const hasEvents = !isSelected && daysWithEvents.some(eventDate =>
+                            normalizeDateStr(eventDate) === normalizeDateStr(dateStr)
+                        );
 
                         return (
                             <button
@@ -99,7 +104,7 @@ export default function WeekRibbon({ selectedDate, currentDate, onWeekChange, on
                                 <span className={`text-lg font-bold ${isSelected ? 'text-white' : 'text-gray-900 dark:text-white'} ${isTodayDate && !isSelected ? 'text-primary-600 dark:text-primary-400' : ''}`}>
                                     {date.getDate()}
                                 </span>
-                                {isTodayDate && (
+                                {hasEvents && (
                                     <span className={`w-1 h-1 rounded-full mt-1 ${isSelected ? 'bg-white' : 'bg-primary-600 dark:bg-primary-400'}`} />
                                 )}
                             </button>

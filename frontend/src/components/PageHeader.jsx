@@ -9,7 +9,8 @@ function PageHeader({
   showBackButton = false,
   breadcrumbs,
   actions,
-  onBack
+  onBack,
+  children
 }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -136,6 +137,11 @@ function PageHeader({
             </div>
           )}
         </div>
+        {children && (
+          <div className="mt-4">
+            {children}
+          </div>
+        )}
       </div>
     </header>
   );

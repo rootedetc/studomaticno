@@ -1,8 +1,20 @@
 import DOMPurify from 'dompurify';
 import Icon from './Icon';
+import { Skeleton } from './Skeleton';
 
 function MessageDetail({ item, loading, isInline = false }) {
-    if (loading) return null;
+    if (loading || (!item?.body && !item?.content)) {
+        return (
+            <div className={`${isInline ? '' : 'p-4'} space-y-4`}>
+                <Skeleton variant="text" count={3} />
+                <Skeleton variant="text" width="60%" />
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <Skeleton variant="text" width="30%" className="mb-2" />
+                    <Skeleton variant="text" height="h-12" />
+                </div>
+            </div>
+        );
+    }
 
     if (!item) return null;
 
