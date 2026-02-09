@@ -1,18 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import Icon from './Icon';
 
-/**
- * AddToCalendar component - Shows a popup with options to add event to Apple Calendar or Google Calendar
- * 
- * Props:
- * - lesson: { subject, professor, room, time, date, type }
- * - onClose: callback when popup closes
- */
-export default function AddToCalendar({ lesson, onClose }) {
+export default function AddToCalendar({ lesson, onClose, anchorRef }) {
     const popupRef = useRef(null);
     const [showSuccess, setShowSuccess] = useState(null);
+    const [position, setPosition] = useState({ top: 0, right: 0 });
 
-    // Close popup when clicking outside
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (popupRef.current && !popupRef.current.contains(e.target)) {
@@ -23,28 +16,33 @@ export default function AddToCalendar({ lesson, onClose }) {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [onClose]);
 
-    // Parse the lesson date and time to create start/end DateTime
-    const parseDateTime = () => {
-        // lesson.date is like "24. 1. 2026." or "24.1.2026."
-        // lesson.time is like "08:00 - 09:30" or "08:00-09:30"
+    useEffect(() => {
+        if (anchorRef?.current) {
+            const rect = anchorRef.current.getBoundingClientRect();
+            setPosition({
+                top: rect.bottom + 8,
+                right: window.innerWidth - rect.right
+            });
+        }
+    }, [anchorRef]);
 
+    const formatGoogleDate = (date) => {
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+    };
+
+    const parseDateTime = () => {
         const dateStr = lesson.date?.replace(/\s+/g, '').replace(/\.$/g, '') || '';
         const dateParts = dateStr.split('.');
 
         if (dateParts.length < 3) {
-            // Fallback to current date
             const now = new Date();
-            return {
-                start: now,
-                end: new Date(now.getTime() + 90 * 60 * 1000) // 90 minutes later
-            };
+            return { start: now, end: new Date(now.getTime() + 90 * 60 * 1000) };
         }
 
         const day = parseInt(dateParts[0], 10);
-        const month = parseInt(dateParts[1], 10) - 1; // JS months are 0-indexed
+        const month = parseInt(dateParts[1], 10) - 1;
         const year = parseInt(dateParts[2], 10);
-
-        // Parse time
         const timeStr = lesson.time || '09:00 - 10:30';
         const timeParts = timeStr.split(/\s*-\s*/);
 
@@ -56,96 +54,26 @@ export default function AddToCalendar({ lesson, onClose }) {
         const startTime = parseTime(timeParts[0] || '09:00');
         const endTime = parseTime(timeParts[1] || '10:30');
 
-        const start = new Date(year, month, day, startTime.hours, startTime.minutes);
-        const end = new Date(year, month, day, endTime.hours, endTime.minutes);
-
-        return { start, end };
+        return {
+            start: new Date(year, month, day, startTime.hours, startTime.minutes),
+            end: new Date(year, month, day, endTime.hours, endTime.minutes)
+        };
     };
 
-    // Format date for ICS file (YYYYMMDDTHHMMSS)
-    const formatICSDate = (date) => {
-        const pad = (n) => n.toString().padStart(2, '0');
-        return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+    const getAppleCalendarUrl = () => {
+        const params = new URLSearchParams({
+            subject: lesson.subject || '',
+            professor: lesson.professor || '',
+            room: lesson.room || '',
+            time: lesson.time || '',
+            date: lesson.date || '',
+            type: lesson.type || ''
+        });
+        return `/api/calendar/event?${params.toString()}`;
     };
 
-    // Generate ICS file content
-    const generateICS = () => {
-        const { start, end } = parseDateTime();
-        const uid = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}@studomaticno`;
-        const now = new Date();
-
-        const icsContent = [
-            'BEGIN:VCALENDAR',
-            'VERSION:2.0',
-            'PRODID:-//studomaticno//HR',
-            'CALSCALE:GREGORIAN',
-            'METHOD:PUBLISH',
-            'BEGIN:VEVENT',
-            `UID:${uid}`,
-            `DTSTAMP:${formatICSDate(now)}`,
-            `DTSTART:${formatICSDate(start)}`,
-            `DTEND:${formatICSDate(end)}`,
-            `SUMMARY:${lesson.subject || 'Predavanje'}`,
-            `DESCRIPTION:${lesson.professor || ''} - ${lesson.type || 'Predavanje'}`,
-            `LOCATION:${lesson.room || ''}`,
-            'END:VEVENT',
-            'END:VCALENDAR'
-        ].join('\r\n');
-
-        return icsContent;
-    };
-
-    // Download ICS file for Apple Calendar or share on mobile
-    const handleAppleCalendar = async () => {
-        const icsContent = generateICS();
-        const file = new File([icsContent], `${lesson.subject || 'event'}.ics`, { type: 'text/calendar' });
-
-        // Try native sharing first (works best on iOS/Android PWAs)
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-                await navigator.share({
-                    files: [file],
-                    title: lesson.subject || 'Predavanje',
-                    text: `Kalendar export za ${lesson.subject}`
-                });
-                setShowSuccess('apple');
-                setTimeout(() => onClose?.(), 1500);
-                return;
-            } catch (err) {
-                console.log('Share failed or cancelled:', err);
-                if (err.name !== 'AbortError') {
-                    // If share failed (not cancelled), fall back to download
-                } else {
-                    return; // User cancelled
-                }
-            }
-        }
-
-        // Fallback to blob download
-        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${lesson.subject || 'event'}.ics`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-
-        setShowSuccess('apple');
-        setTimeout(() => onClose?.(), 1500);
-    };
-
-    // Open Google Calendar with pre-filled event
     const handleGoogleCalendar = () => {
         const { start, end } = parseDateTime();
-
-        // Google Calendar date format: YYYYMMDDTHHMMSS
-        const formatGoogleDate = (date) => {
-            const pad = (n) => n.toString().padStart(2, '0');
-            return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
-        };
 
         const params = new URLSearchParams({
             action: 'TEMPLATE',
@@ -155,24 +83,21 @@ export default function AddToCalendar({ lesson, onClose }) {
             location: lesson.room || ''
         });
 
-        const googleUrl = `https://calendar.google.com/calendar/render?${params.toString()}`;
-        window.open(googleUrl, '_blank');
-
+        window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, '_blank');
         setShowSuccess('google');
         setTimeout(() => onClose?.(), 1500);
     };
 
     return (
         <>
-            {/* Backdrop for mobile to close when clicking outside */}
-            <div className="fixed inset-0 z-40 sm:hidden" onClick={onClose}></div>
+            <div className="fixed inset-0 z-[9998] sm:hidden" onClick={onClose}></div>
 
             <div
                 ref={popupRef}
-                className="absolute right-0 top-full mt-2 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden min-w-[220px] animate-in fade-in slide-in-from-top-2 origin-top-right sm:w-auto w-[200px]"
+                className="fixed z-[9999] bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden min-w-[220px] animate-in fade-in slide-in-from-top-2 origin-top-right"
                 style={{
-                    // Ensure it doesn't go off-screen on the right
-                    right: '0px',
+                    top: `${position.top}px`,
+                    right: `${position.right}px`,
                     maxWidth: '90vw'
                 }}
             >
@@ -187,8 +112,9 @@ export default function AddToCalendar({ lesson, onClose }) {
                     </div>
                 ) : (
                     <div className="p-2 space-y-1">
-                        <button
-                            onClick={handleAppleCalendar}
+                        <a
+                            href={getAppleCalendarUrl()}
+                            onClick={() => { setShowSuccess('apple'); setTimeout(() => onClose?.(), 1500); }}
                             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
                         >
                             <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded-lg flex items-center justify-center shrink-0">
@@ -197,7 +123,7 @@ export default function AddToCalendar({ lesson, onClose }) {
                                 </svg>
                             </div>
                             <span className="text-sm font-medium text-gray-900 dark:text-white">Apple / System</span>
-                        </button>
+                        </a>
 
                         <button
                             onClick={handleGoogleCalendar}
