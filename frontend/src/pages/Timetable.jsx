@@ -7,6 +7,7 @@ import EmptyState from '../components/EmptyState';
 import WeekRibbon from '../components/WeekRibbon';
 import AddToCalendar from '../components/AddToCalendar';
 import Icon from '../components/Icon';
+import PageHeader from '../components/PageHeader';
 
 function Timetable() {
   const [timetable, setTimetable] = useState([]);
@@ -17,8 +18,8 @@ function Timetable() {
   const [weekInfo, setWeekInfo] = useState({ weekStart: '', weekEnd: '' });
   // Track the current week's reference date for ribbon display
   const [currentWeekDate, setCurrentWeekDate] = useState(new Date());
-  // Track which lesson has calendar popup open (by key)
   const [calendarOpenFor, setCalendarOpenFor] = useState(null);
+  const calendarButtonRef = useRef(null);
 
   // Ref to track the latest request timestamp to handle race conditions
   const lastRequestTimeRef = useRef(0);
@@ -246,38 +247,34 @@ function Timetable() {
 
   return (
     <div className="page-container">
-      <div className="page-header">
-        <div className="max-w-6xl mx-auto">
-
-
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Raspored</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {weekInfo.weekStart && weekInfo.weekEnd
-                  ? `${weekInfo.weekStart} - ${weekInfo.weekEnd}`
-                  : (loading ? 'Učitavam...' : '')
-                }
-              </p>
-            </div>
-            {!isWeekView && (
-              <button
-                onClick={() => setSelectedDate(null)}
-                className="px-3 py-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
-              >
-                ← Prikaži tjedan
-              </button>
-            )}
-          </div>
-
+      <PageHeader
+        title="Raspored"
+        subtitle={weekInfo.weekStart && weekInfo.weekEnd
+          ? `${weekInfo.weekStart} - ${weekInfo.weekEnd}`
+          : (loading ? 'Učitavam...' : '')
+        }
+        actions={!isWeekView && (
+          <button
+            onClick={() => setSelectedDate(null)}
+            className="px-3 py-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+          >
+            ← Prikaži tjedan
+          </button>
+        )}
+      >
+        <div className="max-w-6xl mx-auto w-full">
           <WeekRibbon
             selectedDate={selectedDate}
             currentDate={currentWeekDate}
+            daysWithEvents={timetable
+              .filter(day => day.lessons && day.lessons.length > 0)
+              .flatMap(day => day.lessons.map(lesson => lesson.date))
+              .filter(Boolean)}
             onWeekChange={handleWeekChange}
             onDaySelect={handleDaySelect}
           />
         </div>
-      </div>
+      </PageHeader>
 
       <div className="page-content">
         <div className="max-w-6xl mx-auto fade-in">
@@ -334,6 +331,7 @@ function Timetable() {
                                   </span>
                                 )}
                                 <button
+                                  ref={isCalendarOpen ? calendarButtonRef : null}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setCalendarOpenFor(isCalendarOpen ? null : lessonKey);
@@ -348,6 +346,7 @@ function Timetable() {
                                 <AddToCalendar
                                   lesson={{ ...lesson, date: lesson.date }}
                                   onClose={() => setCalendarOpenFor(null)}
+                                  anchorRef={calendarButtonRef}
                                 />
                               )}
                             </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { Skeleton, SkeletonCard } from '../components/Skeleton';
+import PageHeader from '../components/PageHeader';
 import TableCard from '../components/TableCard';
 
 function Finance() {
@@ -103,15 +104,13 @@ function Finance() {
 
   return (
     <div className="page-container">
-      <div className="page-header">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Financije</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Pregled financijskih obaveza</p>
-            </div>
-          </div>
+      <PageHeader
+        title="Financije"
+        subtitle="Pregled financijskih obaveza"
+      />
 
+      <div className="page-content">
+        <div className="max-w-6xl mx-auto fade-in">
           {summary && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="stat-card">
@@ -131,11 +130,7 @@ function Finance() {
               </div>
             </div>
           )}
-        </div>
-      </div>
 
-      <div className="page-content">
-        <div className="max-w-6xl mx-auto fade-in">
           {transactions && transactions.length > 0 ? (
             <>
               <div className="hidden md:block table-container">

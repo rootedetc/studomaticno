@@ -10,6 +10,7 @@ import { usePullToRefresh, PullIndicator } from '../hooks/usePullToRefresh';
 import { useOptimisticUpdate } from '../hooks/useOptimisticUpdate';
 import BottomSheet from '../components/BottomSheet';
 import MessageDetail from '../components/MessageDetail';
+import PageHeader from '../components/PageHeader';
 
 function Inbox() {
     const [items, setItems] = useState([]);
@@ -54,10 +55,10 @@ function Inbox() {
     });
 
     useEffect(() => {
-        loadInbox();
+        loadInbox(false);
     }, []);
 
-    const loadInbox = async () => {
+    const loadInbox = async (useCache = true) => {
         // Helper to parse European date format (DD.MM.YYYY HH:MM)
         const parseDate = (dateStr) => {
             if (!dateStr) return new Date(0);
@@ -74,8 +75,8 @@ function Inbox() {
         try {
             // Fetch both messages and notifications in parallel
             const [messagesResult, notificationsResult] = await Promise.all([
-                api.getMessages(),
-                api.getNotifications()
+                api.getMessages(useCache),
+                api.getNotifications(useCache)
             ]);
 
             const messages = (messagesResult.messages || []).map(msg => ({
@@ -110,9 +111,9 @@ function Inbox() {
                 (messagesResult.unreadCount || 0) +
                 notifications.filter(n => n.isNew).length
             );
+            setLoading(false);
         } catch (err) {
             setError(err.message);
-        } finally {
             setLoading(false);
         }
     };
@@ -123,6 +124,7 @@ function Inbox() {
         // Mobile Logic: Toggle BottomSheet
         if (!isDesktop) {
             setSelectedItem(item);
+            setDetailLoading(true);
         } else {
             // Desktop Logic: Toggle Expansion
             if (expandedItemId === item.id) {
@@ -162,7 +164,7 @@ function Inbox() {
             } catch (err) {
                 setError(err.message);
             } finally {
-                if (isDesktop) setDetailLoading(false);
+                setDetailLoading(false);
             }
         } else {
             // Notification
@@ -184,7 +186,7 @@ function Inbox() {
             } catch (err) {
                 setError(err.message);
             } finally {
-                if (isDesktop) setDetailLoading(false);
+                setDetailLoading(false);
             }
         }
     };
@@ -229,22 +231,18 @@ function Inbox() {
     return (
         <div className="page-container relative">
             <PullIndicator isRefreshing={isRefreshing} pullProgress={pullProgress} />
-            <div className="page-header">
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Sandučić</h1>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {unreadCount > 0 ? `${unreadCount} nepročitanih` : 'Sve pročitano'}
-                        </p>
-                    </div>
-                </div>
+            <PageHeader
+                title="Sandučić"
+                subtitle={unreadCount > 0 ? `${unreadCount} nepročitanih` : 'Sve pročitano'}
+            />
 
-                {error && (
+            {error && (
+                <div className="mx-4 md:mx-6 mt-4">
                     <div className="error-banner">
                         {getFriendlyErrorMessage(error)}
                     </div>
-                )}
-            </div>
+                </div>
+            )}
 
             <div ref={containerRef} className="page-content">
                 <div className="max-w-4xl mx-auto fade-in">
@@ -290,9 +288,9 @@ function Inbox() {
                 onClose={() => setSelectedItem(null)}
                 title={selectedItem?.type === 'message' ? (selectedItem?.subject || 'Poruka') : (selectedItem?.title || 'Obavijest')}
             >
-                {selectedItem && (
-                    <MessageDetail item={selectedItem} />
-                )}
+            {selectedItem && (
+                <MessageDetail item={selectedItem} loading={detailLoading} />
+            )}
             </BottomSheet>
         </div>
     );

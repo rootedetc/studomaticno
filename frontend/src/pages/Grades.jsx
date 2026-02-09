@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { getFriendlyErrorMessage } from '../utils/helpers';
 import { Skeleton, SkeletonList } from '../components/Skeleton';
+import PageHeader from '../components/PageHeader';
 import { PassedCoursesChart, GradeTrendChart } from '../components/Charts';
 import TableCard from '../components/TableCard';
 import EmptyState from '../components/EmptyState';
@@ -75,27 +76,23 @@ function Grades() {
 
   return (
     <div className="page-container">
-      <div className="page-header">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Indeks</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {grades?.studyProgram || grades?.viewMode}
-            </p>
-          </div>
-        </div>
+      <PageHeader
+        title="Indeks"
+        subtitle={grades?.studyProgram || grades?.viewMode}
+      />
 
-        {error && (
+      {error && (
+        <div className="px-4 md:px-6 mt-4">
           <div className="error-banner">
             {getFriendlyErrorMessage(error)}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="page-content">
         <div className="max-w-5xl mx-auto fade-in">
           {grades?.summary && (
-            <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-4 mb-6">
               <div className="stat-card hidden md:block">
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{grades.summary.total}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Ukupno</p>
@@ -108,6 +105,14 @@ function Grades() {
               <div className="stat-card">
                 <p className="text-xl md:text-2xl font-bold text-purple-600 dark:text-purple-400">{grades.summary.averageGrade}</p>
                 <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">Prosjek</p>
+              </div>
+              <div className="stat-card">
+                <p className="text-xl md:text-2xl font-bold text-green-600 dark:text-green-400">{grades.summary.passed}</p>
+                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">Položeno</p>
+              </div>
+              <div className="stat-card">
+                <p className="text-xl md:text-2xl font-bold text-orange-600 dark:text-orange-400">{grades.summary.total - grades.summary.passed}</p>
+                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">Preostalo</p>
               </div>
             </div>
           )}

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 import { getFriendlyErrorMessage } from '../utils/helpers';
-import MobileHeader from '../components/MobileHeader';
 import { Skeleton, SkeletonList } from '../components/Skeleton';
 import DOMPurify from 'dompurify';
 import EmptyState from '../components/EmptyState';
@@ -47,21 +46,22 @@ function Messages() {
     try {
       await markAsReadUpdate.execute(messageId);
     } catch (err) {
+      setError('Failed to mark message as read');
     }
   }, [markAsReadOptimistic, markAsReadUpdate]);
 
   useEffect(() => {
-    loadMessages();
+    loadMessages(false);
   }, []);
 
-  const loadMessages = async () => {
+  const loadMessages = async (useCache = true) => {
     try {
-      const result = await api.getMessages();
+      const result = await api.getMessages(useCache);
       setMessages(result.messages || []);
       setUnreadCount(result.unreadCount || 0);
+      setLoading(false);
     } catch (err) {
       setError(err.message);
-    } finally {
       setLoading(false);
     }
   };
@@ -143,22 +143,18 @@ function Messages() {
   return (
     <div className="page-container relative">
       <PullIndicator isRefreshing={isRefreshing} pullProgress={pullProgress} />
-      <div className="page-header">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Poruke</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {unreadCount > 0 ? `${unreadCount} nepročitanih` : 'Sve pročitano'}
-            </p>
-          </div>
-        </div>
+      <PageHeader
+        title="Poruke"
+        subtitle={unreadCount > 0 ? `${unreadCount} nepročitanih` : 'Sve pročitano'}
+      />
 
-        {error && (
+      {error && (
+        <div className="mx-4 md:mx-6 mt-4">
           <div className="error-banner">
             {getFriendlyErrorMessage(error)}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div ref={containerRef} className="page-content">
         <div className="max-w-4xl mx-auto fade-in">
@@ -198,7 +194,7 @@ function Messages() {
         </div>
       </div>
 
-  /* Message Detail Bottom Sheet */
+      {/* Message Detail Bottom Sheet */}
       <BottomSheet
         isOpen={!!selectedMessage}
         onClose={() => setSelectedMessage(null)}
@@ -216,7 +212,7 @@ function Messages() {
                 </div>
               </div>
             ) : (
-              <MessageDetail item={selectedMessage} />
+              <MessageDetail item={selectedMessage} loading={detailLoading} />
             )}
           </div>
         )}

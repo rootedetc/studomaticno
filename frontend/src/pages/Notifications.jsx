@@ -7,7 +7,6 @@ import EmptyState from '../components/EmptyState';
 import ListItem from '../components/ListItem';
 import Icon from '../components/Icon';
 import PageHeader from '../components/PageHeader';
-import MobileHeader from '../components/MobileHeader';
 import useTranslation from '../hooks/useTranslation';
 import { usePullToRefresh, PullIndicator } from '../hooks/usePullToRefresh';
 import { useOptimisticUpdate } from '../hooks/useOptimisticUpdate';
@@ -51,6 +50,7 @@ function Notifications() {
     try {
       await markAsReadUpdate.execute(notification.id);
     } catch (err) {
+      setError('Failed to mark notification as read');
     }
   }, [markAsReadOptimistic, markAsReadUpdate]);
 
@@ -132,22 +132,18 @@ function Notifications() {
   return (
     <div className="page-container relative">
       <PullIndicator isRefreshing={isRefreshing} pullProgress={pullProgress} />
-      <div className="page-header">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Obavijesti</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {unreadCount > 0 ? `${unreadCount} nepročitanih` : 'Sve pročitano'}
-            </p>
-          </div>
-        </div>
+      <PageHeader
+        title="Obavijesti"
+        subtitle={unreadCount > 0 ? `${unreadCount} nepročitanih` : 'Sve pročitano'}
+      />
 
-        {error && (
+      {error && (
+        <div className="px-4 md:px-6 mt-4">
           <div className="error-banner">
             {getFriendlyErrorMessage(error)}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div ref={containerRef} className="page-content">
         <div className="max-w-4xl mx-auto fade-in">

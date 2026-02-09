@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { Skeleton, SkeletonList } from '../components/Skeleton';
 import useTranslation from '../hooks/useTranslation.jsx';
-import TableCard from '../components/TableCard';
+import PageHeader from '../components/PageHeader';
+
 import SegmentedControl from '../components/SegmentedControl';
 import EmptyState from '../components/EmptyState';
 
@@ -10,10 +11,7 @@ function Ispiti() {
   const { t } = useTranslation();
   const [exams, setExams] = useState(null);
   const [grades, setGrades] = useState(null);
-  const [selectedCourse, setSelectedCourse] = useState(null);
-  const [examAttempts, setExamAttempts] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [loadingAttempts, setLoadingAttempts] = useState(false);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('prijavljeni');
 
@@ -29,32 +27,10 @@ function Ispiti() {
       ]);
       setExams(examsData);
       setGrades(gradesData);
-      if (gradesData.courses && gradesData.courses.length > 0) {
-        setSelectedCourse(null); // Changed to null to show list first
-      }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCourseChange = async (course) => {
-    setSelectedCourse(course);
-    setExamAttempts(null);
-
-    if (course.examLinkParams) {
-      setLoadingAttempts(true);
-      try {
-        const attempts = await api.request(
-          `/exams/attempts?idOS=${course.examLinkParams.idOS}&idPred=${course.examLinkParams.idPred}&idAKG=${course.examLinkParams.idAKG}`
-        );
-        setExamAttempts(attempts);
-      } catch (err) {
-        console.error('Failed to load exam attempts:', err);
-      } finally {
-        setLoadingAttempts(false);
-      }
     }
   };
 
@@ -65,67 +41,6 @@ function Ispiti() {
     if (gradeNum >= 3) return 'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30';
     return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30';
   };
-
-  const prijavljeniColumns = [
-    { key: 'year', label: 'Godina', priority: 'medium' },
-    { key: 'subject', label: 'Predmet', priority: 'high' },
-    { key: 'professor', label: 'Predavač', priority: 'medium' },
-    { key: 'examDate', label: 'Termin', priority: 'high' },
-    { key: 'room', label: 'Učionica', priority: 'medium' },
-    { key: 'enrollmentDate', label: 'Prijavljen', priority: 'low' },
-    {
-      key: 'grade',
-      label: 'Ocjena',
-      priority: 'high',
-      format: (value) => value ? (
-        <span className={`grade-badge ${getGradeColor(value)}`}>{value}</span>
-      ) : (
-        <span className="text-gray-500 dark:text-gray-400">-</span>
-      )
-    },
-  ];
-
-  const odjavljeniColumns = [
-    { key: 'year', label: 'Godina', priority: 'medium' },
-    { key: 'subject', label: 'Predmet', priority: 'high' },
-    { key: 'professor', label: 'Predavač', priority: 'medium' },
-    { key: 'examDate', label: 'Termin', priority: 'high' },
-    { key: 'room', label: 'Učionica', priority: 'medium' },
-    { key: 'cancellationDate', label: 'Odjavljen', priority: 'low' },
-  ];
-
-  const attemptsColumns = [
-    { key: 'attemptNumber', label: 'Br. izlaska', priority: 'high' },
-    { key: 'examPeriod', label: 'Naziv roka', priority: 'high' },
-    {
-      key: 'registered',
-      label: 'Prijavljen',
-      priority: 'medium',
-      format: (value) => value ? (
-        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-        </svg>
-      ) : (
-        <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      )
-    },
-    { key: 'examDate', label: 'Termin roka', priority: 'high' },
-    { key: 'professor', label: 'Predavač', priority: 'medium' },
-    { key: 'enrollmentTime', label: 'Vrijeme prijave', priority: 'low' },
-    { key: 'cancellationTime', label: 'Vrijeme odjave', priority: 'low' },
-    {
-      key: 'grade',
-      label: 'Ocjena',
-      priority: 'high',
-      format: (value) => value ? (
-        <span className={`grade-badge ${getGradeColor(value)}`}>{value}</span>
-      ) : (
-        <span className="text-gray-500 dark:text-gray-400">-</span>
-      )
-    },
-  ];
 
   if (loading) {
     return (
@@ -141,19 +56,13 @@ function Ispiti() {
 
   return (
     <div className="flex-1 flex flex-col h-full">
-      <div className="p-4 lg:p-6 flex-shrink-0">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Ispiti</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              {activeTab === 'prijavljeni'
-                ? `${exams?.academicYear} - ${exams?.examPeriod}`
-                : 'Povijest izlazaka na ispit'
-              }
-            </p>
-          </div>
-        </div>
-
+      <PageHeader
+        title="Ispiti"
+        subtitle={activeTab === 'prijavljeni'
+          ? `${exams?.academicYear} - ${exams?.examPeriod}`
+          : 'Povijest izlazaka na ispit'
+        }
+      >
         <SegmentedControl
           options={[
             { value: 'prijavljeni', label: 'Prijavljeni ispiti' },
@@ -164,13 +73,13 @@ function Ispiti() {
         />
 
         {error && (
-          <div className="error-banner">
+          <div className="error-banner mt-4">
             {error}
           </div>
         )}
-      </div>
+      </PageHeader>
 
-      <div className="flex-1 overflow-y-auto px-4 lg:px-6 pb-6">
+      <div className="flex-1 overflow-y-auto px-4 lg:px-6 pb-6 pt-4">
         <div className="max-w-6xl mx-auto fade-in">
           {activeTab === 'prijavljeni' ? (
             <>
@@ -340,195 +249,17 @@ function Ispiti() {
               )}
             </>
           ) : (
-            <>
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  {selectedCourse ? 'Odabrani kolegij' : 'Odaberi kolegij za pregled izlazaka'}
-                </h2>
-
-                {!selectedCourse ? (
-                  <div className="grid grid-cols-1 gap-3 max-h-[60vh] overflow-y-auto">
-                    {grades?.courses?.map((course, index) => (
-                      <div
-                        key={`${course.course}-${index}`}
-                        onClick={() => handleCourseChange(course)}
-                        className="card p-4 cursor-pointer hover:border-primary-500 transition-colors flex justify-between items-center"
-                      >
-                        <div>
-                          <h3 className="font-medium text-gray-900 dark:text-white">{course.course}</h3>
-                          <p className="text-sm text-gray-500">{course.professor}</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          {course.examAttempts > 0 && <span className="badge badge-primary">{course.examAttempts} izl.</span>}
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="card p-4 flex justify-between items-center bg-primary-50 dark:bg-primary-900/10 border-primary-200 dark:border-primary-800">
-                    <div>
-                      <h3 className="font-medium text-gray-900 dark:text-white">{selectedCourse.course}</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Prikaz povijesti izlazaka</p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setSelectedCourse(null);
-                        setExamAttempts(null);
-                      }}
-                      className="text-primary-600 font-medium text-sm hover:underline"
-                    >
-                      Promijeni
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {loadingAttempts ? (
-                <div className="card p-8">
-                  <div className="flex items-center justify-center">
-                    <div className="loading-spinner w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full"></div>
-                  </div>
+            <div className="grid grid-cols-1 gap-3">
+              {grades?.courses?.map((course, index) => (
+                <div
+                  key={`${course.course}-${index}`}
+                  className="card p-4 flex justify-between items-center"
+                >
+                  <h3 className="font-medium text-gray-900 dark:text-white">{course.course}</h3>
+                  <span className="badge badge-primary">{course.examAttempts} izl.</span>
                 </div>
-              ) : examAttempts ? (
-                <>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                    Povijest izlazaka: {examAttempts.subject}
-                  </h2>
-                  {examAttempts.attempts?.length === 0 ? (
-                    <EmptyState
-                      icon="emptyExams"
-                      title="Nema podataka o izlascima za ovaj kolegij"
-                    />
-                  ) : (
-                    <>
-                      <div className="hidden md:block table-container">
-                        <div className="overflow-x-auto">
-                          <table className="table">
-                            <thead>
-                              <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                                <th className="table-header-cell">Br. izlaska</th>
-                                <th className="table-header-cell">Naziv roka</th>
-                                <th className="table-header-cell text-center">Prijavljen</th>
-                                <th className="table-header-cell">Termin roka</th>
-                                <th className="table-header-cell">Predavač</th>
-                                <th className="table-header-cell">Vrijeme prijave</th>
-                                <th className="table-header-cell">Vrijeme odjave</th>
-                                <th className="table-header-cell text-center">Ocjena</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {examAttempts.attempts.map((attempt, index) => {
-                                const attemptKey = `${attempt.examPeriod}-${attempt.attemptNumber}-${index}`;
-                                return (
-                                  <tr
-                                    key={attemptKey}
-                                    className="table-row"
-                                  >
-                                    <td className="table-cell font-medium">
-                                      {attempt.attemptNumber}
-                                    </td>
-                                    <td className="table-cell">
-                                      {attempt.examPeriod}
-                                    </td>
-                                    <td className="table-cell text-center">
-                                      {attempt.registered ? (
-                                        <svg className="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                      ) : (
-                                        <svg className="w-5 h-5 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                      )}
-                                    </td>
-                                    <td className="table-cell">
-                                      {attempt.examDate}
-                                    </td>
-                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">
-                                      {attempt.professor}
-                                    </td>
-                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">
-                                      {attempt.enrollmentTime}
-                                    </td>
-                                    <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">
-                                      {attempt.cancellationTime || '-'}
-                                    </td>
-                                    <td className="table-cell text-center">
-                                      {attempt.grade ? (
-                                        <span className={`grade-badge ${getGradeColor(attempt.grade)}`}>
-                                          {attempt.grade}
-                                        </span>
-                                      ) : (
-                                        <span className="text-gray-500 dark:text-gray-400">-</span>
-                                      )}
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-
-                      <div className="md:hidden space-y-3">
-                        {examAttempts.attempts.map((attempt, index) => (
-                          <div key={`${attempt.examPeriod}-${attempt.attemptNumber}-${index}`} className="card p-4">
-                            <div className="flex justify-between items-start gap-3 mb-2">
-                              <div>
-                                <h3 className="font-medium text-gray-900 dark:text-white leading-tight">
-                                  {attempt.examPeriod}
-                                </h3>
-                                <span className="text-xs text-gray-500">Izlazak br. {attempt.attemptNumber}</span>
-                              </div>
-                              <div className="shrink-0">
-                                {attempt.grade ? (
-                                  <span className={`grade-badge ${getGradeColor(attempt.grade)}`}>
-                                    {attempt.grade}
-                                  </span>
-                                ) : (
-                                  <span className="text-gray-400 font-medium">-</span>
-                                )}
-                              </div>
-                            </div>
-
-                            <div className="flex flex-col gap-1 text-sm text-gray-500 dark:text-gray-400">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-gray-700 dark:text-gray-300 w-20">Termin:</span>
-                                <span>{attempt.examDate}</span>
-                              </div>
-                              {attempt.professor && (
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium text-gray-700 dark:text-gray-300 w-20">Predavač:</span>
-                                  <span className="truncate">{attempt.professor}</span>
-                                </div>
-                              )}
-                              <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-                                <div className="flex items-center gap-1">
-                                  {attempt.registered ? (
-                                    <span className="text-green-600 text-xs flex items-center gap-1">
-                                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-                                      Prijavljen: {attempt.enrollmentTime}
-                                    </span>
-                                  ) : (
-                                    <span className="text-red-500 text-xs">Nije prijavljen</span>
-                                  )}
-                                </div>
-                                {attempt.cancellationTime && (
-                                  <span className="text-red-500 text-xs">Odjavljen: {attempt.cancellationTime}</span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </>
-              ) : null}
-            </>
+              ))}
+            </div>
           )}
         </div>
       </div>

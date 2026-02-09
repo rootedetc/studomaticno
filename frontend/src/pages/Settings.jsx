@@ -30,13 +30,9 @@ export default function Settings() {
 
   return (
     <div className="page-container">
-      <div className="page-header">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title={t('settings.title')}
+      />
 
       <main className="p-4 max-w-2xl mx-auto space-y-4">
         <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
