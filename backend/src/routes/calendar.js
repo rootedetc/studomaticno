@@ -126,7 +126,7 @@ router.get('/event', (req, res) => {
   ].join('\r\n');
 
   res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
-  res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
   res.setHeader('Cache-Control', 'no-cache');
   res.send(icsContent);
 });
