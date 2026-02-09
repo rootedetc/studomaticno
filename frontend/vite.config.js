@@ -46,6 +46,22 @@ export default defineConfig(({ mode }) => {
           globIgnores: ['**/*.map'],
           runtimeCaching: [
             {
+              // Always fetch latest HTML shell
+              urlPattern: ({ request }) => request.destination === 'document',
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'html-cache',
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 5
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                },
+                networkTimeoutSeconds: 5
+              }
+            },
+            {
               // Cache API requests with NetworkFirst strategy
               urlPattern: /^https?:\/\/.*\/api\/.*/i,
               handler: 'NetworkFirst',
@@ -70,7 +86,9 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '/api': {
           target: 'http://localhost:3001',
-          changeOrigin: true
+          changeOrigin: true,
+          cookieDomainRewrite: 'localhost',
+          cookiePathRewrite: '/'
         }
       }
     },
