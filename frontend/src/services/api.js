@@ -16,12 +16,15 @@ class ApiService {
     const url = `${this.baseUrl}${endpoint}`;
     const startTime = Date.now();
     const requestId = Math.random().toString(36).substring(7);
-    
+    const { headers, body, signal, ...rest } = options;
+
     const config = {
-      ...options,
+      ...rest,
+      signal,
+      body,
       headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
+        ...(body ? { 'Content-Type': 'application/json' } : {}),
+        ...headers
       },
       credentials: 'include'
     };
@@ -102,13 +105,10 @@ class ApiService {
   }
 
   async postData(endpoint, data) {
-    console.log('[API] POST', endpoint, data);
-    const result = await this.request(endpoint, {
+    return this.request(endpoint, {
       method: 'POST',
       body: JSON.stringify(data)
     });
-    console.log('[API] POST result:', endpoint, result);
-    return result;
   }
 
   async getTodayTimetable(useCache = true) {
@@ -124,7 +124,7 @@ class ApiService {
   }
 
   async getWeeklyTimetable(date) {
-    const params = date ? `?date=${date}` : '';
+    const params = date ? `?date=${encodeURIComponent(date)}` : '';
     return this.request(`/timetable/weekly${params}`);
   }
 
@@ -144,7 +144,7 @@ class ApiService {
   }
 
   async getNotification(id, messageId = null) {
-    const params = messageId ? `?idPP=${messageId}` : '';
+    const params = messageId ? `?idPP=${encodeURIComponent(messageId)}` : '';
     return this.request(`/notifications/${encodeURIComponent(id)}${params}`);
   }
 
@@ -171,21 +171,17 @@ class ApiService {
     return this.request(`/messages/thread/${encodeURIComponent(id)}`);
   }
 
-  async markMessageAsRead(id) {
-    return this.request(`/messages/${encodeURIComponent(id)}/read`, { method: 'POST' });
+  async getFiles(akc = null, options = {}) {
+    const params = akc ? `?akc=${encodeURIComponent(akc)}` : '';
+    return this.request(`/files${params}`, options);
   }
 
-  async getFiles(akc = null) {
-    const params = akc ? `?akc=${akc}` : '';
-    return this.request(`/files${params}`);
+  async getFilesByHijer(idHijer, options = {}) {
+    return this.request(`/files?idHijer=${encodeURIComponent(idHijer)}`, options);
   }
 
-  async getFilesByHijer(idHijer) {
-    return this.request(`/files?idHijer=${idHijer}`);
-  }
-
-  async getFilesTree() {
-    return this.request('/files/tree');
+  async getFilesTree(options = {}) {
+    return this.request('/files/tree', options);
   }
 
   async getRecentFiles() {
@@ -193,10 +189,18 @@ class ApiService {
   }
 
   async downloadFile(id) {
-    const response = await fetch(`${this.baseUrl}/files/download/${id}`, {
+    const response = await fetch(`${this.baseUrl}/files/download/${encodeURIComponent(id)}`, {
       credentials: 'include'
     });
     if (!response.ok) {
+      if (response.status === 401 && this.onAuthError) {
+        this.onAuthError();
+      }
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const data = await response.json();
+        throw new Error(data.error || 'Download failed');
+      }
       throw new Error('Download failed');
     }
     const blob = await response.blob();
@@ -218,15 +222,6 @@ class ApiService {
 
   async getPayments() {
     return this.request('/payments');
-  }
-
-  async debugPage(url) {
-    return this.request(`/debug/page?url=${encodeURIComponent(url)}`);
-  }
-
-  async testEncoding() {
-    const response = await fetch(`${this.baseUrl}/debug/test-encoding`);
-    return response.json();
   }
 
   getRequestLog() {

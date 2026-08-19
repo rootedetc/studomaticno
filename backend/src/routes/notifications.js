@@ -2,6 +2,7 @@ import express from 'express';
 import * as cheerio from 'cheerio';
 import { generateRequestId, log } from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
+import { isNumericId, invalidIdResponse } from '../utils/validate.js';
 
 const router = express.Router();
 
@@ -131,6 +132,9 @@ router.get('/:id', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   const { id } = req.params;
   const { idPP } = req.query;
+  if (!isNumericId(id) || (idPP != null && idPP !== '' && !isNumericId(idPP))) {
+    return invalidIdResponse(res, 'id');
+  }
 
   log('info', requestId, 'Fetching notification detail', { id, idPP });
 
@@ -332,6 +336,9 @@ router.post('/:id/read', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   const { id } = req.params;
   const { idPP } = req.query;
+  if (!isNumericId(id) || (idPP != null && idPP !== '' && !isNumericId(idPP))) {
+    return invalidIdResponse(res, 'id');
+  }
 
   log('info', requestId, 'Marking notification as read', { id, idPP });
 

@@ -31,9 +31,7 @@ export const requireAuth = async (req, res, next) => {
     // Validate the Eduneta session is still active
     const isValid = await edunetaService.checkSession(requestId);
     if (!isValid) {
-      log('warn', requestId, 'Auth failed - Eduneta session expired', {
-        user: req.session.user?.username
-      });
+      log('warn', requestId, 'Auth failed - Eduneta session expired');
       serviceManager.destroyService(req.sessionID);
       req.session.destroy();
       return res.status(401).json({ error: 'Session expired' });
@@ -50,6 +48,6 @@ export const requireAuth = async (req, res, next) => {
     log('error', requestId, `Auth middleware error: ${error.message}`);
     serviceManager.destroyService(req.sessionID);
     req.session.destroy();
-    return res.status(401).json({ error: error.message || 'Session expired' });
+    return res.status(401).json({ error: 'Session expired' });
   }
 };

@@ -11,6 +11,7 @@ function generateRequestId() {
 }
 
 function log(level, requestId, message, data = {}) {
+  if (level === 'debug' && process.env.NODE_ENV === 'production') return;
   const timestamp = new Date().toISOString();
   const logEntry = {
     timestamp,
@@ -22,9 +23,48 @@ function log(level, requestId, message, data = {}) {
   console.log(JSON.stringify(logEntry));
 }
 
+function resolveEdunetaUrl(url) {
+  if (!url || typeof url !== 'string') {
+    throw new Error('Invalid URL');
+  }
+
+  const trimmed = url.trim();
+  if (/[\s\\]/.test(trimmed) || trimmed.includes('@')) {
+    throw new Error('Invalid URL');
+  }
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed) && !/^https?:\/\//i.test(trimmed)) {
+    throw new Error('Invalid URL protocol');
+  }
+
+  const base = new URL(EDUNETA_BASE_URL);
+  let resolved;
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    resolved = new URL(trimmed);
+  } else if (trimmed.startsWith('/')) {
+    resolved = new URL(trimmed, EDUNETA_BASE_URL);
+  } else {
+    resolved = new URL(`/lib-student/${trimmed}`, EDUNETA_BASE_URL);
+  }
+
+  if (resolved.protocol !== 'http:' && resolved.protocol !== 'https:') {
+    throw new Error('Invalid URL protocol');
+  }
+  if (resolved.hostname !== base.hostname) {
+    throw new Error('Request host not allowed');
+  }
+
+  return resolved.toString();
+}
+
+const SESSION_CHECK_TTL_MS = 2 * 60 * 1000;
+
 class EdunetaService {
   constructor() {
     this.cookies = {};
+    this.lastSessionCheckAt = 0;
+    this.lastSessionValid = false;
+    this.timetableViewState = null;
   }
 
   setCookies(cookies, requestId = 'init') {
@@ -100,7 +140,7 @@ class EdunetaService {
 
   async request(method, url, data = null, followRedirects = true, requestId = null) {
     const rid = requestId || generateRequestId();
-    const fullUrl = url.startsWith('http') ? url : `${EDUNETA_BASE_URL}${url}`;
+    const fullUrl = resolveEdunetaUrl(url);
     log('info', rid, `HTTP ${method} ${url}`, {
       hasData: !!data,
       followRedirects,
@@ -152,9 +192,13 @@ class EdunetaService {
 
         log('debug', rid, `Following redirect ${redirectCount + 1}`, { location });
 
-        const redirectUrl = location.startsWith('http')
-          ? location
-          : `${EDUNETA_BASE_URL}${location.startsWith('/') ? '' : '/lib-student/'}${location}`;
+        let redirectUrl;
+        try {
+          redirectUrl = resolveEdunetaUrl(location);
+        } catch (error) {
+          log('warn', rid, 'Blocked off-host redirect', { location });
+          break;
+        }
 
         try {
           response = await axios({
@@ -206,10 +250,13 @@ class EdunetaService {
 
   async login(username, password, requestId = null) {
     const rid = requestId || generateRequestId();
-    log('info', rid, `Login attempt for user: ${username}`);
+    log('info', rid, 'Login attempt');
 
     try {
       this.cookies = {};
+      this.lastSessionCheckAt = 0;
+      this.lastSessionValid = false;
+      this.timetableViewState = null;
 
       const loginData = await this.getLoginPage(rid);
 
@@ -240,15 +287,15 @@ class EdunetaService {
           this.isStickyAnnouncementPage(html, rid);
 
         if (isStickyPage) {
-          log('info', rid, `Login successful (redirected to sticky announcement) for user: ${username}`);
-          userName = username; // Use the provided username since we can't scrape it from this page
+          log('info', rid, 'Login successful (redirected to sticky announcement)');
+          userName = username;
         } else {
           log('error', rid, 'Login failed - no user name found');
           throw new Error('Prijava nije uspjela');
         }
       }
 
-      log('info', rid, `Login successful for: ${userName}`);
+      log('info', rid, 'Login successful');
 
       return {
         success: true,
@@ -266,8 +313,7 @@ class EdunetaService {
     const rid = requestId || generateRequestId();
     log('info', rid, `Fetching page: ${url}`);
 
-    const fullUrl = url.startsWith('http') ? url : `${EDUNETA_BASE_URL}${url}`;
-    const response = await this.request('GET', fullUrl, null, true, rid);
+    const response = await this.request('GET', url, null, true, rid);
 
     if (response.status !== 200) {
       log('error', rid, `Failed to fetch ${url}: ${response.status}`);
@@ -287,8 +333,7 @@ class EdunetaService {
     const rid = requestId || generateRequestId();
     log('info', rid, `Posting form to: ${url}`);
 
-    const fullUrl = url.startsWith('http') ? url : `${EDUNETA_BASE_URL}${url}`;
-    const response = await this.request('POST', fullUrl, formData, true, rid);
+    const response = await this.request('POST', url, formData, true, rid);
 
     if (response.status !== 200) {
       log('error', rid, `Failed to post ${url}: ${response.status}`);
@@ -305,23 +350,35 @@ class EdunetaService {
     return Object.entries(this.cookies).map(([key, value]) => ({ key, value }));
   }
 
-  async checkSession(requestId = null) {
+  async checkSession(requestId = null, { force = false } = {}) {
     const rid = requestId || generateRequestId();
+    const now = Date.now();
+
+    if (!force && this.lastSessionValid && now - this.lastSessionCheckAt < SESSION_CHECK_TTL_MS) {
+      return true;
+    }
+
     log('debug', rid, 'Checking session');
 
     try {
       if (!this.cookies.studomatic) {
         log('debug', rid, 'No studomatic cookie');
+        this.lastSessionValid = false;
+        this.lastSessionCheckAt = now;
         return false;
       }
       const homeHtml = await this.getPage('/lib-student/Default.aspx', rid);
       const $ = cheerio.load(homeHtml);
       const userName = $('#labKorisnik').text().trim();
       const isValid = !!userName;
+      this.lastSessionValid = isValid;
+      this.lastSessionCheckAt = now;
       log('debug', rid, `Session check: ${isValid ? 'valid' : 'invalid'}`);
       return isValid;
     } catch (error) {
       log('error', rid, `Session check failed: ${error.message}`);
+      this.lastSessionValid = false;
+      this.lastSessionCheckAt = now;
       return false;
     }
   }
@@ -682,5 +739,5 @@ class EdunetaService {
 }
 
 // Export class for creating instances per session
-export { EdunetaService, generateRequestId, log };
+export { EdunetaService, generateRequestId, log, resolveEdunetaUrl };
 

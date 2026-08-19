@@ -3,11 +3,10 @@ import * as cheerio from 'cheerio';
 import json5 from 'json5';
 import { generateRequestId, log } from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
+import { isNumericId, invalidIdResponse } from '../utils/validate.js';
 import iconv from 'iconv-lite';
 
 const router = express.Router();
-
-const EDUNETA_BASE_URL = process.env.EDUNETA_BASE_URL || 'https://eduneta.hr';
 
 function buildTree(nodes) {
   const nodeMap = {};
@@ -126,31 +125,43 @@ router.get('/', requireAuth, async (req, res) => {
     const { akc, idHijer } = req.query;
     let url;
 
-    if (idHijer) {
+    if (idHijer != null && idHijer !== '') {
+      if (!isNumericId(idHijer)) {
+        return invalidIdResponse(res, 'idHijer');
+      }
       url = `/lib-student/DocDownloadDesno.aspx?idHijer=${idHijer}`;
+    } else if (akc != null && akc !== '') {
+      if (!isNumericId(akc)) {
+        return invalidIdResponse(res, 'akc');
+      }
+      url = `/lib-student/DocDownloadDesno.aspx?akc=${akc}`;
     } else {
-      url = akc ? `/lib-student/DocDownloadDesno.aspx?akc=${akc}` : '/lib-student/DocDownloadDesno.aspx?akc=10';
+      url = '/lib-student/DocDownloadDesno.aspx?akc=10';
     }
 
     log('debug', requestId, 'Fetching files URL', { url });
 
-    const html = await req.edunetaService.getPage(url, requestId);
+    let html = await req.edunetaService.getPage(url, requestId);
 
     if (html.includes('frameset') || html.includes('FRAME')) {
       log('warn', requestId, 'Received frameset instead of content, trying alternate URL');
       if (idHijer) {
         const altUrl = `/lib-student/DocDownloadDesno.aspx?idHijer=${idHijer}`;
         const altHtml = await req.edunetaService.getPage(altUrl, requestId);
-        if (!altHtml.includes('frameset')) {
+        if (!altHtml.includes('frameset') && !altHtml.includes('FRAME')) {
+          html = altHtml;
           log('info', requestId, 'Got content from alternate URL');
         }
       } else {
         const altUrl = `/lib-student/DocDownloadDesno.aspx?akc=${akc || 10}`;
-        const altAltUrl = '/lib-student/DocDownloadDesno.aspx';
         const altHtml = await req.edunetaService.getPage(altUrl, requestId);
-        if (altHtml.includes('frameset')) {
-          const altAltHtml = await req.edunetaService.getPage(altAltUrl, requestId);
-          if (!altAltHtml.includes('frameset')) {
+        if (!altHtml.includes('frameset') && !altHtml.includes('FRAME')) {
+          html = altHtml;
+          log('info', requestId, 'Got content from alternate URL');
+        } else {
+          const altAltHtml = await req.edunetaService.getPage('/lib-student/DocDownloadDesno.aspx', requestId);
+          if (!altAltHtml.includes('frameset') && !altAltHtml.includes('FRAME')) {
+            html = altAltHtml;
             log('info', requestId, 'Got content from base URL');
           }
         }
@@ -279,13 +290,7 @@ router.get('/tree', requireAuth, async (req, res) => {
         htmlPreview: html.substring(0, 3000)
       });
       return res.status(500).json({
-        error: 'Failed to parse tree data - no tvClientData found in page',
-        debug: {
-          htmlLength: html.length,
-          hasFrameset: html.includes('frameset'),
-          hasTvClientData: html.includes('tvClientData'),
-          preview: html.substring(0, 1000).replace(/\s+/g, ' ').trim()
-        }
+        error: 'Failed to parse tree data - no tvClientData found in page'
       });
     }
 
@@ -333,6 +338,9 @@ router.get('/download/:id', requireAuth, async (req, res) => {
 
   try {
     const { id } = req.params;
+    if (!isNumericId(id)) {
+      return invalidIdResponse(res, 'id');
+    }
 
     log('debug', requestId, 'Starting file download request', { id });
 

@@ -6,7 +6,8 @@ const COOKIE_EXPIRY_DAYS = 30;
 function setCookie(name, value, days) {
   const expires = new Date();
   expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+  const secure = window.location.protocol === 'https:' ? ';Secure' : '';
+  document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;SameSite=Lax${secure}`;
 }
 
 function getCookie(name) {
@@ -25,18 +26,17 @@ function deleteCookie(name) {
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
 }
 
-function encodeCredentials(username, password) {
-  return btoa(`${username}:${password}`);
-}
-
-function decodeCredentials(encoded) {
+function decodeRememberedUsername(value) {
+  if (!value) return '';
   try {
-    const decoded = atob(encoded);
-    const [user, pass] = decoded.split(':');
-    return { username: user, password: pass };
+    const decoded = atob(value);
+    if (decoded.includes(':')) {
+      return decoded.split(':')[0] || '';
+    }
   } catch {
-    return { username: '', password: '' };
+    // Not a legacy base64 cookie
   }
+  return value.split(':')[0] || '';
 }
 
 function Login() {
@@ -48,12 +48,14 @@ function Login() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const savedCredentials = getCookie('studomaticno_remember');
-    if (savedCredentials) {
-      const { username: savedUsername, password: savedPassword } = decodeCredentials(savedCredentials);
-      setUsername(savedUsername);
-      setPassword(savedPassword);
-      setRememberMe(true);
+    const saved = getCookie('studomaticno_remember');
+    if (saved) {
+      const savedUsername = decodeRememberedUsername(saved);
+      if (savedUsername) {
+        setUsername(savedUsername);
+        setRememberMe(true);
+        setCookie('studomaticno_remember', savedUsername, COOKIE_EXPIRY_DAYS);
+      }
     }
   }, []);
 
@@ -66,7 +68,7 @@ function Login() {
       await login(username, password);
 
       if (rememberMe) {
-        setCookie('studomaticno_remember', encodeCredentials(username, password), COOKIE_EXPIRY_DAYS);
+        setCookie('studomaticno_remember', username, COOKIE_EXPIRY_DAYS);
       } else {
         deleteCookie('studomaticno_remember');
       }
@@ -133,7 +135,7 @@ function Login() {
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
                 />
-                <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Zapamti me</span>
+                <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Zapamti korisničko ime</span>
               </label>
             </div>
 

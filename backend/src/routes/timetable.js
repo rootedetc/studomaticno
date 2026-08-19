@@ -2,10 +2,9 @@ import express from 'express';
 import * as cheerio from 'cheerio';
 import { generateRequestId, log } from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
+import { isSafeDateParam } from '../utils/validate.js';
 
 const router = express.Router();
-
-const lastViewState = new Map();
 
 function parseTimetable(html, requestId = 'unknown') {
   const rid = requestId || generateRequestId();
@@ -232,14 +231,17 @@ router.post('/navigate', requireAuth, async (req, res) => {
   });
 
   try {
-    const { action, date } = req.body;
+    const { action } = req.body;
+    if (action !== 'prev' && action !== 'next') {
+      return res.status(400).json({ error: 'Invalid action' });
+    }
     const postBackId = action === 'prev' ? 'ctl00$contentBody$puiPrethodni' : 'ctl00$contentBody$puiSljedeci';
 
     let viewState, eventValidation, viewStateGenerator, currentDate, $;
+    const cached = req.edunetaService.timetableViewState;
 
-    if (lastViewState.has(sessionId)) {
+    if (cached) {
       log('debug', requestId, 'Using cached viewstate from previous navigation');
-      const cached = lastViewState.get(sessionId);
       viewState = cached.viewState;
       eventValidation = cached.eventValidation;
       viewStateGenerator = cached.viewStateGenerator;
@@ -294,12 +296,12 @@ router.post('/navigate', requireAuth, async (req, res) => {
       hasNewViewState: !!newViewState
     });
 
-    lastViewState.set(sessionId, {
+    req.edunetaService.timetableViewState = {
       viewState: newViewState,
       eventValidation: newEventValidation,
       viewStateGenerator: newViewStateGenerator,
       currentDate: newCurrentDate
-    });
+    };
 
     log('debug', requestId, 'Cached new viewstate for session', { sessionId: sessionId?.substring(0, 8) + '...' });
 
@@ -336,12 +338,12 @@ router.get('/', requireAuth, async (req, res) => {
     const viewStateGenerator = $('input[name="__VIEWSTATEGENERATOR"]').val();
     const currentDate = $('input[name="ctl00$contentBody$puiDatum"]').val() || '';
 
-    lastViewState.set(sessionId, {
+    req.edunetaService.timetableViewState = {
       viewState,
       eventValidation,
       viewStateGenerator,
       currentDate
-    });
+    };
 
     log('debug', requestId, 'Cached initial viewstate for session', { sessionId: sessionId?.substring(0, 8) + '...' });
 
@@ -364,7 +366,7 @@ router.get('/today', requireAuth, async (req, res) => {
     const html = await req.edunetaService.getPage('/lib-student/raspored.aspx', requestId);
     const result = parseTimetable(html, requestId);
 
-    const today = new Date().toLocaleDateString('hr-HR', { weekday: 'long' });
+    const englishDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
     const croatianDays = {
       'Monday': 'Ponedjeljak',
       'Tuesday': 'Utorak',
@@ -374,10 +376,10 @@ router.get('/today', requireAuth, async (req, res) => {
       'Saturday': 'Subota',
       'Sunday': 'Nedjelja'
     };
-    const croatianToday = croatianDays[today] || today;
+    const croatianToday = croatianDays[englishDay] || englishDay;
 
     const todayLessons = result.timetable.find(t =>
-      t.day.toLowerCase() === croatianToday.toLowerCase()
+      t.day.toLowerCase().startsWith(croatianToday.toLowerCase())
     );
 
     log('debug', requestId, `Today: ${croatianToday}`, {
@@ -405,7 +407,10 @@ router.get('/weekly', requireAuth, async (req, res) => {
     let url = '/lib-student/raspored.aspx';
 
     if (date) {
-      url += `?date=${date}`;
+      if (!isSafeDateParam(date)) {
+        return res.status(400).json({ error: 'Invalid date' });
+      }
+      url += `?date=${encodeURIComponent(date)}`;
     }
 
     const html = await req.edunetaService.getPage(url, requestId);
@@ -427,6 +432,9 @@ router.post('/set-date', requireAuth, async (req, res) => {
 
   try {
     const { date } = req.body;
+    if (!date || !isSafeDateParam(date)) {
+      return res.status(400).json({ error: 'Invalid date' });
+    }
 
     const homeHtml = await req.edunetaService.getPage('/lib-student/raspored.aspx', requestId);
     const $ = cheerio.load(homeHtml);

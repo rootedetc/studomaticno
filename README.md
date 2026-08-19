@@ -97,8 +97,8 @@ This project is optimized for **DigitalOcean App Platform**.
    - **Service (backend)**: Set `HTTP Port` to `8080` (or as configured), Environment: Node.js.
    - **Static Site (frontend)**: Build command `npm run build`, Output directory `dist`.
 3. **Environment Variables**:
-   - `SESSION_SECRET`: Random long string.
-   - `FRONTEND_URL`: Your App Platform URL.
+   - `SESSION_SECRET`: Random long string (**required**).
+   - `FRONTEND_URL`: Your App Platform URL (only if the frontend is on a different origin).
    - `NODE_ENV`: `production`.
 
 ## PWA Installation
@@ -176,11 +176,12 @@ studomaticno/
 
 ## Security Notes
 
-- HTTPS required for production
-- Credentials sent only during login via POST
-- Session tokens protected with `httpOnly` and `secure` flags
-- Per-user session isolation with separate `EdunetaService` instances
-- No student credentials stored in the backend (stored only in session memory)
+- HTTPS is required in production. Session cookies are `httpOnly`, `secure` (when `NODE_ENV=production`), and `SameSite`.
+- `SESSION_SECRET` is **required** in production. Do not use the development fallback.
+- Credentials are sent only during login via POST. "Remember username" stores the username only — never the password.
+- Per-user session isolation uses separate `EdunetaService` instances; outbound fetches are restricted to the Eduneta host.
+- No student credentials are stored on the server (session cookies live in memory only).
+- Debug scrape dumps and live portal HTML samples must not be committed.
 
 ## License
 

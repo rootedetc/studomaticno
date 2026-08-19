@@ -2,6 +2,7 @@ import express from 'express';
 import * as cheerio from 'cheerio';
 import { generateRequestId, log } from '../services/eduneta.js';
 import { requireAuth } from '../middleware/auth.js';
+import { isNumericId, invalidIdResponse } from '../utils/validate.js';
 
 const router = express.Router();
 
@@ -390,6 +391,9 @@ router.get('/thread/:id', requireAuth, async (req, res) => {
 
   try {
     const { id } = req.params;
+    if (!isNumericId(id)) {
+      return invalidIdResponse(res, 'id');
+    }
 
     const inboxHtml = await req.edunetaService.getPage('/lib-student/PorukePrimljene.aspx?idPV=1', requestId);
     const messages = parseMessages(inboxHtml, requestId);
@@ -429,6 +433,9 @@ router.get('/thread/:id', requireAuth, async (req, res) => {
 router.post('/:id/read', requireAuth, async (req, res) => {
   const requestId = generateRequestId();
   const { id } = req.params;
+  if (!isNumericId(id)) {
+    return invalidIdResponse(res, 'id');
+  }
 
   log('info', requestId, 'Marking message as read', { id });
 
