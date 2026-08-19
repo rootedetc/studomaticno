@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
+import { StrictMode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { TranslationProvider } from './hooks/useTranslation';
@@ -50,14 +50,14 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('focus', checkForUpdates);
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <BrowserRouter>
       <TranslationProvider>
         <SettingsProvider>
           <App />
         </SettingsProvider>
       </TranslationProvider>
     </BrowserRouter>
-  </React.StrictMode>
+  </StrictMode>
 );

@@ -1,31 +1,22 @@
-import { memo, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import DOMPurify from 'dompurify';
 
 const StickyAnnouncements = memo(function StickyAnnouncements({ announcements, onDismiss }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
-
-  if (!announcements || announcements.length === 0) {
-    return null;
-  }
-
-  const current = announcements[currentIndex];
-  const hasNext = currentIndex < announcements.length - 1;
+  const announcementCount = announcements?.length || 0;
+  const hasNext = currentIndex < announcementCount - 1;
   const hasPrev = currentIndex > 0;
 
   const handleNext = useCallback(() => {
-    if (hasNext) {
-      setCurrentIndex(prev => prev + 1);
-      setIsExpanded(false);
-    }
-  }, [hasNext]);
+    setCurrentIndex(prev => prev + 1);
+    setIsExpanded(false);
+  }, []);
 
   const handlePrev = useCallback(() => {
-    if (hasPrev) {
-      setCurrentIndex(prev => prev - 1);
-      setIsExpanded(false);
-    }
-  }, [hasPrev]);
+    setCurrentIndex(prev => Math.max(0, prev - 1));
+    setIsExpanded(false);
+  }, []);
 
   const handleDismiss = useCallback(() => {
     onDismiss?.();
@@ -35,10 +26,16 @@ const StickyAnnouncements = memo(function StickyAnnouncements({ announcements, o
     setIsExpanded(prev => !prev);
   }, []);
 
-  const counterText = useMemo(() => 
-    `${currentIndex + 1} / ${announcements.length}`,
-    [currentIndex, announcements.length]
+  const counterText = useMemo(
+    () => `${currentIndex + 1} / ${announcementCount}`,
+    [currentIndex, announcementCount]
   );
+
+  if (!announcementCount) {
+    return null;
+  }
+
+  const current = announcements[currentIndex];
 
   return (
     <div className="mb-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 rounded-lg p-4 shadow-sm">
