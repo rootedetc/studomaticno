@@ -36,7 +36,9 @@ backend/manual-*.mjs
 
 # Scraped data & samples
 backend/eduneta-scrape/
+eduneta-scrape/
 backend/manual-scrape/
+manual-scrape/
 **/samples/
 **/scrapes/
 **/temp/

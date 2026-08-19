@@ -1,82 +1,79 @@
 import { EdunetaService, generateRequestId, log } from '../services/eduneta.js';
 
+const STALE_AFTER_MS = 25 * 60 * 60 * 1000;
+const CLEANUP_INTERVAL_MS = 10 * 60 * 1000;
+
 /**
- * Service Manager - Manages per-session EdunetaService instances
- * 
- * This ensures each user session has its own isolated service instance
- * with its own cookie jar, preventing cross-contamination between users.
+ * Manages per-session EdunetaService instances so cookie jars stay isolated.
  */
 class ServiceManager {
-    constructor() {
-        // Map of sessionId -> EdunetaService instance
-        this.services = new Map();
+  constructor() {
+    this.services = new Map();
+    this.lastUsed = new Map();
+    this.cleanupTimer = setInterval(() => this.cleanupStale(), CLEANUP_INTERVAL_MS);
+    if (typeof this.cleanupTimer.unref === 'function') {
+      this.cleanupTimer.unref();
+    }
+  }
+
+  getServiceForSession(sessionId) {
+    if (!sessionId) {
+      throw new Error('Session ID is required');
     }
 
-    /**
-     * Get or create a service instance for a given session
-     * @param {string} sessionId - The express session ID
-     * @returns {EdunetaService} - The service instance for this session
-     */
-    getServiceForSession(sessionId) {
-        if (!sessionId) {
-            throw new Error('Session ID is required');
-        }
-
-        if (!this.services.has(sessionId)) {
-            const requestId = generateRequestId();
-            log('info', requestId, 'Creating new EdunetaService instance for session', {
-                sessionId: sessionId.substring(0, 8) + '...'
-            });
-            this.services.set(sessionId, new EdunetaService());
-        }
-
-        return this.services.get(sessionId);
+    if (!this.services.has(sessionId)) {
+      const requestId = generateRequestId();
+      log('info', requestId, 'Creating new EdunetaService instance for session', {
+        sessionId: sessionId.substring(0, 8) + '...'
+      });
+      this.services.set(sessionId, new EdunetaService());
     }
 
-    /**
-     * Check if a session has an associated service instance
-     * @param {string} sessionId - The express session ID
-     * @returns {boolean}
-     */
-    hasService(sessionId) {
-        return this.services.has(sessionId);
-    }
+    this.lastUsed.set(sessionId, Date.now());
+    return this.services.get(sessionId);
+  }
 
-    /**
-     * Destroy the service instance for a session (on logout/expiry)
-     * @param {string} sessionId - The express session ID
-     */
-    destroyService(sessionId) {
-        if (this.services.has(sessionId)) {
-            const requestId = generateRequestId();
-            log('info', requestId, 'Destroying EdunetaService instance for session', {
-                sessionId: sessionId.substring(0, 8) + '...'
-            });
-            this.services.delete(sessionId);
-        }
-    }
+  hasService(sessionId) {
+    return this.services.has(sessionId);
+  }
 
-    /**
-     * Get the count of active service instances (for debugging)
-     * @returns {number}
-     */
-    getActiveCount() {
-        return this.services.size;
+  rekeyService(oldSessionId, newSessionId) {
+    if (!oldSessionId || !newSessionId || oldSessionId === newSessionId) return;
+    if (this.services.has(oldSessionId)) {
+      this.services.set(newSessionId, this.services.get(oldSessionId));
+      this.services.delete(oldSessionId);
     }
+    if (this.lastUsed.has(oldSessionId)) {
+      this.lastUsed.set(newSessionId, this.lastUsed.get(oldSessionId));
+      this.lastUsed.delete(oldSessionId);
+    }
+  }
 
-    /**
-     * Clean up stale sessions (can be called periodically)
-     * Note: This is a simple cleanup - in production, you'd want
-     * to track last activity time for each session
-     */
-    cleanup() {
-        const requestId = generateRequestId();
-        const count = this.services.size;
-        log('info', requestId, 'Service manager cleanup', { activeServices: count });
+  destroyService(sessionId) {
+    if (this.services.has(sessionId)) {
+      const requestId = generateRequestId();
+      log('info', requestId, 'Destroying EdunetaService instance for session', {
+        sessionId: sessionId.substring(0, 8) + '...'
+      });
+      this.services.delete(sessionId);
+      this.lastUsed.delete(sessionId);
     }
+  }
+
+  getActiveCount() {
+    return this.services.size;
+  }
+
+  cleanupStale() {
+    const now = Date.now();
+    for (const [sessionId, usedAt] of this.lastUsed) {
+      if (now - usedAt > STALE_AFTER_MS) {
+        this.destroyService(sessionId);
+      }
+    }
+  }
 }
 
-// Single instance of the service manager
 const serviceManager = new ServiceManager();
 
 export default serviceManager;

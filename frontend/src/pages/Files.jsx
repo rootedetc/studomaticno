@@ -104,7 +104,7 @@ function Files() {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
-      const result = await api.getFilesTree();
+      const result = await api.getFilesTree({ signal: controller.signal });
       clearTimeout(timeoutId);
 
       setExpandedNodes(new Set());
@@ -126,7 +126,7 @@ function Files() {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
-      const result = await api.getFilesByHijer(folder.idHijer);
+      const result = await api.getFilesByHijer(folder.idHijer, { signal: controller.signal });
       clearTimeout(timeoutId);
       setFiles(result.files || []);
       setCurrentFolder(folder);

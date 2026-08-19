@@ -1,4 +1,5 @@
 import express from 'express';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -71,15 +72,16 @@ function formatICSDate(year, month, day, hours, minutes) {
 }
 
 function escapeICS(text) {
-  return text
+  return String(text || '')
     .replace(/\\/g, '\\\\')
     .replace(/;/g, '\\;')
     .replace(/,/g, '\\,')
+    .replace(/\r\n/g, '\\n')
     .replace(/\n/g, '\\n')
     .replace(/\r/g, '');
 }
 
-router.get('/event', (req, res) => {
+router.get('/event', requireAuth, (req, res) => {
   const { subject, professor, room, time, date, type } = req.query;
 
   if (!subject || !date || !time) {

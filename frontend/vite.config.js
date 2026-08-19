@@ -2,9 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig(({ mode }) => {
-  const isProduction = mode === 'production';
-
+export default defineConfig(() => {
   return {
     plugins: [
       react(),
@@ -101,8 +99,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom'],
-            api: ['axios']
+            vendor: ['react', 'react-dom', 'react-router-dom']
           }
         }
       }

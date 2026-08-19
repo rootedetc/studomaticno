@@ -1,6 +1,7 @@
 import express from 'express';
 import * as cheerio from 'cheerio';
 import { requireAuth } from '../middleware/auth.js';
+import { isNumericId, invalidIdResponse } from '../utils/validate.js';
 
 const router = express.Router();
 
@@ -127,8 +128,8 @@ router.get('/attempts', requireAuth, async (req, res) => {
   try {
     const { idOS, idPred, idAKG } = req.query;
 
-    if (!idOS || !idPred || !idAKG) {
-      return res.status(400).json({ error: 'Missing required parameters: idOS, idPred, idAKG' });
+    if (!isNumericId(idOS) || !isNumericId(idPred) || !isNumericId(idAKG)) {
+      return invalidIdResponse(res, 'exam parameters');
     }
 
     const html = await req.edunetaService.getPage(`/lib-student/IzvIzlasciIspit.aspx?idOS=${idOS}&idPred=${idPred}&idAKG=${idAKG}`);
